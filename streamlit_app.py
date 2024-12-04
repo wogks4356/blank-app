@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+import imageio
 import io
 
 # Initialize session state
@@ -38,6 +39,9 @@ if st.session_state.csv_data is not None:
     if x_axis and y_axis:
         fig, ax = plt.subplots()
 
+        # Temporary storage for images
+        images = []
+
         def update(frame):
             ax.clear()
             ax.plot(
@@ -49,14 +53,21 @@ if st.session_state.csv_data is not None:
             ax.set_ylabel(y_axis)
             ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
 
+            # Save current frame as an image
+            buf = io.BytesIO()
+            plt.savefig(buf, format="png")
+            buf.seek(0)
+            images.append(imageio.imread(buf))
+            buf.close()
+
         # Create animation
         anim = FuncAnimation(
             fig, update, frames=len(st.session_state.csv_data), interval=200
         )
 
-        # Save animation to GIF
+        # Convert images to GIF
         gif_buffer = io.BytesIO()
-        anim.save(gif_buffer, format="gif", fps=5)
+        imageio.mimsave(gif_buffer, images, format="GIF", fps=5)
         gif_buffer.seek(0)
 
         # Display the GIF in Streamlit
