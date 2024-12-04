@@ -26,49 +26,49 @@ if uploaded_file is not None:
         st.session_state.csv_data = pd.read_csv(uploaded_file)
         st.success("CSV 파일이 업로드되었습니다!")
         st.write("업로드된 데이터:")
-        st.dataframe(st.session_state.csv_data)
+        st.dataframe(st.session_state.csv_data.head())  # Show first few rows
     except Exception as e:
         st.error(f"파일 처리 중 오류 발생: {e}")
 
 # Generate GIF animation
-if st.session_state.csv_data is not None:
+if st.session_state.csv_data is not None and not st.session_state.csv_data.empty:
     columns = st.session_state.csv_data.columns.tolist()
     x_axis = st.selectbox("X 축 선택", columns)
     y_axis = st.selectbox("Y 축 선택", columns)
 
     if x_axis and y_axis:
         fig, ax = plt.subplots()
-
-        # Temporary storage for images
-        images = []
+        images = []  # List to store frame images
 
         def update(frame):
             ax.clear()
-            ax.plot(
-                st.session_state.csv_data[x_axis][:frame],
-                st.session_state.csv_data[y_axis][:frame],
-                marker="o",
-            )
-            ax.set_xlabel(x_axis)
-            ax.set_ylabel(y_axis)
-            ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
+            if frame > 0:
+                ax.plot(
+                    st.session_state.csv_data[x_axis][:frame],
+                    st.session_state.csv_data[y_axis][:frame],
+                    marker="o",
+                )
+                ax.set_xlabel(x_axis)
+                ax.set_ylabel(y_axis)
+                ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
 
-            # Save current frame as an image
-            buf = io.BytesIO()
-            plt.savefig(buf, format="png")
-            buf.seek(0)
-            images.append(imageio.imread(buf))
-            buf.close()
+                # Save current frame as an image
+                buf = io.BytesIO()
+                plt.savefig(buf, format="png")
+                buf.seek(0)
+                images.append(imageio.imread(buf))
+                buf.close()
 
         # Create animation
         anim = FuncAnimation(
             fig, update, frames=len(st.session_state.csv_data), interval=200
         )
 
-        # Convert images to GIF
-        gif_buffer = io.BytesIO()
-        imageio.mimsave(gif_buffer, images, format="GIF", fps=5)
-        gif_buffer.seek(0)
-
-        # Display the GIF in Streamlit
-        st.image(gif_buffer, format="gif", caption="실시간 그래프 애니메이션")
+        # Check if images were generated
+        if len(images) == 0:
+            st.error("GIF 생성을 위한 프레임이 없습니다. 데이터를 확인하세요.")
+        else:
+            gif_buffer = io.BytesIO()
+            imageio.mimsave(gif_buffer, images, format="GIF", fps=5)
+            gif_buffer.seek(0)
+            st.image(gif_buffer, format="gif", caption="실시간 그래프 애니메이션")
