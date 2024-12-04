@@ -1,24 +1,18 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import io
 
 # Initialize session state
 if "csv_data" not in st.session_state:
     st.session_state.csv_data = None
 
-if "show_graph" not in st.session_state:
-    st.session_state.show_graph = False
-
-# Function to reset state
-def reset_state():
-    st.session_state.csv_data = None
-    st.session_state.show_graph = False
-
 # Streamlit App
-st.title("🎈 My 데이터 시각화 앱")
+st.title("🎈 My 실시간 그래프 애니메이션")
 st.write(
     """
-    CSV 파일을 업로드하고 데이터를 시각화합니다.
+    CSV 파일을 업로드하고 실시간처럼 움직이는 그래프(GIF)를 생성합니다.
     """
 )
 
@@ -35,30 +29,35 @@ if uploaded_file is not None:
     except Exception as e:
         st.error(f"파일 처리 중 오류 발생: {e}")
 
-# Next button to show graph
-if st.session_state.csv_data is not None and st.button("다음"):
-    st.session_state.show_graph = True
-
-# Graph display
-if st.session_state.show_graph:
-    st.subheader("📊 데이터 그래프")
-    
-    # Select columns for X and Y axes
+# Generate GIF animation
+if st.session_state.csv_data is not None:
     columns = st.session_state.csv_data.columns.tolist()
     x_axis = st.selectbox("X 축 선택", columns)
     y_axis = st.selectbox("Y 축 선택", columns)
-    
-    if x_axis and y_axis:
-        # Plot the graph
-        fig, ax = plt.subplots()
-        ax.plot(st.session_state.csv_data[x_axis], st.session_state.csv_data[y_axis], marker='o')
-        ax.set_xlabel(x_axis)
-        ax.set_ylabel(y_axis)
-        ax.set_title(f"{x_axis} vs {y_axis}")
-        st.pyplot(fig)
-    else:
-        st.warning("X축과 Y축을 선택하세요.")
 
-# Reset button
-if st.session_state.show_graph and st.button("다시 시작"):
-    reset_state()
+    if x_axis and y_axis:
+        fig, ax = plt.subplots()
+
+        def update(frame):
+            ax.clear()
+            ax.plot(
+                st.session_state.csv_data[x_axis][:frame],
+                st.session_state.csv_data[y_axis][:frame],
+                marker="o",
+            )
+            ax.set_xlabel(x_axis)
+            ax.set_ylabel(y_axis)
+            ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
+
+        # Create animation
+        anim = FuncAnimation(
+            fig, update, frames=len(st.session_state.csv_data), interval=200
+        )
+
+        # Save animation to GIF
+        gif_buffer = io.BytesIO()
+        anim.save(gif_buffer, format="gif", fps=5)
+        gif_buffer.seek(0)
+
+        # Display the GIF in Streamlit
+        st.image(gif_buffer, format="gif", caption="실시간 그래프 애니메이션")
