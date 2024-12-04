@@ -41,6 +41,7 @@ if st.session_state.csv_data is not None and not st.session_state.csv_data.empty
         images = []  # List to store frame images
 
         def update(frame):
+            """Update function for each frame"""
             ax.clear()
             if frame > 0:
                 ax.plot(
@@ -60,11 +61,11 @@ if st.session_state.csv_data is not None and not st.session_state.csv_data.empty
                 buf.close()
 
         # Create animation
-        anim = FuncAnimation(
-            fig, update, frames=len(st.session_state.csv_data), interval=200
-        )
+        frames = len(st.session_state.csv_data)
+        st.write(f"프레임 개수: {frames}")  # Debug: frame count
+        anim = FuncAnimation(fig, update, frames=frames, interval=100)
 
-        # Check if images were generated
+        # Generate GIF
         if len(images) == 0:
             st.error("GIF 생성을 위한 프레임이 없습니다. 데이터를 확인하세요.")
         else:
@@ -72,3 +73,7 @@ if st.session_state.csv_data is not None and not st.session_state.csv_data.empty
             imageio.mimsave(gif_buffer, images, format="GIF", fps=5)
             gif_buffer.seek(0)
             st.image(gif_buffer, format="gif", caption="실시간 그래프 애니메이션")
+    else:
+        st.error("X축과 Y축 데이터를 선택하세요.")
+else:
+    st.warning("CSV 파일이 없거나 데이터가 비어 있습니다.")
