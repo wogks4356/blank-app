@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 
 # App Title
 st.title("🎈 My 나의 app")
@@ -35,16 +34,11 @@ if uploaded_file is not None:
         y_axis = st.selectbox("Y 축 선택", columns)
 
         if x_axis and y_axis:
-            # Plot using Matplotlib
-            fig, ax = plt.subplots()
-            ax.plot(data[x_axis], data[y_axis], marker='o')
-            ax.set_xlabel(x_axis)
-            ax.set_ylabel(y_axis)
-            ax.set_title(f"{x_axis} vs {y_axis}")
-            st.pyplot(fig)
+            # Use Streamlit's built-in line chart
+            chart_data = data[[x_axis, y_axis]].set_index(x_axis)
+            st.line_chart(chart_data)
         else:
             st.write("X축과 Y축을 선택하세요.")
 
     except Exception as e:
         st.error(f"파일을 처리하는 중 오류가 발생했습니다: {e}")
-
