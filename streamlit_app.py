@@ -67,7 +67,7 @@ if st.session_state.csv_data is not None and not st.session_state.csv_data.empty
         # Save animation as GIF
         gif_buffer = io.BytesIO()
         try:
-            anim.save(gif_buffer, writer="pillow", format="gif", fps=5)
+            anim.save(gif_buffer, writer="pillow", fps=5)  # Removed 'format' argument
             gif_buffer.seek(0)
             st.image(gif_buffer, format="gif", caption="실시간 그래프 애니메이션")
         except Exception as e:
