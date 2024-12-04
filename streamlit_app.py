@@ -1,9 +1,14 @@
 import streamlit as st
 import pandas as pd
+import serial
+import time
+import matplotlib.pyplot as plt
 
-# Define the session state for pagination
+# Initialize the session state for pagination and data
 if "page" not in st.session_state:
     st.session_state.page = 1
+if "arduino_data" not in st.session_state:
+    st.session_state.arduino_data = []
 
 def go_next_page():
     st.session_state.page += 1
@@ -12,57 +17,69 @@ def go_previous_page():
     st.session_state.page -= 1
 
 # App Title
-st.title("🎈 My 나의 app")
+st.title("🎈 My 아두이노 실시간 데이터 그래프")
 st.write(
     """
-    Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/).
-    
-    우리 같이 즐겨보아요.
-    
-    우리는 언제 끝나는 걸까요?? 우리 같이 해봐요.
+    아두이노에서 데이터를 받아 실시간으로 그래프를 그립니다.
     """
 )
 
-# Page 1: File upload and data visualization
+# Page 1: Connect to Arduino and receive data
 if st.session_state.page == 1:
-    st.subheader("페이지 1: CSV 파일 업로드 및 데이터 시각화")
-    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
-
-    if uploaded_file is not None:
-        try:
-            # Read the CSV file
-            data = pd.read_csv(uploaded_file)
-            st.write("업로드된 데이터:")
-            st.dataframe(data)  # Display the dataframe
-
-            # Plotting
-            st.write("📊 데이터 그래프")
-            st.write("각 열 중 원하는 데이터를 선택하여 그래프를 그려보세요.")
-            
-            # Select columns for x and y axes
-            columns = data.columns.tolist()
-            x_axis = st.selectbox("X 축 선택", columns)
-            y_axis = st.selectbox("Y 축 선택", columns)
-
-            if x_axis and y_axis:
-                # Use Streamlit's built-in line chart
-                chart_data = data[[x_axis, y_axis]].set_index(x_axis)
-                st.line_chart(chart_data)
-            else:
-                st.write("X축과 Y축을 선택하세요.")
-
-        except Exception as e:
-            st.error(f"파일을 처리하는 중 오류가 발생했습니다: {e}")
-
-    # Add a "Next" button
-    if st.button("다음"):
-        go_next_page()
-
-# Page 2: Next page content
-elif st.session_state.page == 2:
-    st.subheader("페이지 2: 다음 페이지")
-    st.write("여기에서 다음 페이지의 내용을 작성할 수 있습니다.")
+    st.subheader("페이지 1: 아두이노 연결 및 데이터 수신")
     
-    # Add a "Previous" button
+    # Serial port settings
+    port = st.text_input("아두이노 포트를 입력하세요 (예: COM3 또는 /dev/ttyUSB0)", value="/dev/ttyUSB0")
+    baud_rate = st.number_input("보드레이트를 입력하세요", value=9600, step=100)
+    
+    # Start/Stop toggle
+    if st.button("연결 시작"):
+        try:
+            ser = serial.Serial(port, baud_rate, timeout=1)
+            st.success(f"{port}에 연결되었습니다!")
+            
+            # Read data from Arduino
+            st.write("데이터 수신 중...")
+            while True:
+                line = ser.readline().decode('utf-8').strip()  # Read a line from Arduino
+                if line:
+                    st.session_state.arduino_data.append(float(line))  # Convert to float and store
+                    st.write(f"수신 데이터: {line}")  # Display received data
+                    time.sleep(0.1)  # Slight delay to avoid overloading
+
+                # Break condition (button to stop)
+                if st.button("연결 중지"):
+                    ser.close()
+                    st.success("연결을 종료했습니다.")
+                    break
+        except Exception as e:
+            st.error(f"아두이노 연결 오류: {e}")
+
+    # Add a "Next" button to move to visualization
+    if st.button("다음"):
+        if len(st.session_state.arduino_data) > 0:
+            go_next_page()
+        else:
+            st.warning("데이터를 먼저 수신하세요.")
+
+# Page 2: Real-time visualization
+elif st.session_state.page == 2:
+    st.subheader("페이지 2: 실시간 데이터 그래프")
+    
+    # Display real-time graph
+    if len(st.session_state.arduino_data) > 0:
+        st.write("아두이노 데이터 실시간 그래프:")
+        
+        # Plotting the data
+        fig, ax = plt.subplots()
+        ax.plot(st.session_state.arduino_data, label="아두이노 데이터")
+        ax.set_xlabel("Time")
+        ax.set_ylabel("Signal")
+        ax.legend()
+        st.pyplot(fig)
+    else:
+        st.warning("데이터가 없습니다. 첫 번째 페이지로 돌아가 데이터를 수신하세요.")
+
+    # Option to go back to the previous page
     if st.button("이전"):
         go_previous_page()
