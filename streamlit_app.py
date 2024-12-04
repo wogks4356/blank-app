@@ -36,6 +36,11 @@ if st.session_state.csv_data is not None and not st.session_state.csv_data.empty
     x_axis = st.selectbox("X 축 선택", columns)
     y_axis = st.selectbox("Y 축 선택", columns)
 
+    # 데이터 전처리: NaN 제거
+    st.session_state.csv_data = st.session_state.csv_data.dropna(subset=[x_axis, y_axis])
+    if st.session_state.csv_data.empty:
+        st.error("NaN 값을 제거한 후 데이터가 비어 있습니다. CSV 파일을 확인하세요.")
+
     if x_axis and y_axis:
         fig, ax = plt.subplots()
         images = []  # List to store frame images
@@ -43,20 +48,25 @@ if st.session_state.csv_data is not None and not st.session_state.csv_data.empty
         def update(frame):
             ax.clear()
             if frame > 0:
-                x_data = st.session_state.csv_data[x_axis][:frame]
-                y_data = st.session_state.csv_data[y_axis][:frame]
-                st.write(f"프레임 {frame}: X 데이터: {x_data.tolist()}, Y 데이터: {y_data.tolist()}")  # 디버깅
                 try:
+                    # 프레임 데이터 확인
+                    x_data = st.session_state.csv_data[x_axis][:frame]
+                    y_data = st.session_state.csv_data[y_axis][:frame]
+                    st.write(f"프레임 {frame}: X 데이터: {x_data.values}, Y 데이터: {y_data.values}")  # 디버깅
+
+                    # 그래프 그리기
                     ax.plot(x_data, y_data, marker="o")
                     ax.set_xlabel(x_axis)
                     ax.set_ylabel(y_axis)
                     ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
 
+                    # 프레임을 이미지로 저장
                     buf = io.BytesIO()
                     plt.savefig(buf, format="png")
                     buf.seek(0)
                     images.append(imageio.imread(buf))
                     buf.close()
+                    st.write(f"프레임 {frame} 저장 완료")  # 디버깅 메시지
                 except Exception as e:
                     st.error(f"프레임 {frame} 처리 중 오류 발생: {e}")
 
