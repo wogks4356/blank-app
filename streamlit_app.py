@@ -65,11 +65,12 @@ if st.session_state.csv_data is not None and not st.session_state.csv_data.empty
         anim = FuncAnimation(fig, update, frames=frames, interval=100)
 
         # Save animation as GIF
-        gif_buffer = io.BytesIO()
+        gif_path = "temp_animation.gif"  # Temporary file for GIF
         try:
-            anim.save(gif_buffer, writer="pillow", fps=5)  # Removed 'format' argument
-            gif_buffer.seek(0)
-            st.image(gif_buffer, format="gif", caption="실시간 그래프 애니메이션")
+            anim.save(gif_path, writer="pillow", fps=5)  # Save to a temporary file
+            with open(gif_path, "rb") as gif_file:
+                gif_bytes = gif_file.read()
+            st.image(gif_bytes, format="gif", caption="실시간 그래프 애니메이션")
         except Exception as e:
             st.error(f"GIF 생성 중 오류 발생: {e}")
     else:
