@@ -2,3 +2,4 @@ streamlit
 pyserial
 matplotlib
 pillow
+imageio
