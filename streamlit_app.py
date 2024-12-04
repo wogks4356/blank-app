@@ -41,29 +41,32 @@ if st.session_state.csv_data is not None and not st.session_state.csv_data.empty
         images = []  # List to store frame images
 
         def update(frame):
-            """Update function for each frame"""
             ax.clear()
             if frame > 0:
-                ax.plot(
-                    st.session_state.csv_data[x_axis][:frame],
-                    st.session_state.csv_data[y_axis][:frame],
-                    marker="o",
-                )
-                ax.set_xlabel(x_axis)
-                ax.set_ylabel(y_axis)
-                ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
+                x_data = st.session_state.csv_data[x_axis][:frame]
+                y_data = st.session_state.csv_data[y_axis][:frame]
+                st.write(f"프레임 {frame}: X 데이터: {x_data.tolist()}, Y 데이터: {y_data.tolist()}")  # 디버깅
+                try:
+                    ax.plot(x_data, y_data, marker="o")
+                    ax.set_xlabel(x_axis)
+                    ax.set_ylabel(y_axis)
+                    ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
 
-                # Save current frame as an image
-                buf = io.BytesIO()
-                plt.savefig(buf, format="png")
-                buf.seek(0)
-                images.append(imageio.imread(buf))
-                buf.close()
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format="png")
+                    buf.seek(0)
+                    images.append(imageio.imread(buf))
+                    buf.close()
+                except Exception as e:
+                    st.error(f"프레임 {frame} 처리 중 오류 발생: {e}")
 
         # Create animation
         frames = len(st.session_state.csv_data)
-        st.write(f"프레임 개수: {frames}")  # Debug: frame count
+        st.write(f"프레임 개수: {frames}")  # Debug
         anim = FuncAnimation(fig, update, frames=frames, interval=100)
+
+        # Check generated images
+        st.write(f"생성된 이미지 개수: {len(images)}")  # Debug
 
         # Generate GIF
         if len(images) == 0:
