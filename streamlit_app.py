@@ -17,11 +17,14 @@ def set_page(page_name):
     st.session_state.page = page_name
     st.experimental_set_query_params(page=page_name)
 
-query_params = st.query_params
+uery_params = st.query_params
+st.write("쿼리 파라미터:", query_params)  # 디버깅 출력
 if "page" in query_params:
     target_page = query_params["page"][0]
+    st.write("타겟 페이지:", target_page)  # 디버깅 출력
     if st.session_state.page != target_page:
         st.session_state.page = target_page
+        st.experimental_set_query_params(page=target_page)
 
 # Page: Exercise selection
 if st.session_state.page == "home":
