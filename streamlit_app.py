@@ -5,17 +5,18 @@ import pandas as pd
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
+# Check URL query parameter for page change
+query_params = st.query_params  # Updated function
+if "page" in query_params:
+    target_page = query_params["page"][0]
+    if st.session_state.page != target_page:
+        st.session_state.page = target_page
+        st.experimental_rerun()  # Rerun the app when the page changes
+
 # Function to set page
 def set_page(page_name):
     st.session_state.page = page_name
-    st.experimental_rerun()
-
-# Check URL query parameter for page change
-query_params = st.query_params
-if "page" in query_params:
-    if st.session_state.page != query_params["page"][0]:
-        st.session_state.page = query_params["page"][0]
-        st.experimental_rerun()
+    st.experimental_set_query_params(page=page_name)
 
 # Page: Exercise selection
 if st.session_state.page == "home":
