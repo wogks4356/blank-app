@@ -8,21 +8,69 @@ import io
 if "csv_data" not in st.session_state:
     st.session_state.csv_data = None
 if "page" not in st.session_state:
-    st.session_state.page = 1
+    st.session_state.page = "home"
 if "x_axis" not in st.session_state:
     st.session_state.x_axis = None
 if "y_axis" not in st.session_state:
     st.session_state.y_axis = None
 
 # Function to set page
-def set_page(page):
-    st.session_state.page = page
+def set_page(page_name):
+    st.session_state.page = page_name
 
 # Get the current page
 current_page = st.session_state.page
 
-# Page 1: Axis selection and static graph
-if current_page == 1:
+# Home page: Exercise selection
+if current_page == "home":
+    st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
+    st.write("운동 이미지를 클릭하거나 CSV 데이터를 업로드하여 관련 페이지로 이동하세요.")
+
+    # Layout for images
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.image("running.png", caption="러닝", use_column_width=True)
+        if st.button("러닝 페이지로 이동", key="running_button"):
+            set_page("running")
+
+    with col2:
+        st.image("cycling.png", caption="사이클링", use_column_width=True)
+        if st.button("사이클링 페이지로 이동", key="cycling_button"):
+            set_page("cycling")
+
+    with col3:
+        st.image("yoga.png", caption="요가", use_column_width=True)
+        if st.button("요가 페이지로 이동", key="yoga_button"):
+            set_page("yoga")
+
+    # Button for CSV visualization page
+    if st.button("CSV 데이터 시각화"):
+        set_page("csv")
+
+# Running page
+elif current_page == "running":
+    st.title("🏃 러닝 페이지")
+    st.write("러닝 관련 정보를 여기에 추가하세요.")
+    if st.button("홈으로 돌아가기"):
+        set_page("home")
+
+# Cycling page
+elif current_page == "cycling":
+    st.title("🚴 사이클링 페이지")
+    st.write("사이클링 관련 정보를 여기에 추가하세요.")
+    if st.button("홈으로 돌아가기"):
+        set_page("home")
+
+# Yoga page
+elif current_page == "yoga":
+    st.title("🧘 요가 페이지")
+    st.write("요가 관련 정보를 여기에 추가하세요.")
+    if st.button("홈으로 돌아가기"):
+        set_page("home")
+
+# CSV visualization page
+elif current_page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
@@ -56,15 +104,18 @@ if current_page == 1:
             ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis}")
             st.pyplot(fig)
 
-        # Button to navigate to the next page
+        # Button to navigate to the animation page
         if st.button("실시간 그래프"):
             if st.session_state.x_axis and st.session_state.y_axis:
-                set_page(2)  # Update the page number
+                set_page("animation")
             else:
                 st.warning("X축과 Y축을 모두 선택하세요.")
 
-# Page 2: GIF Animation
-elif current_page == 2:
+    if st.button("홈으로 돌아가기"):
+        set_page("home")
+
+# Animation page
+elif current_page == "animation":
     st.title("🎥 실시간 그래프 애니메이션")
 
     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
@@ -105,6 +156,5 @@ elif current_page == 2:
         except Exception as e:
             st.error(f"애니메이션 생성 중 오류 발생: {e}")
 
-    # Back button to return to the first page
-    if st.button("이전"):
-        set_page(1)  # Update the page number
+    if st.button("홈으로 돌아가기"):
+        set_page("home")
