@@ -30,17 +30,17 @@ if current_page == "home":
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.image("running.png", caption="러닝", use_column_width=True)
+        st.image("running.png", caption="러닝", use_container_width=True)
         if st.button("러닝 페이지로 이동", key="running_button"):
             set_page("running")
 
     with col2:
-        st.image("cycling.png", caption="사이클링", use_column_width=True)
+        st.image("cycling.png", caption="사이클링", use_container_width=True)
         if st.button("사이클링 페이지로 이동", key="cycling_button"):
             set_page("cycling")
 
     with col3:
-        st.image("yoga.png", caption="요가", use_column_width=True)
+        st.image("yoga.png", caption="요가", use_container_width=True)
         if st.button("요가 페이지로 이동", key="yoga_button"):
             set_page("yoga")
 
