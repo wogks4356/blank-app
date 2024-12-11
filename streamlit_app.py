@@ -30,19 +30,22 @@ if current_page == "home":
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.image("running.png", caption="러닝", use_container_width=True)
-        if st.button("러닝 페이지로 이동", key="running_button"):
-            set_page("running")
+        # [수정] 러닝 이미지 링크를 여기에 입력하세요.
+        st.image("**https://www.google.com/imgres?q=%EC%82%BC%EB%91%90%20%EC%9A%B4%EB%8F%99&imgurl=https%3A%2F%2Fmblogthumb-phinf.pstatic.net%2FMjAyMDAxMjNfNDAg%2FMDAxNTc5NzYxMjY4MjU2.H1azzr_dYrKoHyUB3QTqA_8nuwnY6mRp2Z7akVql53kg.-9So2SDBCNMY5Y7oDkgIkdssb4dgbHtYnhoWOT2bgJUg.JPEG.essorfit%2F5.jpg%3Ftype%3Dw800&imgrefurl=https%3A%2F%2Fm.blog.naver.com%2Fessorfit%2F221782986649&docid=B_Ub4LhqcUnUNM&tbnid=_CA2Ao9j32mbKM&vet=12ahUKEwj2rK3qjJ-KAxU7j68BHTNJLzcQM3oECGgQAA..i&w=480&h=358&hcb=2&ved=2ahUKEwj2rK3qjJ-KAxU7j68BHTNJLzcQM3oECGgQAA**", caption="러닝", use_container_width=True)
+        if st.button("삼두 페이지로 이동", key="running_button"):
+            set_page("threedoo")
 
     with col2:
-        st.image("cycling.png", caption="사이클링", use_container_width=True)
-        if st.button("사이클링 페이지로 이동", key="cycling_button"):
-            set_page("cycling")
+        # [수정] 사이클링 이미지 링크를 여기에 입력하세요.
+        st.image("**https://www.google.com/imgres?q=%EC%82%AC%EB%A0%88%EB%A0%88&imgurl=https%3A%2F%2Fmblogthumb-phinf.pstatic.net%2FMjAyMjA3MDlfODAg%2FMDAxNjU3MzUxNjcwMzUy.TNfHv09JO2m1FuwvAvHuYMqh566aoMwpJrtQkqGS9r4g.ZB8MpOAz_V2rQrl0w4NIAM_20DZ69AY2wnWFLdR6OQQg.PNG.angelgume%2F1.png%3Ftype%3Dw800&imgrefurl=https%3A%2F%2Fblog.naver.com%2Fangelgume%2F222805524698&docid=2paqMMaLKzecGM&tbnid=oF0h-cPQbfgujM&vet=12ahUKEwiv8O-BjZ-KAxWlVPUHHZgQOP8QM3oECHUQAA..i&w=649&h=503&hcb=2&ved=2ahUKEwiv8O-BjZ-KAxWlVPUHHZgQOP8QM3oECHUQAA**", caption="사이클링", use_container_width=True)
+        if st.button("사레레 페이지로 이동", key="cycling_button"):
+            set_page("side_raise")
 
     with col3:
-        st.image("yoga.png", caption="요가", use_container_width=True)
-        if st.button("요가 페이지로 이동", key="yoga_button"):
-            set_page("yoga")
+        # [수정] 요가 이미지 링크를 여기에 입력하세요.
+        st.image("**https://www.google.com/imgres?q=%EC%9D%B4%EB%91%90%20%EC%9A%B4%EB%8F%99&imgurl=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F90YoF%2FbtquSgAi3m2%2FRw7RkNd9xbFFyT7ab70e4K%2Fimg.png&imgrefurl=https%3A%2F%2Fultra21c.tistory.com%2Fentry%2F%25EB%25B6%2580%25EC%259C%2584%25EB%25B3%2584-%25EC%259A%25B4%25EB%258F%2599-%25EC%25A2%2585%25EB%25A5%2598-%25EB%25B0%258F-%25EB%25B0%25A9%25EB%25B2%2595-%25EC%259D%25B4%25EB%2591%2590%25EC%259A%25B4%25EB%258F%2599&docid=BeLd7sZkqxy0dM&tbnid=kVEqTIi8gzexlM&vet=12ahUKEwiZ_fWRjZ-KAxWGh68BHeMQKq8QM3oECDcQAA..i&w=684&h=598&hcb=2&ved=2ahUKEwiZ_fWRjZ-KAxWGh68BHeMQKq8QM3oECDcQAA**", caption="요가", use_container_width=True)
+        if st.button("이두 페이지로 이동", key="yoga_button"):
+            set_page("twodoo")
 
     # Button for CSV visualization page
     if st.button("CSV 데이터 시각화"):
