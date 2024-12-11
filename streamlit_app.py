@@ -12,11 +12,15 @@ def set_page(page_name):
 
 query_params = st.query_params
 st.write("쿼리 파라미터:", query_params)  # 디버깅 출력
-if "page" in query_params:
-    target_page = query_params.get("page", [None])[0]  # 안전하게 첫 번째 값 가져오기
-    st.write("타겟 페이지:", target_page)  # 디버깅 출력
-    if target_page and st.session_state.page != target_page:
-        st.session_state.page = target_page
+
+# Handle query params safely
+target_page = query_params.get("page", "home")  # 기본값을 "home"으로 설정
+if isinstance(target_page, list):  # target_page가 리스트인 경우 처리
+    target_page = target_page[0]
+
+st.write("타겟 페이지:", target_page)  # 디버깅 출력
+if target_page and st.session_state.page != target_page:
+    st.session_state.page = target_page
 
 # 디버깅 출력: 현재 페이지 상태
 st.write("현재 페이지 상태:", st.session_state.page)
