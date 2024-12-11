@@ -11,8 +11,7 @@ if "page" in query_params:
     target_page = query_params["page"][0]
     if st.session_state.page != target_page:
         st.session_state.page = target_page
-        st.experimental_rerun()  # Rerun the app when the page changes
-
+        
 # Function to set page
 def set_page(page_name):
     st.session_state.page = page_name
