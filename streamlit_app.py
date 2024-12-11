@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # Initialize session state for page navigation
 if "page" not in st.session_state:
@@ -9,7 +10,7 @@ def set_page(page_name):
     st.session_state.page = page_name
 
 # Check URL query parameter for page change
-query_params = st.experimental_get_query_params()
+query_params = st.query_params
 if "page" in query_params:
     st.session_state.page = query_params["page"][0]
 
@@ -18,20 +19,20 @@ if st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
 
     # CSS for image size and button-like behavior
-    # st.markdown(
-    #     """
-    #     <style>
-    #     .custom-image {
-    #         width: 150px;
-    #         height: 150px;
-    #         object-fit: cover;
-    #         cursor: pointer;
-    #         margin: 10px;
-    #     }
-    #     </style>
-    #     """,
-    #     unsafe_allow_html=True,
-    # )
+    st.markdown(
+        """
+        <style>
+        .custom-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+            margin: 10px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # Layout for images
     col1, col2, col3 = st.columns(3)
