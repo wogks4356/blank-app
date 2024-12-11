@@ -8,32 +8,19 @@ if "page" not in st.session_state:
 # Function to set page
 def set_page(page_name):
     st.session_state.page = page_name
-    st.experimental_set_query_params(page=page_name)
 
-query_params = st.query_params
-st.write("쿼리 파라미터:", query_params)  # 디버깅 출력
-
-# Handle query params safely
-target_page = query_params.get("page", "home")  # 기본값을 "home"으로 설정
-if isinstance(target_page, list):  # target_page가 리스트인 경우 처리
-    target_page = target_page[0]
-
-st.write("타겟 페이지:", target_page)  # 디버깅 출력
-if target_page and st.session_state.page != target_page:
-    st.session_state.page = target_page
-
-# 디버깅 출력: 현재 페이지 상태
+# 디버깅 출력
 st.write("현재 페이지 상태:", st.session_state.page)
-# Page: Exercise selection
+
 # Render pages based on the session state
 if st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
 
-    # CSS for image size and button-like behavior
+    # CSS for clickable images
     st.markdown(
         """
         <style>
-        .custom-image {
+        .clickable-image {
             width: 150px;
             height: 150px;
             object-fit: cover;
@@ -45,23 +32,48 @@ if st.session_state.page == "home":
         unsafe_allow_html=True,
     )
 
-    # Layout for images
+    # Layout for images with links to pages
     col1, col2, col3 = st.columns(3)
 
     with col1:
+        # 삼두 이미지 링크
+        st.markdown(
+            """
+            <a href="#" onclick="window.location.reload(); document.getElementById('page_state').value = 'csv';">
+                <img src="https://via.placeholder.com/150?text=삼두" class="clickable-image" alt="삼두">
+            </a>
+            """,
+            unsafe_allow_html=True,
+        )
         if st.button("삼두 페이지로 이동"):
             set_page("csv")
 
     with col2:
+        # 사레레 이미지 링크
+        st.markdown(
+            """
+            <a href="#" onclick="window.location.reload(); document.getElementById('page_state').value = 'csv';">
+                <img src="https://via.placeholder.com/150?text=사레레" class="clickable-image" alt="사레레">
+            </a>
+            """,
+            unsafe_allow_html=True,
+        )
         if st.button("사레레 페이지로 이동"):
             set_page("csv")
 
     with col3:
+        # 이두 이미지 링크
+        st.markdown(
+            """
+            <a href="#" onclick="window.location.reload(); document.getElementById('page_state').value = 'csv';">
+                <img src="https://via.placeholder.com/150?text=이두" class="clickable-image" alt="이두">
+            </a>
+            """,
+            unsafe_allow_html=True,
+        )
         if st.button("이두 페이지로 이동"):
             set_page("csv")
 
-
-# Page: CSV Visualization
 elif st.session_state.page == "csv":
     st.title("🎈 CSV 데이터 시각화")
     st.write("CSV 데이터를 업로드하세요.")
