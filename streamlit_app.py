@@ -18,20 +18,20 @@ if st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
 
     # CSS for image size and button-like behavior
-    st.markdown(
-        """
-        <style>
-        .custom-image {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            cursor: pointer;
-            margin: 10px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    # st.markdown(
+    #     """
+    #     <style>
+    #     .custom-image {
+    #         width: 150px;
+    #         height: 150px;
+    #         object-fit: cover;
+    #         cursor: pointer;
+    #         margin: 10px;
+    #     }
+    #     </style>
+    #     """,
+    #     unsafe_allow_html=True,
+    # )
 
     # Layout for images
     col1, col2, col3 = st.columns(3)
