@@ -11,20 +11,28 @@ if "page" not in st.session_state:
 #     target_page = query_params["page"][0]
 #     if st.session_state.page != target_page:
 #         st.session_state.page = target_page
-        
+
+# Try to fetch query parameters, or fallback to an empty dictionary
+try:
+    query_params = st.query_params
+except AttributeError:
+    query_params = {}  # Fallback if st.query_params is unavailable
+
+# 디버깅 출력
+st.write("쿼리 파라미터:", query_params)
+
 # Function to set page
 def set_page(page_name):
     st.session_state.page = page_name
     st.experimental_set_query_params(page=page_name)
 
-uery_params = st.query_params
-st.write("쿼리 파라미터:", query_params)  # 디버깅 출력
 if "page" in query_params:
-    target_page = query_params["page"][0]
-    st.write("타겟 페이지:", target_page)  # 디버깅 출력
-    if st.session_state.page != target_page:
+    target_page = query_params.get("page", [None])[0]
+    if target_page and st.session_state.page != target_page:
         st.session_state.page = target_page
-        st.experimental_set_query_params(page=target_page)
+
+# 디버깅 출력: 현재 페이지 상태
+st.write("현재 페이지 상태:", st.session_state.page)
 
 # Page: Exercise selection
 if st.session_state.page == "home":
