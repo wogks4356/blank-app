@@ -77,14 +77,14 @@ elif st.session_state.page == "home":
         if st.button("하체 페이지로 이동"):
             set_page("업데이트")
     with col2:
-        st.image("https://cdn.maxq.kr/news/photo/202307/10814_21182_3558.jpg", caption="이두", use_container_width=True)
+        st.image("https://cdn.maxq.kr/news/photo/202307/10814_21182_3558.jpg", caption="하체", use_container_width=True)
     # 5 번째 항목: 이두
     col2, col1 = st.columns([1, 2])  # 비율 설정: 버튼 1, 이미지 2
     with col1:
         if st.button("가슴 페이지로 이동"):
             set_page("업데이트")
     with col2:
-        st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR60xyV_yf96nCcamJPME4JmW2O5G48Iq-Opw&s", caption="이두", use_container_width=True)
+        st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR60xyV_yf96nCcamJPME4JmW2O5G48Iq-Opw&s", caption="가슴", use_container_width=True)
 
 
 # elif st.session_state.page == "home":
