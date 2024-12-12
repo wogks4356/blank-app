@@ -680,11 +680,11 @@ if current_page == "rr":
             if elapsed_time >= refresh_rate:
                 plot_live_graph(csv_file_path)  # 실시간 데이터를 그래프로 출력
                 st.session_state.last_run_time = current_time
-                st.experimental_rerun()  # Streamlit 앱을 새로고침하여 업데이트 반영
+                st.stop()  # 새로고침 없이 현재 상태 유지
 
     # 업로드된 CSV 데이터 표시
-    if uploaded_file is not None:
-        try:
+    try:
+        if uploaded_file is not None:
             # Read and display the CSV file
             csv_data = pd.read_csv(uploaded_file)
             st.session_state.csv_data = csv_data  # Store data in session state
@@ -704,9 +704,7 @@ if current_page == "rr":
                 st.line_chart(chart_data)
             else:
                 st.warning("X축과 Y축을 모두 선택하세요.")
-        except Exception as e:
-            st.error(f"오류가 발생했습니다: {e}")
+    except Exception as e:
+        st.error(f"오류가 발생했습니다: {e}")
     else:
         st.warning("CSV 파일을 업로드하세요.")
-
-
