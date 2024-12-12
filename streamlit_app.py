@@ -222,7 +222,7 @@ if current_page == "csv":
     
      #    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
     
-        if uploaded_file is not None:
+    if uploaded_file is not None:
             try:
                 # Read and display the CSV file
                 csv_data = load_csv(uploaded_file)
