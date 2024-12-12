@@ -276,7 +276,7 @@ if current_page == "csv":
                 st.session_state.y_axis = y_axis
 
                 # X축을 인덱스로 설정
-                chart_data = csv_data.set_index(x_axis)[y_axis].head(100)
+                chart_data = csv_data.set_index(x_axis)[y_axis].head()
 
                 # 선 그래프 생성
                 st.line_chart(chart_data)
