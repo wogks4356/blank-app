@@ -19,9 +19,9 @@ def plot_live_graph(csv_path):
     try:
         # 실시간 데이터를 읽기
         data = pd.read_csv(csv_path)
-        if data.empty:
-            st.warning("CSV 파일이 비어 있습니다.")
-            return
+        # if data.empty:
+        #     st.warning("CSV 파일이 비어 있습니다.")
+        #     return
 
         # 데이터가 있는 경우 그래프 그리기
         plt.figure(figsize=(10, 5))
