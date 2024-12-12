@@ -52,6 +52,8 @@ def main():
 
             st.image(f'image/{img_file.name}')
 
+if __name__ == '__main__':
+    main()
 
 def update_hight_from_slider():
     st.session_state.hight_input = st.session_state.hight_slider
