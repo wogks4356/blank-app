@@ -436,58 +436,117 @@ if current_page == "csv":
 
 
     if st.button("실시간 그래프"):
-        if "x_axis" in st.session_state or "y_axis" in st.session_state:
+        if "x_axis" in st.session_state and "y_axis" in st.session_state:
             set_page("realtime")  # Navigate to the real-time graph page
         else:
             st.warning("X축과 Y축을 모두 선택하세요.")
+
+# elif current_page == "realtime":
+#     st.title("📈 실시간 그래프 애니메이션")
+
+#     if st.button("이전"):
+#             set_page("csv")
+
+#     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
+#         # Downsample the data
+#         max_points = 100
+#         csv_data = st.session_state.csv_data
+#         if len(csv_data) > max_points:
+#             csv_data = csv_data.iloc[::len(csv_data)//max_points, :]
+
+#         fig, ax = plt.subplots()
+
+#         # Update function for animation
+#         def update(frame):
+#             ax.clear()
+#             x_data = csv_data[st.session_state.x_axis][:frame]
+#             # y_data = csv_data[st.session_state.y_axis][:frame]
+#             y_data = csv_data["Value"][:frame]
+#             ax.plot(x_data, y_data, marker="o", linestyle="-")
+#             ax.set_xlabel(st.session_state.x_axis)
+#             ax.set_ylabel(st.session_state.y_axis)
+#             ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
+            
+
+#         # Limit frames to improve performance
+#         max_frames = 100
+#         frames = min(len(csv_data), max_frames)
+
+#         # Create animation
+#         anim = FuncAnimation(fig, update, frames=frames, interval=300)
+
+#         # Save animation as GIF
+#         gif_path = "temp_animation.gif"
+#         try:
+#             anim.save(gif_path, writer="pillow", fps=10)
+
+#             # Read the GIF as binary and display it
+#             with open(gif_path, "rb") as gif_file:
+#                 gif_bytes = gif_file.read()
+#             st.image(gif_bytes, caption="시간에 따른 데이터 변화")  # Display the GIF
+#         except Exception as e:
+#             st.error(f"애니메이션 생성 중 오류 발생: {e}")
+#     if st.button("홈으로 돌아가기"):
+#         set_page("home")
 
 elif current_page == "realtime":
     st.title("📈 실시간 그래프 애니메이션")
 
     if st.button("이전"):
-            set_page("csv")
+        set_page("csv")
 
     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
-        # Downsample the data
-        max_points = 100
         csv_data = st.session_state.csv_data
-        if len(csv_data) > max_points:
-            csv_data = csv_data.iloc[::len(csv_data)//max_points, :]
 
-        fig, ax = plt.subplots()
+        # X축과 Y축 선택
+        x_axis = st.selectbox("X 축 선택", csv_data.columns, key="realtime_x_axis")
+        y_axis = st.selectbox("Y 축 선택", csv_data.columns, key="realtime_y_axis")
 
-        # Update function for animation
-        def update(frame):
-            ax.clear()
-            x_data = csv_data[st.session_state.x_axis][:frame]
-            # y_data = csv_data[st.session_state.y_axis][:frame]
-            y_data = csv_data["Value"][:frame]
-            ax.plot(x_data, y_data, marker="o", linestyle="-")
-            ax.set_xlabel(st.session_state.x_axis)
-            ax.set_ylabel(st.session_state.y_axis)
-            ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
-            
+        if x_axis and y_axis:
+            # Downsample the data
+            max_points = 100
+            if len(csv_data) > max_points:
+                csv_data = csv_data.iloc[::len(csv_data) // max_points, :]
 
-        # Limit frames to improve performance
-        max_frames = 100
-        frames = min(len(csv_data), max_frames)
+            # matplotlib Figure 생성
+            fig, ax = plt.subplots()
 
-        # Create animation
-        anim = FuncAnimation(fig, update, frames=frames, interval=300)
+            # Update 함수 정의 (애니메이션 프레임별 업데이트)
+            def update(frame):
+                ax.clear()
+                x_data = csv_data[x_axis].iloc[:frame]  # 선택된 X축 데이터
+                y_data = csv_data[y_axis].iloc[:frame]  # 선택된 Y축 데이터
+                ax.plot(x_data, y_data, marker="o", linestyle="-", color="b")
+                ax.set_xlabel(x_axis)  # X축 레이블
+                ax.set_ylabel(y_axis)  # Y축 레이블
+                ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
+                ax.grid(True)
 
-        # Save animation as GIF
-        gif_path = "temp_animation.gif"
-        try:
-            anim.save(gif_path, writer="pillow", fps=10)
+            # Limit frames to improve performance
+            max_frames = min(len(csv_data), 100)
 
-            # Read the GIF as binary and display it
-            with open(gif_path, "rb") as gif_file:
-                gif_bytes = gif_file.read()
-            st.image(gif_bytes, caption="시간에 따른 데이터 변화")  # Display the GIF
-        except Exception as e:
-            st.error(f"애니메이션 생성 중 오류 발생: {e}")
+            # Create animation
+            anim = FuncAnimation(fig, update, frames=max_frames, interval=300)
+
+            # Save animation as GIF
+            gif_path = "temp_animation.gif"
+            try:
+                anim.save(gif_path, writer="pillow", fps=10)
+
+                # Read the GIF as binary and display it
+                with open(gif_path, "rb") as gif_file:
+                    gif_bytes = gif_file.read()
+                st.image(gif_bytes, caption="시간에 따른 데이터 변화")  # Display the GIF
+            except Exception as e:
+                st.error(f"애니메이션 생성 중 오류 발생: {e}")
+        else:
+            st.warning("X축과 Y축을 모두 선택하세요.")
+    else:
+        st.warning("CSV 데이터를 먼저 업로드하세요.")
+
     if st.button("홈으로 돌아가기"):
         set_page("home")
+
 
 # elif current_page == "analyze":
 #     st.title("📊 운동 분석 결과")
