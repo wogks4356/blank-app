@@ -31,8 +31,8 @@ elif st.session_state.page == "basis":
     age = st.slider('나이', 0, 100) 
     
     st.text('제 나이는' + str(age)+ '세 입니다')
-    hight = st.slider('키' , 0 , 250, step= 0.5)
-    weight = st.slider('몸무게' , 0 , 200, step = 1)
+    hight = st.slider('키' , 0 , 250, step=0.5)
+    weight = st.slider('몸무게' , 0 , 200, step=1)
 
     if st.button("시작해"):
         set_page("home")
