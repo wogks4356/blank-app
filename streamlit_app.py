@@ -327,7 +327,7 @@ if current_page == "csv":
                                                 count += 1  # 반복 횟수 증가
                                                 values_at_zero.append(value[i])  # Value 저장
                                                 in_motion = False  
-                                                print(in_motion)# 운동 종료 후 대기 상태로 전환
+                                                st.text(in_motion)# 운동 종료 후 대기 상태로 전환
             
                                 # 분석 결과 표시
                                 st.write(f"운동 반복 횟수: **{count}회**")
