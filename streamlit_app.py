@@ -206,7 +206,8 @@ elif st.session_state.page == "삼두":
     st.write("삼두 관련 데이터를 표시합니다.")
     if st.button("홈으로 돌아가기"):
         set_page("home")
-    set_page("csv")
+    else:
+        set_page("csv")
     
 
 elif st.session_state.page == "사레레":
@@ -214,7 +215,8 @@ elif st.session_state.page == "사레레":
     st.write("사레레 관련 데이터를 표시합니다.")
     if st.button("홈으로 돌아가기"):
         set_page("home")
-    st.session_state.page == "csv"
+    else:
+        st.session_state.page == "csv"
     
 
 elif st.session_state.page == "이두":
@@ -222,7 +224,8 @@ elif st.session_state.page == "이두":
     st.write("이두 관련 데이터를 표시합니다.")
     if st.button("홈으로 돌아가기"):
         set_page("home")
-    set_page("csv")
+    else:
+        set_page("csv")
     
 
 elif st.session_state.page == "업데이트":
