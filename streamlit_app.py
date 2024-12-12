@@ -20,7 +20,7 @@ st.write("현재 페이지 상태:", st.session_state.page)
 # Render pages based on the session state
 if st.session_state.page == "start":
     st.title("📋 앱 시작하기")
-    st.write("이 앱은 운동 선택 및 CSV 데이터를 시각화하는 데 사용됩니다.")
+    st.text("이 앱은 운동 선택 및 CSV 데이터를 시각화하는 데 사용됩니다.")
     
     if st.button("Run"):
         set_page("basis")  # Navigate to the home page
