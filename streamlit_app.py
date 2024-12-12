@@ -3,6 +3,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+
+def update_hight_from_slider():
+    st.session_state.hight_input = st.session_state.hight_slider
+
+def update_hight_from_input():
+    st.session_state.hight_slider = st.session_state.hight_input
+
+def update_weight_from_slider():
+    st.session_state.weight_input = st.session_state.weight_slider
+
+def update_weight_from_input():
+    st.session_state.weight_slider = st.session_state.weight_input
+
 # Initialize session state for page navigation
 if "page" not in st.session_state:
     st.session_state.page = "start"  # Initial start page
@@ -40,17 +53,6 @@ if st.session_state.page == "start":
 #     st.session_state.hight = st.number_input("키", min_value=0.0, max_value=300.0, value=165.0)
 #     st.session_state.weight = st.slider('몸무게' , 0 , 200, step=1)
 #     st.session_state.weight = st.number_input("몸무게", min_value=0.0, max_value=300.0, value=70.0)
-def update_hight_from_slider():
-    st.session_state.hight_input = st.session_state.hight_slider
-
-def update_hight_from_input():
-    st.session_state.hight_slider = st.session_state.hight_input
-
-def update_weight_from_slider():
-    st.session_state.weight_input = st.session_state.weight_slider
-
-def update_weight_from_input():
-    st.session_state.weight_slider = st.session_state.weight_input
 
 
 elif st.session_state.page == "basis":
