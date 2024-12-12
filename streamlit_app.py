@@ -41,7 +41,7 @@ elif st.session_state.page == "basis":
 
 elif st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
-    st.write('저는" + str(age) +"," + str(hight) +"," + str(weight) + "입니다.') 
+    st.write('저는' + str(age) +"," + str(hight) +"," + str(weight) + "입니다.') 
 
     # Layout for images with clickable buttons
     col1, col2, col3 = st.columns(3)
