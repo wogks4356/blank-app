@@ -319,6 +319,7 @@ if current_page == "csv":
                                             st.text(in_motion) # 돌고 있다.
                                     else:
                                         # 운동 중
+                                        st.text(direction)
                                         if direction == 'down':
                                             # 하강 중이고 0 근방에 도달
                                             if abs(pitch[i]) <= near_zero:
@@ -326,6 +327,7 @@ if current_page == "csv":
                                                 st.text(direction)
                                         elif direction == 'up':
                                             # 상승 중이고 70 근방에 도달
+                                            st.text(direction)
                                             if abs(pitch[i] - threshold) <= 15:
                                                 count += 1  # 반복 횟수 증가
                                                 values_at_zero.append(value[i])  # Value 저장
