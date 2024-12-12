@@ -5,6 +5,38 @@ from matplotlib.animation import FuncAnimation
 import numpy
 
 
+
+import streamlit as st
+import pandas as pd
+import time
+import matplotlib.pyplot as plt
+
+# CSV 파일 경로 (실시간 업데이트 중인 파일 경로)
+# csv_file_path = "real_time_data.csv"  # 파일 경로를 정확히 지정하세요.
+
+# 그래프 업데이트 함수
+def plot_live_graph(csv_path):
+    try:
+        # 실시간 데이터를 읽기
+        data = pd.read_csv(csv_path)
+        if data.empty:
+            st.warning("CSV 파일이 비어 있습니다.")
+            return
+
+        # 데이터가 있는 경우 그래프 그리기
+        plt.figure(figsize=(10, 5))
+        plt.plot(data["time"], data["value"], marker="o", linestyle="-")
+        plt.title("실시간 데이터 그래프")
+        plt.xlabel("시간")
+        plt.ylabel("값")
+        plt.grid(True)
+        st.pyplot(plt)
+    except FileNotFoundError:
+        st.error("CSV 파일을 찾을 수 없습니다. 경로를 확인하세요.")
+    except Exception as e:
+        st.error(f"오류 발생: {e}")
+
+
 def update_hight_from_slider():
     st.session_state.hight_input = st.session_state.hight_slider
 
@@ -495,7 +527,6 @@ if current_page == "csv":
 #             st.error(f"애니메이션 생성 중 오류 발생: {e}")
 #     if st.button("홈으로 돌아가기"):
 #         set_page("home")
-
 elif current_page == "realtime":
     st.title("📈 실시간 그래프 애니메이션")
 
@@ -615,46 +646,10 @@ elif current_page == "realtime":
 #     if st.button("홈으로 돌아가기"):
 #         set_page("home")
 
-import streamlit as st
-import pandas as pd
-import time
-import matplotlib.pyplot as plt
-
-# CSV 파일 경로 (실시간 업데이트 중인 파일 경로)
-# csv_file_path = "real_time_data.csv"  # 파일 경로를 정확히 지정하세요.
-
-# 그래프 업데이트 함수
-def plot_live_graph(csv_path):
-    try:
-        # 실시간 데이터를 읽기
-        data = pd.read_csv(csv_path)
-        if data.empty:
-            st.warning("CSV 파일이 비어 있습니다.")
-            return
-
-        # 데이터가 있는 경우 그래프 그리기
-        plt.figure(figsize=(10, 5))
-        plt.plot(data["time"], data["value"], marker="o", linestyle="-")
-        plt.title("실시간 데이터 그래프")
-        plt.xlabel("시간")
-        plt.ylabel("값")
-        plt.grid(True)
-        st.pyplot(plt)
-    except FileNotFoundError:
-        st.error("CSV 파일을 찾을 수 없습니다. 경로를 확인하세요.")
-    except Exception as e:
-        st.error(f"오류 발생: {e}")
 
 # Streamlit 앱 구성
     
-    # 실시간 업데이트
-    refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=1, max_value=10, value=3)
-    st.text(f"그래프가 {refresh_rate}초마다 업데이트됩니다.")
-    
-    while True:
-        plot_live_graph(csv_file_path)  # 실시간 데이터를 그래프로 출력
-        time.sleep(refresh_rate)
-        st.experimental_rerun()  # Streamlit 앱을 새로고침하여 업데이트 반영
+ # Streamlit 앱을 새로고침하여 업데이트 반영
 
 
 elif current_page == "rr":
