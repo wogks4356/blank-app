@@ -19,8 +19,8 @@ if st.session_state.page == "start":
 
     if st.button("Run"):
         set_page("home")  # Navigate to the home page
-# 디버깅 출력
-st.write("현재 페이지 상태:", st.session_state.page)
+# # 디버깅 출력
+# st.write("현재 페이지 상태:", st.session_state.page)
 
 # Render pages based on the session state
 if st.session_state.page == "home":
