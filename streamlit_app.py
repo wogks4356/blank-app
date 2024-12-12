@@ -375,7 +375,7 @@ elif current_page == "analyze":
 
         try:
             # Pitch와 Value 데이터 확인
-            if "pitch" not in csv_data.columns or "value" not in csv_data.columns:
+            if "Pitch" not in csv_data.columns or "Value" not in csv_data.columns:
                 st.warning("데이터에 'pitch'와 'value' 열이 필요합니다.")
             else:
                 # Pitch와 Value 데이터 추출
