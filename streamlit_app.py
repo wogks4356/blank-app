@@ -267,10 +267,20 @@ if current_page == "csv":
             x_axis = st.selectbox("X 축 선택", csv_data.columns)
             y_axis = st.selectbox("Y 축 선택", csv_data.columns)
 
+            # if x_axis and y_axis:
+            #     st.session_state.x_axis = x_axis  # Store selected axes in session state
+            #     st.session_state.y_axis = y_axis
+            #     st.line_chart(csv_data[[x_axis, y_axis]].head(100))  # Chart limited to 100 rows
             if x_axis and y_axis:
                 st.session_state.x_axis = x_axis  # Store selected axes in session state
                 st.session_state.y_axis = y_axis
-                st.line_chart(csv_data[[x_axis, y_axis]].head(100))  # Chart limited to 100 rows
+
+                # X축을 인덱스로 설정
+                chart_data = csv_data.set_index(x_axis)[y_axis].head(100)
+
+                # 선 그래프 생성
+                st.line_chart(chart_data)
+
 
         except Exception as e:
             st.error(f"파일 처리 중 오류 발생: {e}")
