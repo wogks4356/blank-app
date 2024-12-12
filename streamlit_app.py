@@ -370,6 +370,10 @@ elif current_page == "analyze":
     st.title("📊 운동 분석 결과")
     st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
 
+    if st.button("이전"):
+            set_page("csv")
+
+
     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
         csv_data = st.session_state.csv_data
 
@@ -379,8 +383,8 @@ elif current_page == "analyze":
                 st.warning("데이터에 'pitch'와 'value' 열이 필요합니다.")
             else:
                 # Pitch와 Value 데이터 추출
-                pitch = csv_data["pitch"].to_numpy()
-                value = csv_data["value"].to_numpy()
+                pitch = csv_data["Pitch"].to_numpy()
+                value = csv_data["Value"].to_numpy()
 
                 # 분석 파라미터
                 threshold = 70  # Pitch 기준
