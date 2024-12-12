@@ -106,6 +106,18 @@ elif st.session_state.page == "basis":
         on_change=update_weight_from_input
     )
 
+    if 'hight' not in st.session_state:
+    st.session_state.hight = 165.0
+
+    if 'weight' not in st.session_state:
+        st.session_state.weight = 70.0
+
+    if 'age' not in st.session_state:
+        st.session_state.age = 25
+
+    if 'sex' not in st.session_state:
+        st.session_state.sex = '남성'
+
     if st.button("시작해"):
         set_page("home")
 
