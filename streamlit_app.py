@@ -846,7 +846,7 @@ elif current_page == "realtime":
  # Streamlit 앱을 새로고침하여 업데이트 반영
 
 
-if current_page == "rr":
+elif current_page == "rr":
     st.title("🎈 RR 데이터의 축 선택 및 정적 그래프")
 
     # CSV 파일 업로드
