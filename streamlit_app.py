@@ -52,13 +52,13 @@ elif st.session_state.page == "basis":
     selected = st.radio('성별', ['남성', '여성'], index=0 if st.session_state.get('sex', '남성') == '남성' else 1)
     st.session_state.sex = selected
 
-    # 키 입력
-    hight = st.slider('키', 0.0, 250.0, step=0.1, value=st.session_state.get('hight', 165.0))
+   # 키 입력 (동기화 처리)
+    hight = st.slider('키', 0.0, 250.0, step=0.1, value=float(st.session_state.get('hight', 165.0)))
     hight_input = st.number_input("키", min_value=0.0, max_value=300.0, value=hight, step=0.1)
     st.session_state.hight = hight_input if hight != hight_input else hight
 
-    # 몸무게 입력
-    weight = st.slider('몸무게', 0, 200, step=1, value=int(st.session_state.get('weight', 70)))
+    # 몸무게 입력 (동기화 처리)
+    weight = st.slider('몸무게', 0.0, 200.0, step=0.1, value=float(st.session_state.get('weight', 70.0)))
     weight_input = st.number_input("몸무게", min_value=0.0, max_value=300.0, value=weight, step=0.1)
     st.session_state.weight = weight_input if weight != weight_input else weight
 
