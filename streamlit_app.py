@@ -48,7 +48,7 @@ elif st.session_state.page == "basis":
 elif st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
     st.text(
-        '저는 ' +  str(st.session_state.sex) + '이며'
+        '저는' +  str(st.session_state.sex) + '이며'
         str(st.session_state.age) + '세, ' +
         str(st.session_state.hight) + 'cm, ' +
         str(st.session_state.weight) + 'kg 입니다.'
