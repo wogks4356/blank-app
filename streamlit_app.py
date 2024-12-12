@@ -396,7 +396,7 @@ elif current_page == "analyze":
                 values_at_zero = []
                 in_motion = False
 
-                While True:
+                while True:
                     if pitch[i] >= threshold and not in_motion:
                         # 운동 시작
                         in_motion = True
