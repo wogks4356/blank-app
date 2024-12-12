@@ -195,7 +195,7 @@ elif current_page == "realtime":
 
     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
         # Downsample the data
-        max_points = 500
+        max_points = 200
         csv_data = st.session_state.csv_data
         if len(csv_data) > max_points:
             csv_data = csv_data.iloc[::len(csv_data)//max_points, :]
@@ -213,7 +213,7 @@ elif current_page == "realtime":
             ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
 
         # Limit frames to improve performance
-        max_frames = 500
+        max_frames = 200
         frames = min(len(csv_data), max_frames)
 
         # Create animation
