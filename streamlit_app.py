@@ -372,31 +372,30 @@ elif current_page == "analyze":
     st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
 
     if st.button("이전"):
-            set_page("csv")
-
+        set_page("csv")
 
     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
         csv_data = st.session_state.csv_data
 
         try:
-            # Pitch와 Value 데이터 확인
+            # 사용자가 선택한 열 이름이 존재하는지 확인
             if "Pitch" not in csv_data.columns or "Value" not in csv_data.columns:
-                st.warning("데이터에 'pitch'와 'value' 열이 필요합니다.")
+                st.warning("'Pitch'와 'Value' 열이 데이터에 포함되어야 합니다.")
             else:
                 # Pitch와 Value 데이터 추출
                 pitch = csv_data["Pitch"].to_numpy()
                 value = csv_data["Value"].to_numpy()
 
                 # 분석 파라미터
-                threshold = 70  # Pitch 기준
-                near_zero = 5   # 0 근방을 판단하는 임계값
+                threshold = st.slider("Pitch 기준값", min_value=0, max_value=100, value=70, step=1)
+                near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
 
                 # 운동 횟수 측정 및 Value 값 저장
                 count = 0
                 values_at_zero = []
                 in_motion = False
 
-                while True:
+                for i in range(len(pitch)):
                     if pitch[i] >= threshold and not in_motion:
                         # 운동 시작
                         in_motion = True
@@ -427,5 +426,6 @@ elif current_page == "analyze":
 
     if st.button("홈으로 돌아가기"):
         set_page("home")
+
 
 
