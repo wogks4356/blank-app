@@ -37,7 +37,9 @@ elif st.session_state.page == "basis":
     selected = st.radio( 'Sex' , ['남성','여성'] )
     st.session_state.sex = selected
     st.session_state.hight = st.slider('키' , 0.0 , 250.0, step=0.1)
+    st.session_state.hight = st.number_input("키", min_value=0.0, max_value=300.0, value=165.0)
     st.session_state.weight = st.slider('몸무게' , 0 , 200, step=1)
+    st.session_state.weight = st.number_input("몸무게", min_value=0.0, max_value=300.0, value=70.0)
 
     if st.button("시작해"):
         set_page("home")
@@ -46,7 +48,8 @@ elif st.session_state.page == "basis":
 elif st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
     st.text(
-        '저는 ' + str(st.session_state.age) + '세, ' +
+        '저는 ' +  str(st.session_state.sex) + "이며"
+        str(st.session_state.age) + '세, ' +
         str(st.session_state.hight) + 'cm, ' +
         str(st.session_state.weight) + 'kg 입니다.'
     ) 
