@@ -299,7 +299,7 @@ if current_page == "csv":
                 st.session_state.y_axes = y_axes  # Store selected Y-axis in session state
     
                 # Prepare data for plotting
-                chart_data = csv_data[[x_axis] + y_axes].head(100)  # Limit to 100 rows
+                chart_data = csv_data[[x_axis] + y_axes]  # Limit to 100 rows
                 chart_data = chart_data.set_index(x_axis)  # Set X-axis as index
     
                 # Create and render the line chart with multiple Y axes
