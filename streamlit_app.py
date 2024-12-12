@@ -318,10 +318,10 @@ elif st.session_state.page == "업데이트":
     if st.button("홈으로 돌아가기"):
         set_page("home")
 
-current_page = st.session_state.page
+# current_page = st.session_state.page
 
 # Streamlit 페이지 관리
-elif current_page == "csv":
+elif st.session_state.page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
 
     # CSV 파일 업로드
@@ -333,7 +333,7 @@ elif current_page == "csv":
             csv_data = load_csv(uploaded_file)
             st.session_state.csv_data = csv_data
             st.write("업로드된 데이터 (처음 100줄):")
-            st.dataframe(csv_data.head(100))  # 처음 100줄 표시
+            st.dataframe(csv_data)  # 처음 100줄 표시
 
             # X축과 Y축 선택
             x_axis = st.selectbox("X 축 선택", csv_data.columns, key="csv_x_axis")
@@ -377,7 +377,7 @@ elif current_page == "csv":
 
 
 # 실시간 분석 페이지
-elif current_page == "realtime":
+elif st.session_state.page == "realtime":
     st.title("📈 실시간 그래프 애니메이션")
 
     if st.button("이전으로 돌아가기", key="back_to_csv"):
