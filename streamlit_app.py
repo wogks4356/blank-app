@@ -321,13 +321,13 @@ if current_page == "csv":
                                             # 하강 중이고 0 근방에 도달
                                             if abs(pitch[i]) <= near_zero:
                                                 direction = 'up'  # 상승으로 전환
+                                                st.text(in_motion)
                                         elif direction == 'up':
                                             # 상승 중이고 70 근방에 도달
                                             if abs(pitch[i] - threshold) <= 15:
                                                 count += 1  # 반복 횟수 증가
                                                 values_at_zero.append(value[i])  # Value 저장
-                                                in_motion = False  
-                                                st.text(in_motion)# 운동 종료 후 대기 상태로 전환
+                                                in_motion = False  # 운동 종료 후 대기 상태로 전환
             
                                 # 분석 결과 표시
                                 st.write(f"운동 반복 횟수: **{count}회**")
