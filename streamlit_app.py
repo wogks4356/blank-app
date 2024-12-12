@@ -294,6 +294,9 @@ if current_page == "csv":
     
             # Select columns for Y-axis (multiple features)
             y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+        else:
+            st.warning("X축과 Y축을 모두 선택하세요.")
+
     
             if x_axis and y_axes:
                 st.session_state.x_axis = x_axis  # Store selected X-axis in session state
@@ -364,10 +367,6 @@ if current_page == "csv":
             st.error(f"분석 중 오류 발생: {e}")
     else:
         st.warning("CSV 데이터를 먼저 업로드하세요.")
-
-        else:
-            st.warning("X축과 Y축을 모두 선택하세요.")
-
 
 
     if st.button("실시간 그래프"):
