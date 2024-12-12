@@ -261,6 +261,7 @@ if current_page == "csv":
             # Read and display the CSV file
             csv_data = load_csv(uploaded_file)
             st.session_state.csv_data = csv_data  # Store data in session state
+            st.text(len(csv_data))
             st.write("업로드된 데이터 (처음 100줄):")
             st.dataframe(csv_data.head(100))  # Display the first 100 rows
     
