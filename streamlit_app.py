@@ -436,9 +436,9 @@ if current_page == "csv":
 
 
     if st.button("실시간 그래프"):
-        if "x_axis" in st.session_state and "y_axis" in st.session_state:
+        # if "x_axis" in st.session_state and "y_axis" in st.session_state:
             set_page("realtime")  # Navigate to the real-time graph page
-        else:
+        # else:
             st.warning("X축과 Y축을 모두 선택하세요.")
 
 elif current_page == "realtime":
@@ -464,10 +464,9 @@ elif current_page == "realtime":
             y_data = csv_data["Value"][:frame]
             ax.plot(x_data, y_data, marker="o", linestyle="-")
             ax.set_xlabel(st.session_state.x_axis)
-            # ax.set_ylabel(st.session_state.y_axis)
-            # ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
-            ax.set_ylabel("Value")                 # Y축 레이블
-            ax.set_title(f"{st.session_state.x_axis} vs Value - Frame {frame}")
+            ax.set_ylabel(st.session_state.y_axis)
+            ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
+            
 
         # Limit frames to improve performance
         max_frames = 100
