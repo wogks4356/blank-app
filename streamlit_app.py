@@ -307,6 +307,11 @@ if current_page == "csv":
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
 
+    if st.button("운동 분석"):
+        if "x_axis" in st.session_state and "y_axis" in st.session_state:
+            set_page("analyze")  # Navigate to the real-time graph page
+        else:
+            st.warning("X축과 Y축을 모두 선택하세요.")
 
 
     if st.button("실시간 그래프"):
@@ -360,4 +365,62 @@ elif current_page == "realtime":
             st.error(f"애니메이션 생성 중 오류 발생: {e}")
     if st.button("홈으로 돌아가기"):
         set_page("home")
+
+elif current_page == "analyze":
+    st.title("📊 운동 분석 결과")
+    st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
+
+    if "csv_data" in st.session_state and st.session_state.csv_data is not None:
+        csv_data = st.session_state.csv_data
+
+        try:
+            # Pitch와 Value 데이터 확인
+            if "pitch" not in csv_data.columns or "value" not in csv_data.columns:
+                st.warning("데이터에 'pitch'와 'value' 열이 필요합니다.")
+            else:
+                # Pitch와 Value 데이터 추출
+                pitch = csv_data["pitch"].to_numpy()
+                value = csv_data["value"].to_numpy()
+
+                # 분석 파라미터
+                threshold = 70  # Pitch 기준
+                near_zero = 5   # 0 근방을 판단하는 임계값
+
+                # 운동 횟수 측정 및 Value 값 저장
+                count = 0
+                values_at_zero = []
+                in_motion = False
+
+                for i in range(1, len(pitch)):
+                    if pitch[i] >= threshold and not in_motion:
+                        # 운동 시작
+                        in_motion = True
+                    elif pitch[i] <= near_zero and in_motion:
+                        # 운동 종료 시점
+                        in_motion = False
+                        count += 1
+                        values_at_zero.append(value[i])
+
+                # 분석 결과 표시
+                st.write(f"운동 반복 횟수: **{count}회**")
+                st.write("운동 종료 시점에서 기록된 Value 값 변화:")
+
+                # 변화 추이 그래프
+                fig, ax = plt.subplots(figsize=(10, 5))
+                ax.plot(values_at_zero, marker="o", linestyle="-", label="Value 변화 추이")
+                ax.set_title("운동 종료 시점의 Value 변화 추이")
+                ax.set_xlabel("운동 반복 횟수")
+                ax.set_ylabel("Value")
+                ax.legend()
+                ax.grid()
+                st.pyplot(fig)
+
+        except Exception as e:
+            st.error(f"분석 중 오류 발생: {e}")
+    else:
+        st.warning("CSV 데이터를 먼저 업로드하세요.")
+
+    if st.button("홈으로 돌아가기"):
+        set_page("home")
+
 
