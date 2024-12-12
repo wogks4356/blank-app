@@ -255,6 +255,31 @@ if current_page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
+    # if uploaded_file is not None:
+    #     try:
+    #         # Read and display the CSV file
+    #         csv_data = load_csv(uploaded_file)
+    #         st.session_state.csv_data = csv_data  # Store data in session state
+    #         st.write("업로드된 데이터 (처음 100줄):")
+    #         st.dataframe(csv_data.head(100))  # Display the first 100 rows
+
+    #         # Select columns for graph
+    #         x_axis = st.selectbox("X 축 선택", csv_data.columns)
+    #         y_axis = st.selectbox("Y 축 선택", csv_data.columns)
+
+    #         # if x_axis and y_axis:
+    #         #     st.session_state.x_axis = x_axis  # Store selected axes in session state
+    #         #     st.session_state.y_axis = y_axis
+    #         #     st.line_chart(csv_data[[x_axis, y_axis]].head(100))  # Chart limited to 100 rows
+    #         if x_axis and y_axis:
+    #             st.session_state.x_axis = x_axis  # Store selected axes in session state
+    #             st.session_state.y_axis = y_axis
+
+    #             # X축을 인덱스로 설정
+    #             chart_data = csv_data.set_index(x_axis)[y_axis]
+
+    #             # 선 그래프 생성
+    #             st.line_chart(chart_data)
     if uploaded_file is not None:
         try:
             # Read and display the CSV file
@@ -262,28 +287,27 @@ if current_page == "csv":
             st.session_state.csv_data = csv_data  # Store data in session state
             st.write("업로드된 데이터 (처음 100줄):")
             st.dataframe(csv_data.head(100))  # Display the first 100 rows
-
-            # Select columns for graph
+    
+            # Select column for X-axis
             x_axis = st.selectbox("X 축 선택", csv_data.columns)
-            y_axis = st.selectbox("Y 축 선택", csv_data.columns)
-
-            # if x_axis and y_axis:
-            #     st.session_state.x_axis = x_axis  # Store selected axes in session state
-            #     st.session_state.y_axis = y_axis
-            #     st.line_chart(csv_data[[x_axis, y_axis]].head(100))  # Chart limited to 100 rows
-            if x_axis and y_axis:
-                st.session_state.x_axis = x_axis  # Store selected axes in session state
-                st.session_state.y_axis = y_axis
-
-                # X축을 인덱스로 설정
-                chart_data = csv_data.set_index(x_axis)[y_axis]
-
-                # 선 그래프 생성
+    
+            # Select columns for Y-axis (multiple features)
+            y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+    
+            if x_axis and y_axes:
+                st.session_state.x_axis = x_axis  # Store selected X-axis in session state
+                st.session_state.y_axes = y_axes  # Store selected Y-axis in session state
+    
+                # Prepare data for plotting
+                chart_data = csv_data[[x_axis] + y_axes].head(100)  # Limit to 100 rows
+                chart_data = chart_data.set_index(x_axis)  # Set X-axis as index
+    
+                # Create and render the line chart with multiple Y axes
                 st.line_chart(chart_data)
-
-
         except Exception as e:
-            st.error(f"파일 처리 중 오류 발생: {e}")
+            st.error(f"오류가 발생했습니다: {e}")
+
+
 
     if st.button("실시간 그래프"):
         if "x_axis" in st.session_state and "y_axis" in st.session_state:
