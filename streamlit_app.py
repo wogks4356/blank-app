@@ -349,7 +349,7 @@ if current_page == "csv":
                 # Create and render the line chart with multiple Y axes
                 st.line_chart(chart_data)
 
-                if st.button("운동 분석"):
+                if st.button("운동 분석", key="analyze_button"):
                     if "Pitch" in csv_data.columns and "Time (ms)" in csv_data.columns:
                         try:
                             # Pitch와 Time 데이터 추출
@@ -396,7 +396,7 @@ if current_page == "csv":
                         st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
 
                 # 실시간 분석
-                if st.button("실시간 분석"):
+                if st.button("실시간 분석", key="realtime_button"):
                     st.title("📈 실시간 그래프 애니메이션")
                     try:
                         # Downsample the data for better performance
@@ -450,6 +450,7 @@ if current_page == "csv":
             st.error(f"오류가 발생했습니다: {e}")
     else:
         st.warning("CSV 파일을 업로드하세요.")
+
 
 
 # # if st.button("운동 분석"):
