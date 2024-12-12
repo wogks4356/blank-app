@@ -311,11 +311,11 @@ if current_page == "csv":
                 st.line_chart(chart_data)
                 
                 if st.button("운동 분석"):
-                    if "Pitch" in csv_data.columns and "Time" in csv_data.columns:
+                    if "Pitch" in csv_data.columns and "Time (ms)" in csv_data.columns:
                         try:
                             # Pitch와 Time 데이터 추출
                             pitch = csv_data["Pitch"].to_numpy()
-                            time_ms = csv_data["Time"].to_numpy()
+                            time_ms = csv_data["Time (ms)"].to_numpy()
     
                             # 분석 파라미터
                             offset = 45  # 기준 오프셋 값
