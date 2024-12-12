@@ -116,7 +116,7 @@ st.write("현재 페이지 상태:", st.session_state.page)
 if st.session_state.page == "start":
     st.title("📋 앱 시작하기")
     st.text("이 앱은 운동 선택 및 CSV 데이터를 시각화하는 데 사용됩니다.")
-    st.image("C:\Users\wogks\OneDrive\바탕 화면\KakaoTalk_20241212_225012450.webp")
+    # st.image("C:\Users\wogks\OneDrive\바탕 화면\KakaoTalk_20241212_225012450.webp")
     if st.button("Run"):
         set_page("basis")  # Navigate to the home page
 
