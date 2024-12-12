@@ -45,6 +45,13 @@ def count_reps(data, time, offset):
 
     return reps, below_times, above_times
 
+def load_csv(file_path):
+    try:
+        return pd.read_csv(file_path)
+    except FileNotFoundError:
+        st.error("파일을 찾을 수 없습니다. 경로를 확인하세요.")
+        return None
+
 
 csv_data = load_csv(bicep_curl.csv)
 st.session_state.csv_data = csv_data  # Store data in session state
