@@ -527,18 +527,27 @@ if current_page == "csv":
 #             st.error(f"애니메이션 생성 중 오류 발생: {e}")
 #     if st.button("홈으로 돌아가기"):
 #         set_page("home")
+
 elif current_page == "realtime":
     st.title("📈 실시간 그래프 애니메이션")
 
     if st.button("이전"):
         set_page("csv")
 
+    # CSV 데이터 확인
     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
         csv_data = st.session_state.csv_data
 
+        # CSV 데이터 확인 및 열 이름 추출
+        if not csv_data.empty:
+            columns = csv_data.columns
+        else:
+            st.error("CSV 데이터가 비어 있습니다.")
+            st.stop()
+
         # X축과 Y축 선택
-        x_axis = st.selectbox("X 축 선택", csv_data.columns, key="realtime_x_axis")
-        y_axis = st.selectbox("Y 축 선택", csv_data.columns, key="realtime_y_axis")
+        x_axis = st.selectbox("X 축 선택", columns, key="realtime_x_axis")
+        y_axis = st.selectbox("Y 축 선택", columns, key="realtime_y_axis")
 
         if x_axis and y_axis:
             # Downsample the data
@@ -584,6 +593,7 @@ elif current_page == "realtime":
 
     if st.button("홈으로 돌아가기"):
         set_page("home")
+
 
 
 # elif current_page == "analyze":
