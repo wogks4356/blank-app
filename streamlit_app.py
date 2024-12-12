@@ -349,8 +349,8 @@ if current_page == "csv":
     
                             # 결과 출력
                             st.write(f"총 운동 횟수: {reps}")
-                            st.write(f"Offset 아래 도달 시간: {below_times}")
-                            st.write(f"Offset 위로 도달 시간: {above_times}")
+                            # st.write(f"Offset 아래 도달 시간: {below_times}")
+                            # st.write(f"Offset 위로 도달 시간: {above_times}")
     
                             # 데이터 시각화
                             st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
