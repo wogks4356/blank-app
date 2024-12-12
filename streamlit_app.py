@@ -17,6 +17,35 @@ def update_weight_from_slider():
 def update_weight_from_input():
     st.session_state.weight_slider = st.session_state.weight_input
 
+# 운동 횟수 계산 함수
+def count_reps(data, time, offset):
+    reps = 0
+    above_offset = False
+    below_offset = False
+    below_times = []
+    above_times = []
+
+    for i in range(1, len(data)):
+        if data[i] > offset:
+            if below_offset:
+                below_offset = False
+                above_times.append(time[i])
+        elif data[i] <= offset:
+            if above_offset:
+                above_offset = False
+                below_times.append(time[i])
+
+                # 유효한 운동 사이클 확인
+                if len(below_times) > 0 and len(above_times) > 0:
+                    if below_times[-1] > above_times[-1]:
+                        reps += 1
+
+            below_offset = True
+        above_offset = data[i] > offset
+
+    return reps, below_times, above_times
+
+
 # Initialize session state for page navigation
 if "page" not in st.session_state:
     st.session_state.page = "start"  # Initial start page
@@ -261,7 +290,6 @@ if current_page == "csv":
             # Read and display the CSV file
             csv_data = load_csv(uploaded_file)
             st.session_state.csv_data = csv_data  # Store data in session state
-            st.text(len(csv_data))
             st.write("업로드된 데이터 (처음 100줄):")
             st.dataframe(csv_data.head(100))  # Display the first 100 rows
     
@@ -283,54 +311,42 @@ if current_page == "csv":
                 st.line_chart(chart_data)
                 if st.button("운동 분석"):
                     if "x_axis" in st.session_state and "y_axes" in st.session_state:
-                        st.title("📊 운동 분석 결과")
-                        st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
-
-                    if "csv_data" in st.session_state and st.session_state.csv_data is not None:
-                        csv_data = st.session_state.csv_data
-
-                        try:
-                            # 사용자가 선택한 열 이름이 존재하는지 확인
-                            if "Pitch" not in csv_data.columns or "Value" not in csv_data.columns:
-                                st.warning("'Pitch'와 'Value' 열이 데이터에 포함되어야 합니다.")
-                            else:
-                                # Pitch와 Value 데이터 추출
-                                pitch = csv_data["Pitch"].to_numpy()
-                                value = csv_data["Value"].to_numpy()
-                                
-                                # 분석 파라미터
-                                threshold = 65  # 기준값
-                                near_zero = 30  # 0 근처 값 범위
-                                
-                                # 운동 횟수 측정 및 Value 값 저장
-                                st.text(len(csv_data))
-                                count = 0
-                                values_at_zero = []
-                                in_motion = False  # 운동 상태 (True: 운동 중, False: 대기 상태)
-                                direction = None  # 현재 방향 ('down' 또는 'up')
-                                st.text(len(pitch))
-                                
-                                for i in range(0, len(pitch), 100):  # 100 간격으로 데이터 샘플링
-                                    if not in_motion:
-                                        # 운동 시작 조건: `threshold` 근방에 도달하며 하강 시작
-                                        if abs(pitch[i] - threshold) <= 15:
-                                            in_motion = True
-                                            direction = 'down'
-                                    else:
-                                        if direction == 'down':
-                                            # 하강 상태에서 `near_zero` 근방 도달 시
-                                            if abs(pitch[i]) <= near_zero:
-                                                direction = 'up'  # 상승 상태로 전환
-                                        elif direction == 'up':
-                                            # 상승 상태에서 다시 `threshold` 근방 도달 시
-                                            if abs(pitch[i] - threshold) <= 15:
-                                                count += 1  # 운동 반복 횟수 증가
-                                                values_at_zero.append(value[i])  # 현재 값 저장
-                                                in_motion = False  # 한 사이클 종료 후 대기 상태로 전환
-                                
-                                            st.write(f"총 운동 횟수: {count}")
-                                            st.write(f"Value 목록: {values_at_zero}")
-
+                       # Streamlit 애플리케이션
+                        st.title("📊 운동 데이터 분석 도구")
+                        
+                        # CSV 데이터 업로드
+                        uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
+                        
+                        if uploaded_file:
+                            # 데이터 읽기
+                            csv_data = pd.read_csv(uploaded_file)
+                        
+                            # 데이터 확인
+                            st.write("업로드된 데이터:")
+                            st.dataframe(csv_data.head())
+                        
+                            # 운동 분석 버튼
+                            if st.button("운동 분석"):
+                                if "Pitch" not in csv_data.columns or "Time" not in csv_data.columns:
+                                    st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
+                                else:
+                                    # Pitch와 Time 데이터 추출
+                                    pitch = csv_data["Pitch"].to_numpy()
+                                    time_ms = csv_data["Time"].to_numpy()
+                        
+                                    # 분석 파라미터
+                                    offset = 45  # 기준 오프셋 값
+                        
+                                    # 운동 횟수 계산
+                                    reps, below_times, above_times = count_reps(pitch, time_ms, offset)
+                        
+                                    # 결과 출력
+                                    st.write(f"총 운동 횟수: {reps}")
+                                    st.write(f"Offset 아래 도달 시간: {below_times}")
+                                    st.write(f"Offset 위로 도달 시간: {above_times}")
+                        
+                                    # 데이터 시각화
+                                    st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
             
                         except Exception as e:
                             st.error(f"분석 중 오류 발생: {e}")
