@@ -657,6 +657,7 @@ elif current_page == "rr":
 
     # CSV 파일 업로드
     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+
     if uploaded_file is not None:
         csv_file_path = uploaded_file
 
@@ -669,7 +670,10 @@ elif current_page == "rr":
 
         # 실시간 데이터를 그래프로 출력
         if st.button("그래프 업데이트"):
-            while True:
+            import time
+
+            # Loop-like mechanism for real-time updates
+            for _ in range(10):  # 10회만 반복 (무한 반복 방지)
                 plot_live_graph(csv_file_path)  # 실시간 데이터를 그래프로 출력
                 time.sleep(refresh_rate)
                 st.experimental_rerun()  # Streamlit 앱을 새로고침하여 업데이트 반영
@@ -700,4 +704,5 @@ elif current_page == "rr":
             st.error(f"오류가 발생했습니다: {e}")
     else:
         st.warning("CSV 파일을 업로드하세요.")
+
 
