@@ -27,19 +27,40 @@ if st.session_state.page == "start":
     if st.button("Run"):
         set_page("basis")  # Navigate to the home page
 
+# elif st.session_state.page == "basis":
+#     st.title("👧 기본 정보를 입력해줘요~")
+#     st.write("신체 정보 등을 업로드하세요.")
+#     st.session_state.age = st.slider('나이', 0, 100) 
+    
+#     st.text('제 나이는' + str(st.session_state.age)+ '세 입니다')
+
+#     selected = st.radio( 'Sex' , ['남성','여성'] )
+#     st.session_state.sex = selected
+#     st.session_state.hight = st.slider('키' , 0.0 , 250.0, step=0.1)
+#     st.session_state.hight = st.number_input("키", min_value=0.0, max_value=300.0, value=165.0)
+#     st.session_state.weight = st.slider('몸무게' , 0 , 200, step=1)
+#     st.session_state.weight = st.number_input("몸무게", min_value=0.0, max_value=300.0, value=70.0)
 elif st.session_state.page == "basis":
     st.title("👧 기본 정보를 입력해줘요~")
     st.write("신체 정보 등을 업로드하세요.")
-    st.session_state.age = st.slider('나이', 0, 100) 
-    
-    st.text('제 나이는' + str(st.session_state.age)+ '세 입니다')
 
-    selected = st.radio( 'Sex' , ['남성','여성'] )
+    # 나이 입력
+    st.session_state.age = st.slider('나이', 0, 100, value=st.session_state.get('age', 25))
+    st.text(f'제 나이는 {st.session_state.age}세 입니다.')
+
+    # 성별 선택
+    selected = st.radio('성별', ['남성', '여성'], index=0 if st.session_state.get('sex', '남성') == '남성' else 1)
     st.session_state.sex = selected
-    st.session_state.hight = st.slider('키' , 0.0 , 250.0, step=0.1)
-    st.session_state.hight = st.number_input("키", min_value=0.0, max_value=300.0, value=165.0)
-    st.session_state.weight = st.slider('몸무게' , 0 , 200, step=1)
-    st.session_state.weight = st.number_input("몸무게", min_value=0.0, max_value=300.0, value=70.0)
+
+    # 키 입력
+    hight = st.slider('키', 0.0, 250.0, step=0.1, value=st.session_state.get('hight', 165.0))
+    hight_input = st.number_input("키", min_value=0.0, max_value=300.0, value=hight, step=0.1)
+    st.session_state.hight = hight_input if hight != hight_input else hight
+
+    # 몸무게 입력
+    weight = st.slider('몸무게', 0, 200, step=1, value=int(st.session_state.get('weight', 70)))
+    weight_input = st.number_input("몸무게", min_value=0.0, max_value=300.0, value=weight, step=0.1)
+    st.session_state.weight = weight_input if weight != weight_input else weight
 
     if st.button("시작해"):
         set_page("home")
@@ -48,7 +69,7 @@ elif st.session_state.page == "basis":
 elif st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
     st.text(
-        '저는' +  str(st.session_state.sex) + '이며' +
+        '저는 ' +  str(st.session_state.sex) + '이며 ' +
         str(st.session_state.age) + '세, ' +
         str(st.session_state.hight) + 'cm, ' +
         str(st.session_state.weight) + 'kg 입니다.'
