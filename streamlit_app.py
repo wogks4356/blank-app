@@ -40,7 +40,6 @@ elif st.session_state.page == "basis":
 
 elif st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
-    st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
     st.text(
         '저는 ' + str(st.session_state.age) + '세, ' +
         str(st.session_state.hight) + 'cm, ' +
@@ -71,6 +70,21 @@ elif st.session_state.page == "home":
             set_page("이두")
     with col2:
         st.image("https://blog.kakaocdn.net/dn/dSw3lH/btq54MXF9Rl/nDVQ5JhPbMq5RRMRvpFHS0/img.png", caption="이두", use_container_width=True)
+
+    # 4 번째 항목: 이두
+    col2, col1 = st.columns([1, 2])  # 비율 설정: 버튼 1, 이미지 2
+    with col1:
+        if st.button("하체 페이지로 이동"):
+            set_page("업데이트")
+    with col2:
+        st.image("https://cdn.maxq.kr/news/photo/202307/10814_21182_3558.jpg", caption="이두", use_container_width=True)
+    # 5 번째 항목: 이두
+    col2, col1 = st.columns([1, 2])  # 비율 설정: 버튼 1, 이미지 2
+    with col1:
+        if st.button("가슴 페이지로 이동"):
+            set_page("업데이트")
+    with col2:
+        st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR60xyV_yf96nCcamJPME4JmW2O5G48Iq-Opw&s", caption="이두", use_container_width=True)
 
 
 # elif st.session_state.page == "home":
@@ -120,6 +134,14 @@ elif st.session_state.page == "이두":
     st.title("이두 페이지")
     st.write("이두 관련 데이터를 표시합니다.")
     set_page("csv")
+    if st.button("홈으로 돌아가기"):
+        set_page("home")
+
+elif st.session_state.page == "업데이트":
+    st.title("업데이트 예정")
+    st.write("Coming soon~")
+    st.image("https://img.extmovie.com/files/attach/images/135/615/810/084/632dfbd1e803081a07a3d53f56ad3b83.gif", caption="작업 중", use_container_width=True)
+
     if st.button("홈으로 돌아가기"):
         set_page("home")
 
