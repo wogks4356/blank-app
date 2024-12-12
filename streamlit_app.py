@@ -330,13 +330,13 @@ if current_page == "csv":
             csv_data = load_csv(uploaded_file)
             st.session_state.csv_data = csv_data  # Store data in session state
             st.write("업로드된 데이터 (처음 100줄):")
-            st.dataframe(csv_data.head(100))  # Display the first 100 rows
+            st.dataframe(csv_data)  # Display the first 100 rows
 
             # Select column for X-axis
-            x_axis = st.selectbox("X 축 선택", csv_data.columns)
+            x_axis = st.selectbox("X 축 선택", csv_data.columns, key="x_axis_select")
 
             # Select columns for Y-axis (multiple features)
-            y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+            y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns, key="y_axes_select")
 
             if x_axis and y_axes:
                 st.session_state.x_axis = x_axis  # Store selected X-axis in session state
