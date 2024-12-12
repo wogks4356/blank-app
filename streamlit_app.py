@@ -320,89 +320,89 @@ elif st.session_state.page == "업데이트":
 
 current_page = st.session_state.page
 
-# if current_page == "csv":
-#     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
-#     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+if current_page == "csv":
+    st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
+    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
-#     if uploaded_file is not None:
-#         try:
-#             # Read and display the CSV file
-#             csv_data = load_csv(uploaded_file)
-#             st.session_state.csv_data = csv_data  # Store data in session state
-#             st.write("업로드된 데이터 (처음 100줄):")
-#             st.dataframe(csv_data.head(100))  # Display the first 100 rows
+    if uploaded_file is not None:
+        try:
+            # Read and display the CSV file
+            csv_data = load_csv(uploaded_file)
+            st.session_state.csv_data = csv_data  # Store data in session state
+            st.write("업로드된 데이터 (처음 100줄):")
+            st.dataframe(csv_data.head(100))  # Display the first 100 rows
     
-#             # Select column for X-axis
-#             x_axis = st.selectbox("X 축 선택", csv_data.columns)
+            # Select column for X-axis
+            x_axis = st.selectbox("X 축 선택", csv_data.columns)
     
-#             # Select columns for Y-axis (multiple features)
-#             y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+            # Select columns for Y-axis (multiple features)
+            y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
     
-#             if x_axis and y_axes:
-#                 st.session_state.x_axis = x_axis  # Store selected X-axis in session state
-#                 st.session_state.y_axes = y_axes  # Store selected Y-axis in session state
+            if x_axis and y_axes:
+                st.session_state.x_axis = x_axis  # Store selected X-axis in session state
+                st.session_state.y_axes = y_axes  # Store selected Y-axis in session state
     
-#                 # Prepare data for plotting
-#                 chart_data = csv_data[[x_axis] + y_axes]
-#                 chart_data = chart_data.set_index(x_axis)  # Set X-axis as index
+                # Prepare data for plotting
+                chart_data = csv_data[[x_axis] + y_axes]
+                chart_data = chart_data.set_index(x_axis)  # Set X-axis as index
     
-#                 # Create and render the line chart with multiple Y axes
-#                 st.line_chart(chart_data)
+                # Create and render the line chart with multiple Y axes
+                st.line_chart(chart_data)
                 
-#                 if st.button("운동 분석"):
-#                     if "Pitch" in csv_data.columns and "Time (ms)" in csv_data.columns:
-#                         try:
-#                             # Pitch와 Time 데이터 추출
-#                             pitch = csv_data["Pitch"].to_numpy()
-#                             time_ms = csv_data["Time (ms)"].to_numpy()
+                if st.button("운동 분석"):
+                    if "Pitch" in csv_data.columns and "Time (ms)" in csv_data.columns:
+                        try:
+                            # Pitch와 Time 데이터 추출
+                            pitch = csv_data["Pitch"].to_numpy()
+                            time_ms = csv_data["Time (ms)"].to_numpy()
     
-#                             # 분석 파라미터
-#                             offset = -35  # 기준 오프셋 값
+                            # 분석 파라미터
+                            offset = -35  # 기준 오프셋 값
     
-#                             # 운동 횟수 계산 함수 정의
-#                             def count_reps(data, time, offset):
-#                                 reps = 0
-#                                 above_offset = False
-#                                 below_offset = False
-#                                 below_times = []
-#                                 above_times = []
+                            # 운동 횟수 계산 함수 정의
+                            def count_reps(data, time, offset):
+                                reps = 0
+                                above_offset = False
+                                below_offset = False
+                                below_times = []
+                                above_times = []
     
-#                                 for i in range(1, len(data)):
-#                                     if data[i] > offset:
-#                                         if below_offset:
-#                                             below_offset = False
-#                                             above_times.append(time[i])
-#                                     elif data[i] <= offset:
-#                                         if above_offset:
-#                                             above_offset = False
-#                                             below_times.append(time[i])
-#                                             if len(below_times) > 0 and len(above_times) > 0:
-#                                                 if below_times[-1] > above_times[-1]:
-#                                                     reps += 1
-#                                         below_offset = True
-#                                     above_offset = data[i] > offset
-#                                 return reps, below_times, above_times
+                                for i in range(1, len(data)):
+                                    if data[i] > offset:
+                                        if below_offset:
+                                            below_offset = False
+                                            above_times.append(time[i])
+                                    elif data[i] <= offset:
+                                        if above_offset:
+                                            above_offset = False
+                                            below_times.append(time[i])
+                                            if len(below_times) > 0 and len(above_times) > 0:
+                                                if below_times[-1] > above_times[-1]:
+                                                    reps += 1
+                                        below_offset = True
+                                    above_offset = data[i] > offset
+                                return reps, below_times, above_times
     
-#                             # 운동 횟수 계산
-#                             reps, below_times, above_times = count_reps(pitch, time_ms, offset)
+                            # 운동 횟수 계산
+                            reps, below_times, above_times = count_reps(pitch, time_ms, offset)
     
-#                             # 결과 출력
-#                             st.write(f"총 운동 횟수: {reps}")
-#                             # st.write(f"Offset 아래 도달 시간: {below_times}")
-#                             # st.write(f"Offset 위로 도달 시간: {above_times}")
+                            # 결과 출력
+                            st.write(f"총 운동 횟수: {reps}")
+                            # st.write(f"Offset 아래 도달 시간: {below_times}")
+                            # st.write(f"Offset 위로 도달 시간: {above_times}")
     
-#                             # 데이터 시각화
-#                             st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
-#                         except Exception as e:
-#                             st.error(f"분석 중 오류 발생: {e}")
-#                     else:
-#                         st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
-#             else:
-#                 st.warning("X축과 Y축을 모두 선택하세요.")
-#         except Exception as e:
-#             st.error(f"오류가 발생했습니다: {e}")
-#     else:
-#         st.warning("CSV 파일을 업로드하세요.")
+                            # 데이터 시각화
+                            st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
+                        except Exception as e:
+                            st.error(f"분석 중 오류 발생: {e}")
+                    else:
+                        st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
+            else:
+                st.warning("X축과 Y축을 모두 선택하세요.")
+        except Exception as e:
+            st.error(f"오류가 발생했습니다: {e}")
+    else:
+        st.warning("CSV 파일을 업로드하세요.")
 
 
 # # if st.button("운동 분석"):
@@ -594,134 +594,136 @@ current_page = st.session_state.page
 #     if st.button("홈으로 돌아가기"):
 #         set_page("home")
 
-if current_page == "csv":
-    st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
-    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+# if current_page == "csv":
+#     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
+#     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
-    if uploaded_file is not None:
-        try:
-            # Read and display the CSV file
-            csv_data = load_csv(uploaded_file)
-            st.session_state.csv_data = csv_data  # Store data in session state
-            st.write("업로드된 데이터 (처음 100줄):")
-            st.dataframe(csv_data.head(100))  # Display the first 100 rows
+#     if uploaded_file is not None:
+#         try:
+#             # Read and display the CSV file
+#             csv_data = load_csv(uploaded_file)
+#             st.session_state.csv_data = csv_data  # Store data in session state
+#             st.write("업로드된 데이터 (처음 100줄):")
+#             st.dataframe(csv_data.head(100))  # Display the first 100 rows
     
-            # Select column for X-axis
-            x_axis = st.selectbox("X 축 선택", csv_data.columns)
+#             # Select column for X-axis
+#             x_axis = st.selectbox("X 축 선택", csv_data.columns)
     
-            # Select columns for Y-axis (multiple features)
-            y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+#             # Select columns for Y-axis (multiple features)
+#             y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
     
-            if x_axis and y_axes:
-                st.session_state.x_axis = x_axis  # Store selected X-axis in session state
-                st.session_state.y_axes = y_axes  # Store selected Y-axis in session state
+#             if x_axis and y_axes:
+#                 st.session_state.x_axis = x_axis  # Store selected X-axis in session state
+#                 st.session_state.y_axes = y_axes  # Store selected Y-axis in session state
     
-                # Prepare data for plotting
-                chart_data = csv_data[[x_axis] + y_axes]
-                chart_data = chart_data.set_index(x_axis)  # Set X-axis as index
+#                 # Prepare data for plotting
+#                 chart_data = csv_data[[x_axis] + y_axes]
+#                 chart_data = chart_data.set_index(x_axis)  # Set X-axis as index
     
-                # Create and render the line chart with multiple Y axes
-                st.line_chart(chart_data)
+#                 # Create and render the line chart with multiple Y axes
+#                 st.line_chart(chart_data)
                 
-                if st.button("운동 분석"):
-                    if "Pitch" in csv_data.columns and "Time (ms)" in csv_data.columns:
-                        try:
-                            # Pitch와 Time 데이터 추출
-                            pitch = csv_data["Pitch"].to_numpy()
-                            time_ms = csv_data["Time (ms)"].to_numpy()
+#                 if st.button("운동 분석"):
+#                     if "Pitch" in csv_data.columns and "Time (ms)" in csv_data.columns:
+#                         try:
+#                             # Pitch와 Time 데이터 추출
+#                             pitch = csv_data["Pitch"].to_numpy()
+#                             time_ms = csv_data["Time (ms)"].to_numpy()
     
-                            # 분석 파라미터
-                            offset = -35  # 기준 오프셋 값
+#                             # 분석 파라미터
+#                             offset = -35  # 기준 오프셋 값
     
-                            # 운동 횟수 계산 함수 정의
-                            def count_reps(data, time, offset):
-                                reps = 0
-                                above_offset = False
-                                below_offset = False
-                                below_times = []
-                                above_times = []
+#                             # 운동 횟수 계산 함수 정의
+#                             def count_reps(data, time, offset):
+#                                 reps = 0
+#                                 above_offset = False
+#                                 below_offset = False
+#                                 below_times = []
+#                                 above_times = []
     
-                                for i in range(1, len(data)):
-                                    if data[i] > offset:
-                                        if below_offset:
-                                            below_offset = False
-                                            above_times.append(time[i])
-                                    elif data[i] <= offset:
-                                        if above_offset:
-                                            above_offset = False
-                                            below_times.append(time[i])
-                                            if len(below_times) > 0 and len(above_times) > 0:
-                                                if below_times[-1] > above_times[-1]:
-                                                    reps += 1
-                                        below_offset = True
-                                    above_offset = data[i] > offset
-                                return reps, below_times, above_times
+#                                 for i in range(1, len(data)):
+#                                     if data[i] > offset:
+#                                         if below_offset:
+#                                             below_offset = False
+#                                             above_times.append(time[i])
+#                                     elif data[i] <= offset:
+#                                         if above_offset:
+#                                             above_offset = False
+#                                             below_times.append(time[i])
+#                                             if len(below_times) > 0 and len(above_times) > 0:
+#                                                 if below_times[-1] > above_times[-1]:
+#                                                     reps += 1
+#                                         below_offset = True
+#                                     above_offset = data[i] > offset
+#                                 return reps, below_times, above_times
     
-                            # 운동 횟수 계산
-                            reps, below_times, above_times = count_reps(pitch, time_ms, offset)
+#                             # 운동 횟수 계산
+#                             reps, below_times, above_times = count_reps(pitch, time_ms, offset)
     
-                            # 결과 출력
-                            st.write(f"총 운동 횟수: {reps}")
+#                             # 결과 출력
+#                             st.write(f"총 운동 횟수: {reps}")
     
-                            # 데이터 시각화
-                            st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
-                        except Exception as e:
-                            st.error(f"분석 중 오류 발생: {e}")
-                    else:
-                        st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
+#                             # 데이터 시각화
+#                             st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
+#                         except Exception as e:
+#                             st.error(f"분석 중 오류 발생: {e}")
+#                     else:
+#                         st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
 
-                # 실시간 그래프 분석 추가
-                if st.button("실시간 분석"):
-                    st.title("📈 실시간 그래프 애니메이션")
-                    try:
-                        # Downsample the data for better performance
-                        max_points = 100
-                        if len(csv_data) > max_points:
-                            csv_data = csv_data.iloc[::len(csv_data) // max_points, :]
+#         except Exception as e:
+#             st.error(f"오류가 발생했습니다: {e}")
+#     else:
+#         st.warning("CSV 파일을 업로드하세요.")
 
-                        # Select X and Y axes for real-time visualization
-                        realtime_x_axis = st.selectbox("X 축 선택 (실시간)", csv_data.columns, key="realtime_x_axis")
-                        realtime_y_axis = st.selectbox("Y 축 선택 (실시간)", csv_data.columns, key="realtime_y_axis")
 
-                        if realtime_x_axis and realtime_y_axis:
-                            # matplotlib Figure 생성
-                            fig, ax = plt.subplots()
+# 실시간 그래프 분석 추가
+if st.button("실시간 분석"):
+    st.title("📈 실시간 그래프 애니메이션")
+    try:
+        # Downsample the data for better performance
+        max_points = 100
+        if len(csv_data) > max_points:
+            csv_data = csv_data.iloc[::len(csv_data) // max_points, :]
 
-                            # Update 함수 정의 (애니메이션 프레임별 업데이트)
-                            def update(frame):
-                                ax.clear()
-                                x_data = csv_data[realtime_x_axis].iloc[:frame]
-                                y_data = csv_data[realtime_y_axis].iloc[:frame]
-                                ax.plot(x_data, y_data, marker="o", linestyle="-", color="b")
-                                ax.set_xlabel(realtime_x_axis)
-                                ax.set_ylabel(realtime_y_axis)
-                                ax.set_title(f"{realtime_x_axis} vs {realtime_y_axis} - Frame {frame}")
-                                ax.grid(True)
+        # Select X and Y axes for real-time visualization
+        realtime_x_axis = st.selectbox("X 축 선택 (실시간)", csv_data.columns, key="realtime_x_axis")
+        realtime_y_axis = st.selectbox("Y 축 선택 (실시간)", csv_data.columns, key="realtime_y_axis")
 
-                            # Limit frames to improve performance
-                            max_frames = min(len(csv_data), 100)
+        if realtime_x_axis and realtime_y_axis:
+            # matplotlib Figure 생성
+            fig, ax = plt.subplots()
 
-                            # Create animation
-                            anim = FuncAnimation(fig, update, frames=max_frames, interval=300)
+            # Update 함수 정의 (애니메이션 프레임별 업데이트)
+            def update(frame):
+                ax.clear()
+                x_data = csv_data[realtime_x_axis].iloc[:frame]
+                y_data = csv_data[realtime_y_axis].iloc[:frame]
+                ax.plot(x_data, y_data, marker="o", linestyle="-", color="b")
+                ax.set_xlabel(realtime_x_axis)
+                ax.set_ylabel(realtime_y_axis)
+                ax.set_title(f"{realtime_x_axis} vs {realtime_y_axis} - Frame {frame}")
+                ax.grid(True)
 
-                            # Save animation as GIF
-                            gif_path = "temp_animation.gif"
-                            anim.save(gif_path, writer="pillow", fps=10)
+            # Limit frames to improve performance
+            max_frames = min(len(csv_data), 100)
 
-                            # Read and display the GIF
-                            with open(gif_path, "rb") as gif_file:
-                                gif_bytes = gif_file.read()
-                            st.image(gif_bytes, caption="시간에 따른 데이터 변화")
-                        else:
-                            st.warning("X축과 Y축을 모두 선택하세요.")
-                    except Exception as e:
-                        st.error(f"실시간 분석 중 오류 발생: {e}")
-            else:
-                st.warning("X축과 Y축을 모두 선택하세요.")
-        except Exception as e:
-            st.error(f"오류가 발생했습니다: {e}")
-    else:
-        st.warning("CSV 파일을 업로드하세요.")
+            # Create animation
+            anim = FuncAnimation(fig, update, frames=max_frames, interval=300)
+
+            # Save animation as GIF
+            gif_path = "temp_animation.gif"
+            anim.save(gif_path, writer="pillow", fps=10)
+
+            # Read and display the GIF
+            with open(gif_path, "rb") as gif_file:
+                gif_bytes = gif_file.read()
+            st.image(gif_bytes, caption="시간에 따른 데이터 변화")
+        else:
+            st.warning("X축과 Y축을 모두 선택하세요.")
+    except Exception as e:
+        st.error(f"실시간 분석 중 오류 발생: {e}")
+else:
+st.warning("X축과 Y축을 모두 선택하세요.")
 
 
 
