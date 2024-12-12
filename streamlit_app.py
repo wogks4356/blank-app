@@ -57,8 +57,7 @@ elif st.session_state.page == "home":
 
     with col2:
         st.image("https://mblogthumb-phinf.pstatic.net/MjAyNDAyMjNfMjU1/MDAxNzA4NjE2NTAyODUx.Yz14QKhzSHdt-3JVbYCp5RP15Zhq5nhOZwaWJRLaqmMg.WeALWGNC-3Ry0yXiyhhtByGiaJTSC8JDkc_LWIVhEyUg.PNG/SE-4ebe176a-47fb-4d74-844c-39ec26681e52.png?type=w800", caption="사레레", use_container_width=True)
-        A = st.image("https://w7.pngwing.com/pngs/928/451/png-transparent-muscle-emoji-emoji-pop-sticker-biceps-smiley-muscle-hand-arm-thumb-thumbnail.png")
-        if st.button(A):
+        if st.button("사레레 페이지로 이동"):
             set_page("csv")
 
     with col3:
