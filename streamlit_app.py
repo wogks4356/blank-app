@@ -33,6 +33,9 @@ elif st.session_state.page == "basis":
     st.session_state.age = st.slider('나이', 0, 100) 
     
     st.text('제 나이는' + str(st.session_state.age)+ '세 입니다')
+
+    selected = st.radio( 'Sex' , ['남성','여성'] )
+    st.session_state.sex = selected
     st.session_state.hight = st.slider('키' , 0.0 , 250.0, step=0.1)
     st.session_state.weight = st.slider('몸무게' , 0 , 200, step=1)
 
