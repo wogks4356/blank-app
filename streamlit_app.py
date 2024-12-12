@@ -461,11 +461,13 @@ elif current_page == "realtime":
             ax.clear()
             x_data = csv_data[st.session_state.x_axis][:frame]
             # y_data = csv_data[st.session_state.y_axis][:frame]
-            y_data = csv_data["Pitch"][:frame]
+            y_data = csv_data["Value"][:frame]
             ax.plot(x_data, y_data, marker="o", linestyle="-")
             ax.set_xlabel(st.session_state.x_axis)
-            ax.set_ylabel(st.session_state.y_axis)
-            ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
+            # ax.set_ylabel(st.session_state.y_axis)
+            # ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
+            ax.set_ylabel("Value")                 # Y축 레이블
+            ax.set_title(f"{st.session_state.x_axis} vs Value - Frame {frame}")
 
         # Limit frames to improve performance
         max_frames = 100
