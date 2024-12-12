@@ -302,6 +302,7 @@ if current_page == "csv":
                                 near_zero = 30  # 0 근처 값 범위
                                 
                                 # 운동 횟수 측정 및 Value 값 저장
+                                st.text(len(csv_data))
                                 count = 0
                                 values_at_zero = []
                                 in_motion = False  # 운동 상태 (True: 운동 중, False: 대기 상태)
