@@ -256,31 +256,6 @@ if current_page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
-    # if uploaded_file is not None:
-    #     try:
-    #         # Read and display the CSV file
-    #         csv_data = load_csv(uploaded_file)
-    #         st.session_state.csv_data = csv_data  # Store data in session state
-    #         st.write("업로드된 데이터 (처음 100줄):")
-    #         st.dataframe(csv_data.head(100))  # Display the first 100 rows
-
-    #         # Select columns for graph
-    #         x_axis = st.selectbox("X 축 선택", csv_data.columns)
-    #         y_axis = st.selectbox("Y 축 선택", csv_data.columns)
-
-    #         # if x_axis and y_axis:
-    #         #     st.session_state.x_axis = x_axis  # Store selected axes in session state
-    #         #     st.session_state.y_axis = y_axis
-    #         #     st.line_chart(csv_data[[x_axis, y_axis]].head(100))  # Chart limited to 100 rows
-    #         if x_axis and y_axis:
-    #             st.session_state.x_axis = x_axis  # Store selected axes in session state
-    #             st.session_state.y_axis = y_axis
-
-    #             # X축을 인덱스로 설정
-    #             chart_data = csv_data.set_index(x_axis)[y_axis]
-
-    #             # 선 그래프 생성
-    #             st.line_chart(chart_data)
     if uploaded_file is not None:
         try:
             # Read and display the CSV file
@@ -294,79 +269,81 @@ if current_page == "csv":
     
             # Select columns for Y-axis (multiple features)
             y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
-        else:
-            st.warning("X축과 Y축을 모두 선택하세요.")
-
     
             if x_axis and y_axes:
                 st.session_state.x_axis = x_axis  # Store selected X-axis in session state
                 st.session_state.y_axes = y_axes  # Store selected Y-axis in session state
     
                 # Prepare data for plotting
-                chart_data = csv_data[[x_axis] + y_axes]  # Limit to 100 rows
+                chart_data = csv_data[[x_axis] + y_axes]
                 chart_data = chart_data.set_index(x_axis)  # Set X-axis as index
     
                 # Create and render the line chart with multiple Y axes
                 st.line_chart(chart_data)
+            else:
+                st.warning("X축과 Y축을 모두 선택하세요.")
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
+    else:
+        st.warning("CSV 파일을 업로드하세요.")
 
     if st.button("운동 분석"):
-        if "x_axis" in st.session_state and "y_axis" in st.session_state:
-              # Navigate to the real-time graph page
+        if "x_axis" in st.session_state and "y_axes" in st.session_state:
             st.title("📊 운동 분석 결과")
             st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
 
+            if "csv_data" in st.session_state and st.session_state.csv_data is not None:
+                csv_data = st.session_state.csv_data
 
-    if "csv_data" in st.session_state and st.session_state.csv_data is not None:
-        csv_data = st.session_state.csv_data
+                try:
+                    # 사용자가 선택한 열 이름이 존재하는지 확인
+                    if "Pitch" not in csv_data.columns or "Value" not in csv_data.columns:
+                        st.warning("'Pitch'와 'Value' 열이 데이터에 포함되어야 합니다.")
+                    else:
+                        # Pitch와 Value 데이터 추출
+                        pitch = csv_data["Pitch"].to_numpy()
+                        value = csv_data["Value"].to_numpy()
 
-        try:
-            # 사용자가 선택한 열 이름이 존재하는지 확인
-            if "Pitch" not in csv_data.columns or "Value" not in csv_data.columns:
-                st.warning("'Pitch'와 'Value' 열이 데이터에 포함되어야 합니다.")
-            else:
-                # Pitch와 Value 데이터 추출
-                pitch = csv_data["Pitch"].to_numpy()
-                value = csv_data["Value"].to_numpy()
+                        # 분석 파라미터
+                        threshold = st.slider("Pitch 기준값", min_value=0, max_value=100, value=70, step=1)
+                        near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
 
-                # 분석 파라미터
-                threshold = st.slider("Pitch 기준값", min_value=0, max_value=100, value=70, step=1)
-                near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
-
-                # 운동 횟수 측정 및 Value 값 저장
-                count = 0
-                values_at_zero = []
-                in_motion = False
-
-                for i in range(csv_data.shape[0]):  # CSV 데이터의 행 수를 사용
-                    if pitch[i] >= threshold and not in_motion:
-                        # 운동 시작
-                        in_motion = True
-                    elif pitch[i] <= near_zero and in_motion:
-                        # 운동 종료 시점
+                        # 운동 횟수 측정 및 Value 값 저장
+                        count = 0
+                        values_at_zero = []
                         in_motion = False
-                        count += 1
-                        values_at_zero.append(value[i])
 
-                # 분석 결과 표시
-                st.write(f"운동 반복 횟수: **{count}회**")
-                st.write("운동 종료 시점에서 기록된 Value 값 변화:")
+                        for i in range(csv_data.shape[0]):  # CSV 데이터의 행 수를 사용
+                            if pitch[i] >= threshold and not in_motion:
+                                # 운동 시작
+                                in_motion = True
+                            elif pitch[i] <= near_zero and in_motion:
+                                # 운동 종료 시점
+                                in_motion = False
+                                count += 1
+                                values_at_zero.append(value[i])
 
-                # 변화 추이 그래프
-                fig, ax = plt.subplots(figsize=(10, 5))
-                ax.plot(values_at_zero, marker="o", linestyle="-", label="Value 변화 추이")
-                ax.set_title("운동 종료 시점의 Value 변화 추이")
-                ax.set_xlabel("운동 반복 횟수")
-                ax.set_ylabel("Value")
-                ax.legend()
-                ax.grid()
-                st.pyplot(fig)
+                        # 분석 결과 표시
+                        st.write(f"운동 반복 횟수: **{count}회**")
+                        st.write("운동 종료 시점에서 기록된 Value 값 변화:")
 
-        except Exception as e:
-            st.error(f"분석 중 오류 발생: {e}")
-    else:
-        st.warning("CSV 데이터를 먼저 업로드하세요.")
+                        # 변화 추이 그래프
+                        fig, ax = plt.subplots(figsize=(10, 5))
+                        ax.plot(values_at_zero, marker="o", linestyle="-", label="Value 변화 추이")
+                        ax.set_title("운동 종료 시점의 Value 변화 추이")
+                        ax.set_xlabel("운동 반복 횟수")
+                        ax.set_ylabel("Value")
+                        ax.legend()
+                        ax.grid()
+                        st.pyplot(fig)
+
+                except Exception as e:
+                    st.error(f"분석 중 오류 발생: {e}")
+            else:
+                st.warning("CSV 데이터를 먼저 업로드하세요.")
+        else:
+            st.warning("X축과 Y축을 모두 선택하세요.")
+
 
 
     if st.button("실시간 그래프"):
