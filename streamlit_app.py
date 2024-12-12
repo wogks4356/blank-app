@@ -25,7 +25,7 @@ if st.session_state.page == "home":
             height: 170px;
             object-fit: cover;
             cursor: pointer;
-            margin: 5px;
+            margin: 10px;
         }
         </style>
         """,
