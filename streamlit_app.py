@@ -460,7 +460,8 @@ elif current_page == "realtime":
         def update(frame):
             ax.clear()
             x_data = csv_data[st.session_state.x_axis][:frame]
-            y_data = csv_data[st.session_state.y_axis][:frame]
+            # y_data = csv_data[st.session_state.y_axis][:frame]
+            y_data = csv_data["Pitch"][:frame]
             ax.plot(x_data, y_data, marker="o", linestyle="-")
             ax.set_xlabel(st.session_state.x_axis)
             ax.set_ylabel(st.session_state.y_axis)
