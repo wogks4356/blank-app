@@ -309,58 +309,62 @@ if current_page == "csv":
     
                 # Create and render the line chart with multiple Y axes
                 st.line_chart(chart_data)
+                
                 if st.button("운동 분석"):
-                    if "x_axis" in st.session_state and "y_axes" in st.session_state:
-                       # Streamlit 애플리케이션
-                        st.title("📊 운동 데이터 분석 도구")
-                        
-                        # CSV 데이터 업로드
-                        uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
-                        
-                        if uploaded_file:
-                            # 데이터 읽기
-                            csv_data = pd.read_csv(uploaded_file)
-                        
-                            # 데이터 확인
-                            st.write("업로드된 데이터:")
-                            st.dataframe(csv_data.head())
-                        
-                            # 운동 분석 버튼
-                            if st.button("운동 분석"):
-                                if "Pitch" not in csv_data.columns or "Time" not in csv_data.columns:
-                                    st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
-                                else:
-                                    # Pitch와 Time 데이터 추출
-                                    pitch = csv_data["Pitch"].to_numpy()
-                                    time_ms = csv_data["Time"].to_numpy()
-                        
-                                    # 분석 파라미터
-                                    offset = 45  # 기준 오프셋 값
-                        
-                                    # 운동 횟수 계산
-                                    reps, below_times, above_times = count_reps(pitch, time_ms, offset)
-                        
-                                    # 결과 출력
-                                    st.write(f"총 운동 횟수: {reps}")
-                                    st.write(f"Offset 아래 도달 시간: {below_times}")
-                                    st.write(f"Offset 위로 도달 시간: {above_times}")
-                        
-                                    # 데이터 시각화
-                                    st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
-            
+                    if "Pitch" in csv_data.columns and "Time" in csv_data.columns:
+                        try:
+                            # Pitch와 Time 데이터 추출
+                            pitch = csv_data["Pitch"].to_numpy()
+                            time_ms = csv_data["Time"].to_numpy()
+    
+                            # 분석 파라미터
+                            offset = 45  # 기준 오프셋 값
+    
+                            # 운동 횟수 계산 함수 정의
+                            def count_reps(data, time, offset):
+                                reps = 0
+                                above_offset = False
+                                below_offset = False
+                                below_times = []
+                                above_times = []
+    
+                                for i in range(1, len(data)):
+                                    if data[i] > offset:
+                                        if below_offset:
+                                            below_offset = False
+                                            above_times.append(time[i])
+                                    elif data[i] <= offset:
+                                        if above_offset:
+                                            above_offset = False
+                                            below_times.append(time[i])
+                                            if len(below_times) > 0 and len(above_times) > 0:
+                                                if below_times[-1] > above_times[-1]:
+                                                    reps += 1
+                                        below_offset = True
+                                    above_offset = data[i] > offset
+                                return reps, below_times, above_times
+    
+                            # 운동 횟수 계산
+                            reps, below_times, above_times = count_reps(pitch, time_ms, offset)
+    
+                            # 결과 출력
+                            st.write(f"총 운동 횟수: {reps}")
+                            st.write(f"Offset 아래 도달 시간: {below_times}")
+                            st.write(f"Offset 위로 도달 시간: {above_times}")
+    
+                            # 데이터 시각화
+                            st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
                         except Exception as e:
                             st.error(f"분석 중 오류 발생: {e}")
                     else:
-                        st.warning("CSV 데이터를 먼저 업로드하세요.")
-                else:
-                    st.warning("X축과 Y축을 모두 선택하세요.")
-
+                        st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
             else:
                 st.warning("X축과 Y축을 모두 선택하세요.")
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
     else:
         st.warning("CSV 파일을 업로드하세요.")
+
 
 # if st.button("운동 분석"):
 #     if "x_axis" in st.session_state and "y_axes" in st.session_state:
