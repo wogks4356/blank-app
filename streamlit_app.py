@@ -306,7 +306,7 @@ if current_page == "csv":
                                 values_at_zero = []
                                 in_motion = False  # 운동 상태 (True: 운동 중, False: 대기 상태)
                                 direction = None  # 현재 방향 ('down' 또는 'up')
-                                st.text(len(picth))
+                                st.text(len(pitch))
                                 
                                 for i in range(0, len(pitch), 100):  # 100 간격으로 데이터 샘플링
                                     if not in_motion:
