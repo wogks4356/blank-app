@@ -845,7 +845,7 @@ if current_page == "rr":
                 st.line_chart(chart_data)
             else:
                 st.warning("X축과 Y축을 모두 선택하세요.")
-    except Exception as e:
-        st.error(f"오류가 발생했습니다: {e}")
+        except Exception as e:
+            st.error(f"오류가 발생했습니다: {e}")
     else:
         st.warning("CSV 파일을 업로드하세요.")
