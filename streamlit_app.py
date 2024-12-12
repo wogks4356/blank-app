@@ -296,56 +296,38 @@ if current_page == "csv":
                                 # Pitch와 Value 데이터 추출
                                 pitch = csv_data["Pitch"].to_numpy()
                                 value = csv_data["Value"].to_numpy()
-            
+                                
                                 # 분석 파라미터
-                                # threshold = st.slider("Pitch 기준값 (근방 값)", min_value=0, max_value=100, value=70, step=1)
-                                # near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
-                                threshold = 65
-                                near_zero = 30
-            
+                                threshold = 65  # 기준값
+                                near_zero = 30  # 0 근처 값 범위
+                                
                                 # 운동 횟수 측정 및 Value 값 저장
                                 count = 0
                                 values_at_zero = []
-                                in_motion = False  # 운동 중 상태
-                                direction = None  # 상승 또는 하강 상태 ('down' 또는 'up')
-            
-                                for i in range(0,len(pitch), 100):  # CSV 데이터의 행 수를 사용
-                                    st.text(1)
+                                in_motion = False  # 운동 상태 (True: 운동 중, False: 대기 상태)
+                                direction = None  # 현재 방향 ('down' 또는 'up')
+                                
+                                for i in range(0, len(pitch), 100):  # 100 간격으로 데이터 샘플링
                                     if not in_motion:
-                                        # 운동 시작 조건: 70 근방에서 시작하고 하강 중인 상태
+                                        # 운동 시작 조건: `threshold` 근방에 도달하며 하강 시작
                                         if abs(pitch[i] - threshold) <= 15:
                                             in_motion = True
                                             direction = 'down'
-                                            st.text(in_motion) # 돌고 있다.
                                     else:
-                                        # 운동 중
-                                        st.text(direction)
                                         if direction == 'down':
-                                            # 하강 중이고 0 근방에 도달
+                                            # 하강 상태에서 `near_zero` 근방 도달 시
                                             if abs(pitch[i]) <= near_zero:
-                                                direction = 'up'  # 상승으로 전환
-                                                st.text(direction)
+                                                direction = 'up'  # 상승 상태로 전환
                                         elif direction == 'up':
-                                            # 상승 중이고 70 근방에 도달
-                                            st.text(direction)
+                                            # 상승 상태에서 다시 `threshold` 근방 도달 시
                                             if abs(pitch[i] - threshold) <= 15:
-                                                count += 1  # 반복 횟수 증가
-                                                values_at_zero.append(value[i])  # Value 저장
-                                                in_motion = False  # 운동 종료 후 대기 상태로 전환
-            
-                                # 분석 결과 표시
-                                st.write(f"운동 반복 횟수: **{count}회**")
-                                st.write("운동 종료 시점에서 기록된 Value 값 변화:")
-            
-                                # 변화 추이 그래프
-                                fig, ax = plt.subplots(figsize=(10, 5))
-                                ax.plot(values_at_zero, marker="o", linestyle="-", label="Value 변화 추이")
-                                ax.set_title("운동 종료 시점의 Value 변화 추이")
-                                ax.set_xlabel("운동 반복 횟수")
-                                ax.set_ylabel("Value")
-                                ax.legend()
-                                ax.grid()
-                                st.pyplot(fig)
+                                                count += 1  # 운동 반복 횟수 증가
+                                                values_at_zero.append(value[i])  # 현재 값 저장
+                                                in_motion = False  # 한 사이클 종료 후 대기 상태로 전환
+                                
+                                            st.write(f"총 운동 횟수: {count}")
+                                            st.write(f"Value 목록: {values_at_zero}")
+
             
                         except Exception as e:
                             st.error(f"분석 중 오류 발생: {e}")
