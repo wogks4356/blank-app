@@ -107,7 +107,7 @@ elif st.session_state.page == "basis":
     )
 
     if 'hight' not in st.session_state:
-    st.session_state.hight = 165.0
+        st.session_state.hight = 165.0
 
     if 'weight' not in st.session_state:
         st.session_state.weight = 70.0
