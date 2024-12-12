@@ -60,8 +60,9 @@ elif st.session_state.page == "basis":
     st.write("신체 정보 등을 업로드하세요.")
 
     # 나이 입력
-    st.session_state.age = st.slider('나이', 0, 100, value=st.session_state.get('age', 25))
-    st.text(f'제 나이는 {st.session_state.age}세 입니다.')
+    st.session_state.age = st.slider('나이', 0, 100) 
+    
+    st.text('제 나이는' + str(st.session_state.age)+ '세 입니다')
 
     # 성별 선택
     selected = st.radio('성별', ['남성', '여성'], index=0 if st.session_state.get('sex', '남성') == '남성' else 1)
