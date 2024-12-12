@@ -310,6 +310,7 @@ if current_page == "csv":
                                 direction = None  # 상승 또는 하강 상태 ('down' 또는 'up')
             
                                 for i in range(len(pitch)):  # CSV 데이터의 행 수를 사용
+                                    st.text(1)
                                     if not in_motion:
                                         # 운동 시작 조건: 70 근방에서 시작하고 하강 중인 상태
                                         if abs(pitch[i] - threshold) <= 15:
