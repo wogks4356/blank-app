@@ -315,13 +315,13 @@ if current_page == "csv":
                                         if abs(pitch[i] - threshold) <= 15:
                                             in_motion = True
                                             direction = 'down'
+                                            st.text(in_motion)
                                     else:
                                         # 운동 중
                                         if direction == 'down':
                                             # 하강 중이고 0 근방에 도달
                                             if abs(pitch[i]) <= near_zero:
                                                 direction = 'up'  # 상승으로 전환
-                                                st.text(in_motion)
                                         elif direction == 'up':
                                             # 상승 중이고 70 근방에 도달
                                             if abs(pitch[i] - threshold) <= 15:
