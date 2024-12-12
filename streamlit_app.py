@@ -436,9 +436,9 @@ if current_page == "csv":
 
 
     if st.button("실시간 그래프"):
-        # if "x_axis" in st.session_state and "y_axis" in st.session_state:
+        if "x_axis" in st.session_state or "y_axis" in st.session_state:
             set_page("realtime")  # Navigate to the real-time graph page
-        # else:
+        else:
             st.warning("X축과 Y축을 모두 선택하세요.")
 
 elif current_page == "realtime":
