@@ -395,7 +395,7 @@ elif current_page == "analyze":
                 values_at_zero = []
                 in_motion = False
 
-                for i in range(len(pitch)):
+                for i in range(csv_data.shape[0]):  # CSV 데이터의 행 수를 사용
                     if pitch[i] >= threshold and not in_motion:
                         # 운동 시작
                         in_motion = True
@@ -426,6 +426,7 @@ elif current_page == "analyze":
 
     if st.button("홈으로 돌아가기"):
         set_page("home")
+
 
 
 
