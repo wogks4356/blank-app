@@ -318,7 +318,7 @@ if current_page == "csv":
                             time_ms = csv_data["Time (ms)"].to_numpy()
     
                             # 분석 파라미터
-                            offset = -35  # 기준 오프셋 값
+                            offset = -30  # 기준 오프셋 값
     
                             # 운동 횟수 계산 함수 정의
                             def count_reps(data, time, offset):
