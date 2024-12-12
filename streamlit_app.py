@@ -46,7 +46,7 @@ def count_reps(data, time, offset):
     return reps, below_times, above_times
 
 
-csv_data = load_csv()
+csv_data = load_csv(bicep_curl.csv)
             st.session_state.csv_data = csv_data  # Store data in session state
             st.write("업로드된 데이터 (처음 100줄):")
             st.dataframe(csv_data.head(100))
