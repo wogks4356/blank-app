@@ -310,7 +310,7 @@ if current_page == "csv":
                                 for i in range(csv_data.shape[0]):  # CSV 데이터의 행 수를 사용
                                     if not in_motion:
                                         # 운동 시작 조건: 70 근방에서 시작하고 하강 중인 상태
-                                        if abs(pitch[i] - threshold) <= 5:
+                                        if abs(pitch[i] - threshold) <= 15:
                                             in_motion = True
                                             direction = 'down'
                                     else:
