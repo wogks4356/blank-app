@@ -652,7 +652,7 @@ elif current_page == "realtime":
  # Streamlit 앱을 새로고침하여 업데이트 반영
 
 
-elif current_page == "rr":
+if current_page == "rr":
     st.title("🎈 RR 데이터의 축 선택 및 정적 그래프")
 
     # CSV 파일 업로드
@@ -668,14 +668,18 @@ elif current_page == "rr":
         refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=1, max_value=10, value=3)
         st.text(f"그래프가 {refresh_rate}초마다 업데이트됩니다.")
 
-        # 실시간 데이터를 그래프로 출력
+        # "그래프 업데이트" 버튼 클릭 시 실시간 데이터 시각화
         if st.button("그래프 업데이트"):
-            import time
+            if "last_run_time" not in st.session_state:
+                st.session_state.last_run_time = time.time()
 
-            # Loop-like mechanism for real-time updates
-            for _ in range(10):  # 10회만 반복 (무한 반복 방지)
+            current_time = time.time()
+            elapsed_time = current_time - st.session_state.last_run_time
+
+            # 주기적으로 그래프를 새로 그림
+            if elapsed_time >= refresh_rate:
                 plot_live_graph(csv_file_path)  # 실시간 데이터를 그래프로 출력
-                time.sleep(refresh_rate)
+                st.session_state.last_run_time = current_time
                 st.experimental_rerun()  # Streamlit 앱을 새로고침하여 업데이트 반영
 
     # 업로드된 CSV 데이터 표시
