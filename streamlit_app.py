@@ -126,7 +126,7 @@ elif st.session_state.page == "삼두":
 elif st.session_state.page == "사레레":
     st.title("사레레 페이지")
     st.write("사레레 관련 데이터를 표시합니다.")
-    set_page("csv")
+    st.session_state.page == "csv"
     if st.button("홈으로 돌아가기"):
         set_page("home")
 
