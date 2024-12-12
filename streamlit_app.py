@@ -23,7 +23,7 @@ if st.session_state.page == "start":
     st.write("이 앱은 운동 선택 및 CSV 데이터를 시각화하는 데 사용됩니다.")
     
     if st.button("Run"):
-        set_page("home")  # Navigate to the home page
+        set_page("basis")  # Navigate to the home page
 
 elif st.session_state.page == "basis":
     st.title("👧 기본 정보를 입력해줘요~")
