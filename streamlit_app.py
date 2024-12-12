@@ -28,11 +28,11 @@ if st.session_state.page == "start":
 elif st.session_state.page == "basis":
     st.title("👧 기본 정보를 입력해줘요~")
     st.write("신체 정보 등을 업로드하세요.")
-    age = st.slider('나이', 0, 100) 
+    st.session_state.age = st.slider('나이', 0, 100) 
     
-    st.text('제 나이는' + str(age)+ '세 입니다')
-    hight = st.slider('키' , 0.0 , 250.0, step=0.1)
-    weight = st.slider('몸무게' , 0 , 200, step=1)
+    st.text('제 나이는' + str(st.session_state.age)+ '세 입니다')
+    st.session_state.hight = st.slider('키' , 0.0 , 250.0, step=0.1)
+    st.session_state.weight = st.slider('몸무게' , 0 , 200, step=1)
 
     if st.button("시작해"):
         set_page("home")
@@ -41,7 +41,11 @@ elif st.session_state.page == "basis":
 
 elif st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
-    st.text('저는' + str(age) +',' + str(hight) +',' + str(weight) + '입니다.') 
+    st.text(
+        '저는 ' + str(st.session_state.age) + '세, ' +
+        str(st.session_state.hight) + 'cm, ' +
+        str(st.session_state.weight) + 'kg 입니다.'
+    ) 
 
     # Layout for images with clickable buttons
     col1, col2, col3 = st.columns(3)
