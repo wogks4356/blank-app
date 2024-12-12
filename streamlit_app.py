@@ -40,27 +40,68 @@ if st.session_state.page == "start":
 #     st.session_state.hight = st.number_input("키", min_value=0.0, max_value=300.0, value=165.0)
 #     st.session_state.weight = st.slider('몸무게' , 0 , 200, step=1)
 #     st.session_state.weight = st.number_input("몸무게", min_value=0.0, max_value=300.0, value=70.0)
+def update_hight_from_slider():
+    st.session_state.hight_input = st.session_state.hight_slider
+
+def update_hight_from_input():
+    st.session_state.hight_slider = st.session_state.hight_input
+
+def update_weight_from_slider():
+    st.session_state.weight_input = st.session_state.weight_slider
+
+def update_weight_from_input():
+    st.session_state.weight_slider = st.session_state.weight_input
+
+
 elif st.session_state.page == "basis":
     st.title("👧 기본 정보를 입력해줘요~")
     st.write("신체 정보 등을 업로드하세요.")
 
     # 나이 입력
     st.session_state.age = st.slider('나이', 0, 100, value=st.session_state.get('age', 25))
-    st.text('제 나이는' + str(st.session_state.age)+ '세 입니다')
+    st.text(f'제 나이는 {st.session_state.age}세 입니다.')
 
     # 성별 선택
     selected = st.radio('성별', ['남성', '여성'], index=0 if st.session_state.get('sex', '남성') == '남성' else 1)
     st.session_state.sex = selected
 
-   # 키 입력 (동기화 처리)
-    hight = st.slider('키', 0.0, 250.0, step=0.1, value=float(st.session_state.get('hight', 165.0)))
-    hight_input = st.number_input("키", min_value=0.0, max_value=300.0, value=hight, step=0.1)
-    st.session_state.hight = hight_input if hight != hight_input else hight
+    # 키 입력 (동기화 처리)
+    st.slider(
+        '키 (슬라이더)', 
+        0.0, 250.0, 
+        step=0.1, 
+        value=float(st.session_state.get('hight_slider', 165.0)),
+        key='hight_slider',
+        on_change=update_hight_from_slider
+    )
+    st.number_input(
+        '키 (입력창)', 
+        min_value=0.0, 
+        max_value=300.0, 
+        value=float(st.session_state.get('hight_input', 165.0)), 
+        step=0.1, 
+        key='hight_input',
+        on_change=update_hight_from_input
+    )
 
     # 몸무게 입력 (동기화 처리)
-    weight = st.slider('몸무게', 0.0, 200.0, step=0.1, value=float(st.session_state.get('weight', 70.0)))
-    weight_input = st.number_input("몸무게", min_value=0.0, max_value=300.0, value=weight, step=0.1)
-    st.session_state.weight = weight_input if weight != weight_input else weight
+    st.slider(
+        '몸무게 (슬라이더)', 
+        0.0, 200.0, 
+        step=0.1, 
+        value=float(st.session_state.get('weight_slider', 70.0)),
+        key='weight_slider',
+        on_change=update_weight_from_slider
+    )
+    st.number_input(
+        '몸무게 (입력창)', 
+        min_value=0.0, 
+        max_value=300.0, 
+        value=float(st.session_state.get('weight_input', 70.0)), 
+        step=0.1, 
+        key='weight_input',
+        on_change=update_weight_from_input
+    )
 
     if st.button("시작해"):
         set_page("home")
