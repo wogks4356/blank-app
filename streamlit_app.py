@@ -194,35 +194,42 @@ elif current_page == "realtime":
             set_page("csv")
 
     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
-        # Retrieve data from session state
-        csv_data = st.session_state.csv_data
-        x_data = csv_data[st.session_state.x_axis]
-        y_data = csv_data[st.session_state.y_axis]
-
-        # Downsample the data for performance
+        # Downsample the data
         max_points = 500
+        csv_data = st.session_state.csv_data
         if len(csv_data) > max_points:
-            csv_data = csv_data.iloc[::len(csv_data) // max_points, :]
+            csv_data = csv_data.iloc[::len(csv_data)//max_points, :]
 
         fig, ax = plt.subplots()
-        window_size = 50  # Window size for real-time visualization
 
+        # Update function for animation
         def update(frame):
-            start = max(0, frame - window_size)
-            end = frame
             ax.clear()
-            ax.plot(x_data[start:end], y_data[start:end], marker="o", linestyle="-")
+            x_data = csv_data[st.session_state.x_axis][:frame]
+            y_data = csv_data[st.session_state.y_axis][:frame]
+            ax.plot(x_data, y_data, marker="o", linestyle="-")
             ax.set_xlabel(st.session_state.x_axis)
             ax.set_ylabel(st.session_state.y_axis)
             ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
 
-        max_frames = len(x_data)  # Total frames for the animation
-        anim = FuncAnimation(fig, update, frames=max_frames, interval=200)
-        st.pyplot(fig)
+        # Limit frames to improve performance
+        max_frames = 500
+        frames = min(len(csv_data), max_frames)
 
-    else:
-        st.warning("CSV 데이터를 업로드하세요.")
+        # Create animation
+        anim = FuncAnimation(fig, update, frames=frames, interval=200)
 
+        # Save animation as GIF
+        gif_path = "temp_animation.gif"
+        try:
+            anim.save(gif_path, writer="pillow", fps=10)
+
+            # Read the GIF as binary and display it
+            with open(gif_path, "rb") as gif_file:
+                gif_bytes = gif_file.read()
+            st.image(gif_bytes, caption="시간에 따른 데이터 변화")  # Display the GIF
+        except Exception as e:
+            st.error(f"애니메이션 생성 중 오류 발생: {e}")
     if st.button("홈으로 돌아가기"):
         set_page("home")
 
