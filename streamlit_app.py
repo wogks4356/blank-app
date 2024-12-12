@@ -21,7 +21,7 @@ if st.session_state.page == "home":
         """
         <style>
         .clickable-image {
-            width: 150px;
+            width: 170px;
             height: 170px;
             object-fit: cover;
             cursor: pointer;
