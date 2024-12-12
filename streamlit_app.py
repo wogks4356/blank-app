@@ -143,7 +143,7 @@ elif st.session_state.page == "업데이트":
     st.markdown(
     """
     <div style="text-align: center;">
-        <img src="https://img.extmovie.com/files/attach/images/135/615/810/084/632dfbd1e803081a07a3d53f56ad3b83.gif" alt="GIF Example" style="width: 100%; max-width: 500px;">
+        <img src="https://img.extmovie.com/files/attach/images/135/615/810/084/0de6596f9677fb2a73d50c5cc6c6f83e.gif" alt="GIF Example" style="width: 100%; max-width: 500px;">
     </div>
     """,
     unsafe_allow_html=True
