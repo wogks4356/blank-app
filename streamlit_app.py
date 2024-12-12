@@ -301,7 +301,7 @@ if current_page == "csv":
                                 # threshold = st.slider("Pitch 기준값 (근방 값)", min_value=0, max_value=100, value=70, step=1)
                                 # near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
                                 threshold = 65
-                                near_zero = 15
+                                near_zero = 30
             
                                 # 운동 횟수 측정 및 Value 값 저장
                                 count = 0
