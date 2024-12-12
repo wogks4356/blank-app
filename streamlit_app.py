@@ -323,89 +323,57 @@ current_page = st.session_state.page
 # Streamlit 페이지 관리
 elif current_page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
+
+    # CSV 파일 업로드
     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
     if uploaded_file is not None:
         try:
-            # Read and display the CSV file
+            # CSV 파일 읽기 및 세션 상태에 저장
             csv_data = load_csv(uploaded_file)
-            st.session_state.csv_data = csv_data  # Store data in session state
+            st.session_state.csv_data = csv_data
             st.write("업로드된 데이터 (처음 100줄):")
-            st.dataframe(csv_data.head(100))  # Display the first 100 rows
+            st.dataframe(csv_data.head(100))  # 처음 100줄 표시
 
-            # Select column for X-axis
-            x_axis = st.selectbox("X 축 선택", csv_data.columns, key="x_axis_select")
-
-            # Select columns for Y-axis (multiple features)
-            y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns, key="y_axes_select")
+            # X축과 Y축 선택
+            x_axis = st.selectbox("X 축 선택", csv_data.columns, key="csv_x_axis")
+            y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns, key="csv_y_axes")
 
             if x_axis and y_axes:
-                st.session_state.x_axis = x_axis  # Store selected X-axis in session state
-                st.session_state.y_axes = y_axes  # Store selected Y-axis in session state
-
-                # Prepare data for plotting
-                chart_data = csv_data[[x_axis] + y_axes]
-                chart_data = chart_data.set_index(x_axis)  # Set X-axis as index
-
-                # Create and render the line chart with multiple Y axes
+                # 선택된 데이터를 기반으로 그래프 생성
+                chart_data = csv_data[[x_axis] + y_axes].set_index(x_axis)
                 st.line_chart(chart_data)
 
-                if st.button("운동 분석", key="analyze_button"):
+                # 운동 분석 버튼
+                if st.button("운동 분석", key="csv_analyze_button"):
                     if "Pitch" in csv_data.columns and "Time (ms)" in csv_data.columns:
                         try:
-                            # Pitch와 Time 데이터 추출
                             pitch = csv_data["Pitch"].to_numpy()
                             time_ms = csv_data["Time (ms)"].to_numpy()
-
-                            # 분석 파라미터
                             offset = -35  # 기준 오프셋 값
 
-                            # 운동 횟수 계산 함수 정의
-                            def count_reps(data, time, offset):
-                                reps = 0
-                                above_offset = False
-                                below_offset = False
-                                below_times = []
-                                above_times = []
-
-                                for i in range(1, len(data)):
-                                    if data[i] > offset:
-                                        if below_offset:
-                                            below_offset = False
-                                            above_times.append(time[i])
-                                    elif data[i] <= offset:
-                                        if above_offset:
-                                            above_offset = False
-                                            below_times.append(time[i])
-                                            if len(below_times) > 0 and len(above_times) > 0:
-                                                if below_times[-1] > above_times[-1]:
-                                                    reps += 1
-                                        below_offset = True
-                                    above_offset = data[i] > offset
-                                return reps, below_times, above_times
-
-                            # 운동 횟수 계산
+                            # 운동 횟수 계산 함수
                             reps, below_times, above_times = count_reps(pitch, time_ms, offset)
 
-                            # 결과 출력
+                            # 분석 결과 출력
                             st.write(f"총 운동 횟수: {reps}")
                             st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
 
                         except Exception as e:
-                            st.error(f"분석 중 오류 발생: {e}")
+                            st.error(f"운동 분석 중 오류 발생: {e}")
                     else:
-                        st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
+                        st.warning("'Pitch'와 'Time (ms)' 열이 데이터에 포함되어야 합니다.")
 
-                # 실시간 분석을 다른 페이지로 이동
-                if st.button("실시간 분석으로 이동", key="go_to_realtime"):
-                    set_page("realtime")  # 다른 페이지로 이동
-
+                # 실시간 분석으로 이동
+                if st.button("실시간 분석으로 이동", key="csv_to_realtime_button"):
+                    set_page("realtime")
             else:
                 st.warning("X축과 Y축을 모두 선택하세요.")
         except Exception as e:
-            st.error(f"오류가 발생했습니다: {e}")
+            st.error(f"CSV 데이터 처리 중 오류 발생: {e}")
     else:
         st.warning("CSV 파일을 업로드하세요.")
+
 
 
 # 실시간 분석 페이지
