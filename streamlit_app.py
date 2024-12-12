@@ -320,6 +320,280 @@ elif st.session_state.page == "업데이트":
 
 current_page = st.session_state.page
 
+# if current_page == "csv":
+#     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
+#     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+
+#     if uploaded_file is not None:
+#         try:
+#             # Read and display the CSV file
+#             csv_data = load_csv(uploaded_file)
+#             st.session_state.csv_data = csv_data  # Store data in session state
+#             st.write("업로드된 데이터 (처음 100줄):")
+#             st.dataframe(csv_data.head(100))  # Display the first 100 rows
+    
+#             # Select column for X-axis
+#             x_axis = st.selectbox("X 축 선택", csv_data.columns)
+    
+#             # Select columns for Y-axis (multiple features)
+#             y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+    
+#             if x_axis and y_axes:
+#                 st.session_state.x_axis = x_axis  # Store selected X-axis in session state
+#                 st.session_state.y_axes = y_axes  # Store selected Y-axis in session state
+    
+#                 # Prepare data for plotting
+#                 chart_data = csv_data[[x_axis] + y_axes]
+#                 chart_data = chart_data.set_index(x_axis)  # Set X-axis as index
+    
+#                 # Create and render the line chart with multiple Y axes
+#                 st.line_chart(chart_data)
+                
+#                 if st.button("운동 분석"):
+#                     if "Pitch" in csv_data.columns and "Time (ms)" in csv_data.columns:
+#                         try:
+#                             # Pitch와 Time 데이터 추출
+#                             pitch = csv_data["Pitch"].to_numpy()
+#                             time_ms = csv_data["Time (ms)"].to_numpy()
+    
+#                             # 분석 파라미터
+#                             offset = -35  # 기준 오프셋 값
+    
+#                             # 운동 횟수 계산 함수 정의
+#                             def count_reps(data, time, offset):
+#                                 reps = 0
+#                                 above_offset = False
+#                                 below_offset = False
+#                                 below_times = []
+#                                 above_times = []
+    
+#                                 for i in range(1, len(data)):
+#                                     if data[i] > offset:
+#                                         if below_offset:
+#                                             below_offset = False
+#                                             above_times.append(time[i])
+#                                     elif data[i] <= offset:
+#                                         if above_offset:
+#                                             above_offset = False
+#                                             below_times.append(time[i])
+#                                             if len(below_times) > 0 and len(above_times) > 0:
+#                                                 if below_times[-1] > above_times[-1]:
+#                                                     reps += 1
+#                                         below_offset = True
+#                                     above_offset = data[i] > offset
+#                                 return reps, below_times, above_times
+    
+#                             # 운동 횟수 계산
+#                             reps, below_times, above_times = count_reps(pitch, time_ms, offset)
+    
+#                             # 결과 출력
+#                             st.write(f"총 운동 횟수: {reps}")
+#                             # st.write(f"Offset 아래 도달 시간: {below_times}")
+#                             # st.write(f"Offset 위로 도달 시간: {above_times}")
+    
+#                             # 데이터 시각화
+#                             st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
+#                         except Exception as e:
+#                             st.error(f"분석 중 오류 발생: {e}")
+#                     else:
+#                         st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
+#             else:
+#                 st.warning("X축과 Y축을 모두 선택하세요.")
+#         except Exception as e:
+#             st.error(f"오류가 발생했습니다: {e}")
+#     else:
+#         st.warning("CSV 파일을 업로드하세요.")
+
+
+# # if st.button("운동 분석"):
+# #     if "x_axis" in st.session_state and "y_axes" in st.session_state:
+# #         st.title("📊 운동 분석 결과")
+# #         st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
+
+# #         if "csv_data" in st.session_state and st.session_state.csv_data is not None:
+# #             csv_data = st.session_state.csv_data
+
+# #             try:
+# #                 # 사용자가 선택한 열 이름이 존재하는지 확인
+# #                 if "Pitch" not in csv_data.columns or "Value" not in csv_data.columns:
+# #                     st.warning("'Pitch'와 'Value' 열이 데이터에 포함되어야 합니다.")
+# #                 else:
+# #                     # Pitch와 Value 데이터 추출
+# #                     pitch = csv_data["Pitch"].to_numpy()
+# #                     value = csv_data["Value"].to_numpy()
+
+# #                     # 분석 파라미터
+# #                     threshold = st.slider("Pitch 기준값 (근방 값)", min_value=0, max_value=100, value=70, step=1)
+# #                     near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
+
+# #                     # 운동 횟수 측정 및 Value 값 저장
+# #                     count = 0
+# #                     values_at_zero = []
+# #                     in_motion = False  # 운동 중 상태
+# #                     direction = None  # 상승 또는 하강 상태 ('down' 또는 'up')
+
+# #                     for i in range(csv_data.shape[0]):  # CSV 데이터의 행 수를 사용
+# #                         if not in_motion:
+# #                             # 운동 시작 조건: 70 근방에서 시작하고 하강 중인 상태
+# #                             if abs(pitch[i] - threshold) <= 5:
+# #                                 in_motion = True
+# #                                 direction = 'down'
+# #                         else:
+# #                             # 운동 중
+# #                             if direction == 'down':
+# #                                 # 하강 중이고 0 근방에 도달
+# #                                 if abs(pitch[i]) <= near_zero:
+# #                                     direction = 'up'  # 상승으로 전환
+# #                             elif direction == 'up':
+# #                                 # 상승 중이고 70 근방에 도달
+# #                                 if abs(pitch[i] - threshold) <= 5:
+# #                                     count += 1  # 반복 횟수 증가
+# #                                     values_at_zero.append(value[i])  # Value 저장
+# #                                     in_motion = False  # 운동 종료 후 대기 상태로 전환
+
+# #                     # 분석 결과 표시
+# #                     st.write(f"운동 반복 횟수: **{count}회**")
+# #                     st.write("운동 종료 시점에서 기록된 Value 값 변화:")
+
+# #                     # 변화 추이 그래프
+# #                     fig, ax = plt.subplots(figsize=(10, 5))
+# #                     ax.plot(values_at_zero, marker="o", linestyle="-", label="Value 변화 추이")
+# #                     ax.set_title("운동 종료 시점의 Value 변화 추이")
+# #                     ax.set_xlabel("운동 반복 횟수")
+# #                     ax.set_ylabel("Value")
+# #                     ax.legend()
+# #                     ax.grid()
+# #                     st.pyplot(fig)
+
+# #             except Exception as e:
+# #                 st.error(f"분석 중 오류 발생: {e}")
+# #         else:
+# #             st.warning("CSV 데이터를 먼저 업로드하세요.")
+# #     else:
+# #         st.warning("X축과 Y축을 모두 선택하세요.")
+
+
+
+#     if st.button("실시간 그래프"):
+#         if "x_axis" in st.session_state and "y_axis" in st.session_state:
+#             set_page("realtime")  # Navigate to the real-time graph page
+#         else:
+#             st.warning("X축과 Y축을 모두 선택하세요.")
+
+# # elif current_page == "realtime":
+# #     st.title("📈 실시간 그래프 애니메이션")
+
+# #     if st.button("이전"):
+# #             set_page("csv")
+
+# #     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
+# #         # Downsample the data
+# #         max_points = 100
+# #         csv_data = st.session_state.csv_data
+# #         if len(csv_data) > max_points:
+# #             csv_data = csv_data.iloc[::len(csv_data)//max_points, :]
+
+# #         fig, ax = plt.subplots()
+
+# #         # Update function for animation
+# #         def update(frame):
+# #             ax.clear()
+# #             x_data = csv_data[st.session_state.x_axis][:frame]
+# #             # y_data = csv_data[st.session_state.y_axis][:frame]
+# #             y_data = csv_data["Value"][:frame]
+# #             ax.plot(x_data, y_data, marker="o", linestyle="-")
+# #             ax.set_xlabel(st.session_state.x_axis)
+# #             ax.set_ylabel(st.session_state.y_axis)
+# #             ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
+            
+
+# #         # Limit frames to improve performance
+# #         max_frames = 100
+# #         frames = min(len(csv_data), max_frames)
+
+# #         # Create animation
+# #         anim = FuncAnimation(fig, update, frames=frames, interval=300)
+
+# #         # Save animation as GIF
+# #         gif_path = "temp_animation.gif"
+# #         try:
+# #             anim.save(gif_path, writer="pillow", fps=10)
+
+# #             # Read the GIF as binary and display it
+# #             with open(gif_path, "rb") as gif_file:
+# #                 gif_bytes = gif_file.read()
+# #             st.image(gif_bytes, caption="시간에 따른 데이터 변화")  # Display the GIF
+# #         except Exception as e:
+# #             st.error(f"애니메이션 생성 중 오류 발생: {e}")
+# #     if st.button("홈으로 돌아가기"):
+# #         set_page("home")
+
+# elif current_page == "realtime":
+#     st.title("📈 실시간 그래프 애니메이션")
+
+#     if st.button("이전"):
+#         set_page("csv")
+
+#     # CSV 데이터 확인
+#     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
+#         csv_data = st.session_state.csv_data
+
+#         # CSV 데이터 확인 및 열 이름 추출
+#         if not csv_data.empty:
+#             columns = csv_data.columns
+#         else:
+#             st.error("CSV 데이터가 비어 있습니다.")
+#             st.stop()
+
+#         # X축과 Y축 선택
+#         x_axis = st.selectbox("X 축 선택", columns, key="realtime_x_axis")
+#         y_axis = st.selectbox("Y 축 선택", columns, key="realtime_y_axis")
+
+#         if x_axis and y_axis:
+#             # Downsample the data
+#             max_points = 100
+#             if len(csv_data) > max_points:
+#                 csv_data = csv_data.iloc[::len(csv_data) // max_points, :]
+
+#             # matplotlib Figure 생성
+#             fig, ax = plt.subplots()
+
+#             # Update 함수 정의 (애니메이션 프레임별 업데이트)
+#             def update(frame):
+#                 ax.clear()
+#                 x_data = csv_data[x_axis].iloc[:frame]  # 선택된 X축 데이터
+#                 y_data = csv_data[y_axis].iloc[:frame]  # 선택된 Y축 데이터
+#                 ax.plot(x_data, y_data, marker="o", linestyle="-", color="b")
+#                 ax.set_xlabel(x_axis)  # X축 레이블
+#                 ax.set_ylabel(y_axis)  # Y축 레이블
+#                 ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
+#                 ax.grid(True)
+
+#             # Limit frames to improve performance
+#             max_frames = min(len(csv_data), 100)
+
+#             # Create animation
+#             anim = FuncAnimation(fig, update, frames=max_frames, interval=300)
+
+#             # Save animation as GIF
+#             gif_path = "temp_animation.gif"
+#             try:
+#                 anim.save(gif_path, writer="pillow", fps=10)
+
+#                 # Read the GIF as binary and display it
+#                 with open(gif_path, "rb") as gif_file:
+#                     gif_bytes = gif_file.read()
+#                 st.image(gif_bytes, caption="시간에 따른 데이터 변화")  # Display the GIF
+#             except Exception as e:
+#                 st.error(f"애니메이션 생성 중 오류 발생: {e}")
+#         else:
+#             st.warning("X축과 Y축을 모두 선택하세요.")
+#     else:
+#         st.warning("CSV 데이터를 먼저 업로드하세요.")
+
+#     if st.button("홈으로 돌아가기"):
+#         set_page("home")
+
 if current_page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
@@ -388,8 +662,6 @@ if current_page == "csv":
     
                             # 결과 출력
                             st.write(f"총 운동 횟수: {reps}")
-                            # st.write(f"Offset 아래 도달 시간: {below_times}")
-                            # st.write(f"Offset 위로 도달 시간: {above_times}")
     
                             # 데이터 시각화
                             st.line_chart({"Pitch": pitch, "Offset": [offset] * len(pitch)})
@@ -397,202 +669,59 @@ if current_page == "csv":
                             st.error(f"분석 중 오류 발생: {e}")
                     else:
                         st.warning("'Pitch'와 'Time' 열이 데이터에 포함되어야 합니다.")
+
+                # 실시간 그래프 분석 추가
+                if st.button("실시간 분석"):
+                    st.title("📈 실시간 그래프 애니메이션")
+                    try:
+                        # Downsample the data for better performance
+                        max_points = 100
+                        if len(csv_data) > max_points:
+                            csv_data = csv_data.iloc[::len(csv_data) // max_points, :]
+
+                        # Select X and Y axes for real-time visualization
+                        realtime_x_axis = st.selectbox("X 축 선택 (실시간)", csv_data.columns, key="realtime_x_axis")
+                        realtime_y_axis = st.selectbox("Y 축 선택 (실시간)", csv_data.columns, key="realtime_y_axis")
+
+                        if realtime_x_axis and realtime_y_axis:
+                            # matplotlib Figure 생성
+                            fig, ax = plt.subplots()
+
+                            # Update 함수 정의 (애니메이션 프레임별 업데이트)
+                            def update(frame):
+                                ax.clear()
+                                x_data = csv_data[realtime_x_axis].iloc[:frame]
+                                y_data = csv_data[realtime_y_axis].iloc[:frame]
+                                ax.plot(x_data, y_data, marker="o", linestyle="-", color="b")
+                                ax.set_xlabel(realtime_x_axis)
+                                ax.set_ylabel(realtime_y_axis)
+                                ax.set_title(f"{realtime_x_axis} vs {realtime_y_axis} - Frame {frame}")
+                                ax.grid(True)
+
+                            # Limit frames to improve performance
+                            max_frames = min(len(csv_data), 100)
+
+                            # Create animation
+                            anim = FuncAnimation(fig, update, frames=max_frames, interval=300)
+
+                            # Save animation as GIF
+                            gif_path = "temp_animation.gif"
+                            anim.save(gif_path, writer="pillow", fps=10)
+
+                            # Read and display the GIF
+                            with open(gif_path, "rb") as gif_file:
+                                gif_bytes = gif_file.read()
+                            st.image(gif_bytes, caption="시간에 따른 데이터 변화")
+                        else:
+                            st.warning("X축과 Y축을 모두 선택하세요.")
+                    except Exception as e:
+                        st.error(f"실시간 분석 중 오류 발생: {e}")
             else:
                 st.warning("X축과 Y축을 모두 선택하세요.")
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
     else:
         st.warning("CSV 파일을 업로드하세요.")
-
-
-# if st.button("운동 분석"):
-#     if "x_axis" in st.session_state and "y_axes" in st.session_state:
-#         st.title("📊 운동 분석 결과")
-#         st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
-
-#         if "csv_data" in st.session_state and st.session_state.csv_data is not None:
-#             csv_data = st.session_state.csv_data
-
-#             try:
-#                 # 사용자가 선택한 열 이름이 존재하는지 확인
-#                 if "Pitch" not in csv_data.columns or "Value" not in csv_data.columns:
-#                     st.warning("'Pitch'와 'Value' 열이 데이터에 포함되어야 합니다.")
-#                 else:
-#                     # Pitch와 Value 데이터 추출
-#                     pitch = csv_data["Pitch"].to_numpy()
-#                     value = csv_data["Value"].to_numpy()
-
-#                     # 분석 파라미터
-#                     threshold = st.slider("Pitch 기준값 (근방 값)", min_value=0, max_value=100, value=70, step=1)
-#                     near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
-
-#                     # 운동 횟수 측정 및 Value 값 저장
-#                     count = 0
-#                     values_at_zero = []
-#                     in_motion = False  # 운동 중 상태
-#                     direction = None  # 상승 또는 하강 상태 ('down' 또는 'up')
-
-#                     for i in range(csv_data.shape[0]):  # CSV 데이터의 행 수를 사용
-#                         if not in_motion:
-#                             # 운동 시작 조건: 70 근방에서 시작하고 하강 중인 상태
-#                             if abs(pitch[i] - threshold) <= 5:
-#                                 in_motion = True
-#                                 direction = 'down'
-#                         else:
-#                             # 운동 중
-#                             if direction == 'down':
-#                                 # 하강 중이고 0 근방에 도달
-#                                 if abs(pitch[i]) <= near_zero:
-#                                     direction = 'up'  # 상승으로 전환
-#                             elif direction == 'up':
-#                                 # 상승 중이고 70 근방에 도달
-#                                 if abs(pitch[i] - threshold) <= 5:
-#                                     count += 1  # 반복 횟수 증가
-#                                     values_at_zero.append(value[i])  # Value 저장
-#                                     in_motion = False  # 운동 종료 후 대기 상태로 전환
-
-#                     # 분석 결과 표시
-#                     st.write(f"운동 반복 횟수: **{count}회**")
-#                     st.write("운동 종료 시점에서 기록된 Value 값 변화:")
-
-#                     # 변화 추이 그래프
-#                     fig, ax = plt.subplots(figsize=(10, 5))
-#                     ax.plot(values_at_zero, marker="o", linestyle="-", label="Value 변화 추이")
-#                     ax.set_title("운동 종료 시점의 Value 변화 추이")
-#                     ax.set_xlabel("운동 반복 횟수")
-#                     ax.set_ylabel("Value")
-#                     ax.legend()
-#                     ax.grid()
-#                     st.pyplot(fig)
-
-#             except Exception as e:
-#                 st.error(f"분석 중 오류 발생: {e}")
-#         else:
-#             st.warning("CSV 데이터를 먼저 업로드하세요.")
-#     else:
-#         st.warning("X축과 Y축을 모두 선택하세요.")
-
-
-
-    if st.button("실시간 그래프"):
-        if "x_axis" in st.session_state and "y_axis" in st.session_state:
-            set_page("realtime")  # Navigate to the real-time graph page
-        else:
-            st.warning("X축과 Y축을 모두 선택하세요.")
-
-# elif current_page == "realtime":
-#     st.title("📈 실시간 그래프 애니메이션")
-
-#     if st.button("이전"):
-#             set_page("csv")
-
-#     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
-#         # Downsample the data
-#         max_points = 100
-#         csv_data = st.session_state.csv_data
-#         if len(csv_data) > max_points:
-#             csv_data = csv_data.iloc[::len(csv_data)//max_points, :]
-
-#         fig, ax = plt.subplots()
-
-#         # Update function for animation
-#         def update(frame):
-#             ax.clear()
-#             x_data = csv_data[st.session_state.x_axis][:frame]
-#             # y_data = csv_data[st.session_state.y_axis][:frame]
-#             y_data = csv_data["Value"][:frame]
-#             ax.plot(x_data, y_data, marker="o", linestyle="-")
-#             ax.set_xlabel(st.session_state.x_axis)
-#             ax.set_ylabel(st.session_state.y_axis)
-#             ax.set_title(f"{st.session_state.x_axis} vs {st.session_state.y_axis} - Frame {frame}")
-            
-
-#         # Limit frames to improve performance
-#         max_frames = 100
-#         frames = min(len(csv_data), max_frames)
-
-#         # Create animation
-#         anim = FuncAnimation(fig, update, frames=frames, interval=300)
-
-#         # Save animation as GIF
-#         gif_path = "temp_animation.gif"
-#         try:
-#             anim.save(gif_path, writer="pillow", fps=10)
-
-#             # Read the GIF as binary and display it
-#             with open(gif_path, "rb") as gif_file:
-#                 gif_bytes = gif_file.read()
-#             st.image(gif_bytes, caption="시간에 따른 데이터 변화")  # Display the GIF
-#         except Exception as e:
-#             st.error(f"애니메이션 생성 중 오류 발생: {e}")
-#     if st.button("홈으로 돌아가기"):
-#         set_page("home")
-
-elif current_page == "realtime":
-    st.title("📈 실시간 그래프 애니메이션")
-
-    if st.button("이전"):
-        set_page("csv")
-
-    # CSV 데이터 확인
-    if "csv_data" in st.session_state and st.session_state.csv_data is not None:
-        csv_data = st.session_state.csv_data
-
-        # CSV 데이터 확인 및 열 이름 추출
-        if not csv_data.empty:
-            columns = csv_data.columns
-        else:
-            st.error("CSV 데이터가 비어 있습니다.")
-            st.stop()
-
-        # X축과 Y축 선택
-        x_axis = st.selectbox("X 축 선택", columns, key="realtime_x_axis")
-        y_axis = st.selectbox("Y 축 선택", columns, key="realtime_y_axis")
-
-        if x_axis and y_axis:
-            # Downsample the data
-            max_points = 100
-            if len(csv_data) > max_points:
-                csv_data = csv_data.iloc[::len(csv_data) // max_points, :]
-
-            # matplotlib Figure 생성
-            fig, ax = plt.subplots()
-
-            # Update 함수 정의 (애니메이션 프레임별 업데이트)
-            def update(frame):
-                ax.clear()
-                x_data = csv_data[x_axis].iloc[:frame]  # 선택된 X축 데이터
-                y_data = csv_data[y_axis].iloc[:frame]  # 선택된 Y축 데이터
-                ax.plot(x_data, y_data, marker="o", linestyle="-", color="b")
-                ax.set_xlabel(x_axis)  # X축 레이블
-                ax.set_ylabel(y_axis)  # Y축 레이블
-                ax.set_title(f"{x_axis} vs {y_axis} - Frame {frame}")
-                ax.grid(True)
-
-            # Limit frames to improve performance
-            max_frames = min(len(csv_data), 100)
-
-            # Create animation
-            anim = FuncAnimation(fig, update, frames=max_frames, interval=300)
-
-            # Save animation as GIF
-            gif_path = "temp_animation.gif"
-            try:
-                anim.save(gif_path, writer="pillow", fps=10)
-
-                # Read the GIF as binary and display it
-                with open(gif_path, "rb") as gif_file:
-                    gif_bytes = gif_file.read()
-                st.image(gif_bytes, caption="시간에 따른 데이터 변화")  # Display the GIF
-            except Exception as e:
-                st.error(f"애니메이션 생성 중 오류 발생: {e}")
-        else:
-            st.warning("X축과 Y축을 모두 선택하세요.")
-    else:
-        st.warning("CSV 데이터를 먼저 업로드하세요.")
-
-    if st.button("홈으로 돌아가기"):
-        set_page("home")
 
 
 
