@@ -300,6 +300,8 @@ if current_page == "csv":
                                 # 분석 파라미터
                                 # threshold = st.slider("Pitch 기준값 (근방 값)", min_value=0, max_value=100, value=70, step=1)
                                 # near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
+                                threshold = 65
+                                near_zero = 15
             
                                 # 운동 횟수 측정 및 Value 값 저장
                                 count = 0
@@ -321,7 +323,7 @@ if current_page == "csv":
                                                 direction = 'up'  # 상승으로 전환
                                         elif direction == 'up':
                                             # 상승 중이고 70 근방에 도달
-                                            if abs(pitch[i] - threshold) <= 5:
+                                            if abs(pitch[i] - threshold) <= 15:
                                                 count += 1  # 반복 횟수 증가
                                                 values_at_zero.append(value[i])  # Value 저장
                                                 in_motion = False  # 운동 종료 후 대기 상태로 전환
@@ -475,65 +477,65 @@ elif current_page == "realtime":
     if st.button("홈으로 돌아가기"):
         set_page("home")
 
-elif current_page == "analyze":
-    st.title("📊 운동 분석 결과")
-    st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
+# elif current_page == "analyze":
+#     st.title("📊 운동 분석 결과")
+#     st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
 
-    if st.button("이전"):
-        set_page("csv")
+#     if st.button("이전"):
+#         set_page("csv")
 
-    if "csv_data" in st.session_state and st.session_state.csv_data is not None:
-        csv_data = st.session_state.csv_data
+#     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
+#         csv_data = st.session_state.csv_data
 
-        try:
-            # 사용자가 선택한 열 이름이 존재하는지 확인
-            if "Pitch" not in csv_data.columns or "Value" not in csv_data.columns:
-                st.warning("'Pitch'와 'Value' 열이 데이터에 포함되어야 합니다.")
-            else:
-                # Pitch와 Value 데이터 추출
-                pitch = csv_data["Pitch"].to_numpy()
-                value = csv_data["Value"].to_numpy()
+#         try:
+#             # 사용자가 선택한 열 이름이 존재하는지 확인
+#             if "Pitch" not in csv_data.columns or "Value" not in csv_data.columns:
+#                 st.warning("'Pitch'와 'Value' 열이 데이터에 포함되어야 합니다.")
+#             else:
+#                 # Pitch와 Value 데이터 추출
+#                 pitch = csv_data["Pitch"].to_numpy()
+#                 value = csv_data["Value"].to_numpy()
 
-                # 분석 파라미터
-                threshold = st.slider("Pitch 기준값", min_value=0, max_value=100, value=70, step=1)
-                near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
+#                 # 분석 파라미터
+#                 threshold = st.slider("Pitch 기준값", min_value=0, max_value=100, value=70, step=1)
+#                 near_zero = st.slider("Pitch 근처 0 값의 임계값", min_value=0, max_value=20, value=5, step=1)
 
-                # 운동 횟수 측정 및 Value 값 저장
-                count = 0
-                values_at_zero = []
-                in_motion = False
+#                 # 운동 횟수 측정 및 Value 값 저장
+#                 count = 0
+#                 values_at_zero = []
+#                 in_motion = False
 
-                for i in range(csv_data.shape[0]):  # CSV 데이터의 행 수를 사용
-                    if pitch[i] >= threshold and not in_motion:
-                        # 운동 시작
-                        in_motion = True
-                    elif pitch[i] <= near_zero and in_motion:
-                        # 운동 종료 시점
-                        in_motion = False
-                        count += 1
-                        values_at_zero.append(value[i])
+#                 for i in range(csv_data.shape[0]):  # CSV 데이터의 행 수를 사용
+#                     if pitch[i] >= threshold and not in_motion:
+#                         # 운동 시작
+#                         in_motion = True
+#                     elif pitch[i] <= near_zero and in_motion:
+#                         # 운동 종료 시점
+#                         in_motion = False
+#                         count += 1
+#                         values_at_zero.append(value[i])
 
-                # 분석 결과 표시
-                st.write(f"운동 반복 횟수: **{count}회**")
-                st.write("운동 종료 시점에서 기록된 Value 값 변화:")
+#                 # 분석 결과 표시
+#                 st.write(f"운동 반복 횟수: **{count}회**")
+#                 st.write("운동 종료 시점에서 기록된 Value 값 변화:")
 
-                # 변화 추이 그래프
-                fig, ax = plt.subplots(figsize=(10, 5))
-                ax.plot(values_at_zero, marker="o", linestyle="-", label="Value 변화 추이")
-                ax.set_title("운동 종료 시점의 Value 변화 추이")
-                ax.set_xlabel("운동 반복 횟수")
-                ax.set_ylabel("Value")
-                ax.legend()
-                ax.grid()
-                st.pyplot(fig)
+#                 # 변화 추이 그래프
+#                 fig, ax = plt.subplots(figsize=(10, 5))
+#                 ax.plot(values_at_zero, marker="o", linestyle="-", label="Value 변화 추이")
+#                 ax.set_title("운동 종료 시점의 Value 변화 추이")
+#                 ax.set_xlabel("운동 반복 횟수")
+#                 ax.set_ylabel("Value")
+#                 ax.legend()
+#                 ax.grid()
+#                 st.pyplot(fig)
 
-        except Exception as e:
-            st.error(f"분석 중 오류 발생: {e}")
-    else:
-        st.warning("CSV 데이터를 먼저 업로드하세요.")
+#         except Exception as e:
+#             st.error(f"분석 중 오류 발생: {e}")
+#     else:
+#         st.warning("CSV 데이터를 먼저 업로드하세요.")
 
-    if st.button("홈으로 돌아가기"):
-        set_page("home")
+#     if st.button("홈으로 돌아가기"):
+#         set_page("home")
 
 
 
