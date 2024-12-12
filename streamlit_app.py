@@ -321,7 +321,7 @@ elif st.session_state.page == "업데이트":
 current_page = st.session_state.page
 
 # Streamlit 페이지 관리
-if current_page == "csv":
+elif current_page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
