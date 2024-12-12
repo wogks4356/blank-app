@@ -3,12 +3,22 @@ import pandas as pd
 
 # Initialize session state for page navigation
 if "page" not in st.session_state:
-    st.session_state.page = "home"
+    st.session_state.page = "start"  # Start page
 
 # Function to set page
 def set_page(page_name):
     st.session_state.page = page_name
 
+# Debugging output
+st.write("현재 페이지 상태:", st.session_state.page)
+
+# Render pages based on the session state
+if st.session_state.page == "start":
+    st.title("📋 앱 시작하기")
+    st.write("이 앱은 운동 선택 및 CSV 데이터를 시각화하는 데 사용됩니다.")
+
+    if st.button("Run"):
+        set_page("home")  # Navigate to the home page
 # 디버깅 출력
 st.write("현재 페이지 상태:", st.session_state.page)
 
