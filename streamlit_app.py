@@ -285,7 +285,7 @@ if current_page == "csv":
                         st.title("📊 운동 분석 결과")
                         st.write("운동 데이터를 기반으로 분석 결과를 표시합니다.")
 
-                     if "csv_data" in st.session_state and st.session_state.csv_data is not None:
+                    if "csv_data" in st.session_state and st.session_state.csv_data is not None:
                         csv_data = st.session_state.csv_data
 
                         try:
