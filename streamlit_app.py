@@ -27,7 +27,7 @@ if st.session_state.page == "start":
 
 elif st.session_state.page == "basis":
     st.title("👧 기본 정보를 입력해줘요~")
-    st.st.write("신체 정보 등을 업로드하세요.")
+    st.write("신체 정보 등을 업로드하세요.")
     age = st.slider('나이', 0, 100) 
     
     st.text('제 나이는' + str(age)+ '세 입니다')
