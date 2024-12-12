@@ -153,7 +153,7 @@ elif st.session_state.page == "업데이트":
     if st.button("홈으로 돌아가기"):
         set_page("home")
 
-elif st.session_state.page == "csv":
+if st.session_state.page == "csv":
     st.title("🎈 CSV 데이터 시각화")
     st.write("CSV 데이터를 업로드하세요.")
 
