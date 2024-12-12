@@ -140,7 +140,7 @@ elif st.session_state.page == "이두":
 elif st.session_state.page == "업데이트":
     st.title("업데이트 예정")
     st.write("Coming soon~")
-    st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK7CPUBKEPw3bw1-Gshtp7e7n0cpK7fFmZYpN4DOo3EuscDLp4inp9rUfjiIU3Oo6u_Cc&usqp=CAU", caption="coming soon~", use_container_width=True)
+    st.image("https://mblogthumb-phinf.pstatic.net/MjAyMDA3MDJfMjk4/MDAxNTkzNjc1MzM5NjIx.OjEij9RK6k3yFrvDhkRC0_3NXmfFqZiHUS1tyv-Fygwg.Wk6unZQiMuqoJeqfrDhIhUNIpiuj3tumQI_WyP7a2Wog.GIF.sjlhome/Despicable_Me_2_2013_1080p_BRRip_x264_AC3-JYK.mkv_001209458.gif?type=w800", caption="coming soon~", use_container_width=True)
 #     st.markdown(
 #     """
 #     <div style="text-align: center;">
