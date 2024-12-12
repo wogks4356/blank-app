@@ -140,8 +140,14 @@ elif st.session_state.page == "이두":
 elif st.session_state.page == "업데이트":
     st.title("업데이트 예정")
     st.write("Coming soon~")
-    st.image("https://img.extmovie.com/files/attach/images/135/615/810/084/632dfbd1e803081a07a3d53f56ad3b83.gif", caption="작업 중", use_container_width=True)
-
+    st.markdown(
+    """
+    <div style="text-align: center;">
+        <img src="https://img.extmovie.com/files/attach/images/135/615/810/084/632dfbd1e803081a07a3d53f56ad3b83.gif" alt="GIF Example" style="width: 100%; max-width: 500px;">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
     if st.button("홈으로 돌아가기"):
         set_page("home")
 
