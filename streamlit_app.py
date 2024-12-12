@@ -21,11 +21,11 @@ if st.session_state.page == "home":
         """
         <style>
         .clickable-image {
-            width: 170px;
+            width: 150px;
             height: 170px;
             object-fit: cover;
             cursor: pointer;
-            margin: 10px;
+            margin: 5px;
         }
         </style>
         """,
