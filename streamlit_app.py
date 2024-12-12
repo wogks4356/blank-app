@@ -140,7 +140,7 @@ elif st.session_state.page == "이두":
 elif st.session_state.page == "업데이트":
     st.title("업데이트 예정")
     st.write("Coming soon~")
-    st.image("https://img.extmovie.com/files/attach/images/135/615/810/084/0de6596f9677fb2a73d50c5cc6c6f83e.gif", caption="coming soon~", use_container_width=True)
+    st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK7CPUBKEPw3bw1-Gshtp7e7n0cpK7fFmZYpN4DOo3EuscDLp4inp9rUfjiIU3Oo6u_Cc&usqp=CAU", caption="coming soon~", use_container_width=True)
 #     st.markdown(
 #     """
 #     <div style="text-align: center;">
