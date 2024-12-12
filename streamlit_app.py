@@ -723,7 +723,7 @@ if st.button("실시간 분석"):
     except Exception as e:
         st.error(f"실시간 분석 중 오류 발생: {e}")
 else:
-st.warning("X축과 Y축을 모두 선택하세요.")
+    st.warning("X축과 Y축을 모두 선택하세요.")
 
 
 
