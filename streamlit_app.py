@@ -401,6 +401,56 @@ if current_page == "csv":
                 st.warning("X축과 Y축을 모두 선택하세요.")
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
+
+            if st.button("실시간 분석"):
+            st.title("📈 실시간 그래프 애니메이션")
+                try:
+                    # Downsample the data for better performance
+                    max_points = 100
+                    if len(csv_data) > max_points:
+                        csv_data = csv_data.iloc[::len(csv_data) // max_points, :]
+            
+                    # Select X and Y axes for real-time visualization
+                    realtime_x_axis = st.selectbox("X 축 선택 (실시간)", csv_data.columns, key="realtime_x_axis")
+                    realtime_y_axis = st.selectbox("Y 축 선택 (실시간)", csv_data.columns, key="realtime_y_axis")
+            
+                    if realtime_x_axis and realtime_y_axis:
+                        # matplotlib Figure 생성
+                        fig, ax = plt.subplots()
+            
+                        # Update 함수 정의 (애니메이션 프레임별 업데이트)
+                        def update(frame):
+                            ax.clear()
+                            x_data = csv_data[realtime_x_axis].iloc[:frame]
+                            y_data = csv_data[realtime_y_axis].iloc[:frame]
+                            ax.plot(x_data, y_data, marker="o", linestyle="-", color="b")
+                            ax.set_xlabel(realtime_x_axis)
+                            ax.set_ylabel(realtime_y_axis)
+                            ax.set_title(f"{realtime_x_axis} vs {realtime_y_axis} - Frame {frame}")
+                            ax.grid(True)
+            
+                        # Limit frames to improve performance
+                        max_frames = min(len(csv_data), 100)
+            
+                        # Create animation
+                        anim = FuncAnimation(fig, update, frames=max_frames, interval=300)
+            
+                        # Save animation as GIF
+                        gif_path = "temp_animation.gif"
+                        anim.save(gif_path, writer="pillow", fps=10)
+            
+                        # Read and display the GIF
+                        with open(gif_path, "rb") as gif_file:
+                            gif_bytes = gif_file.read()
+                        st.image(gif_bytes, caption="시간에 따른 데이터 변화")
+                    else:
+                        st.warning("X축과 Y축을 모두 선택하세요.")
+                except Exception as e:
+                    st.error(f"실시간 분석 중 오류 발생: {e}")
+        else:
+            st.warning("X축과 Y축을 모두 선택하세요.")
+            
+    
     else:
         st.warning("CSV 파일을 업로드하세요.")
 
