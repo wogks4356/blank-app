@@ -37,6 +37,23 @@ def plot_live_graph(csv_path):
         st.error(f"오류 발생: {e}")
 
 
+# 카운트다운 함수 정의
+def show_countdown(total_time=5):
+    countdown_placeholder = st.empty()
+    progress_bar = st.progress(0)
+    
+    for i in range(total_time, 0, -1):
+        countdown_placeholder.markdown(
+            f"<h2 style='text-align: center;'>운동 측정 시작: <span style='color:blue;'>{i}</span>초 후</h2>", 
+            unsafe_allow_html=True
+        )
+        progress_bar.progress((total_time - i + 1) / total_time)
+        time.sleep(1)
+    
+    countdown_placeholder.empty()
+    progress_bar.empty()
+
+
 def update_hight_from_slider():
     st.session_state.hight_input = st.session_state.hight_slider
 
@@ -325,26 +342,30 @@ elif st.session_state.page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
 
         # 초기 상태 설정
-    if "countdown_done" not in st.session_state:
-        st.session_state.countdown_done = False
+    # if "countdown_done" not in st.session_state:
+    #     st.session_state.countdown_done = False
 
-    # 5초 카운트다운 (처음에만 실행)
-    if not st.session_state.countdown_done:
-        countdown_placeholder = st.empty()
-        progress_bar = st.progress(0)
-        total_time = 5  # 총 카운트다운 시간 (초)
+    # # 5초 카운트다운 (처음에만 실행)
+    # if not st.session_state.countdown_done:
+    #     countdown_placeholder = st.empty()
+    #     progress_bar = st.progress(0)
+    #     total_time = 5  # 총 카운트다운 시간 (초)
 
-        for i in range(total_time, 0, -1):
-            countdown_placeholder.markdown(
-                f"<h2 style='text-align: center;'>운동 측정 시작: <span style='color:blue;'>{i}</span>초 후</h2>", 
-                unsafe_allow_html=True
-            )
-            progress_bar.progress((total_time - i + 1) / total_time)
-            time.sleep(1)
+    #     for i in range(total_time, 0, -1):
+    #         countdown_placeholder.markdown(
+    #             f"<h2 style='text-align: center;'>운동 측정 시작: <span style='color:blue;'>{i}</span>초 후</h2>", 
+    #             unsafe_allow_html=True
+    #         )
+    #         progress_bar.progress((total_time - i + 1) / total_time)
+    #         time.sleep(1)
         
-        countdown_placeholder.empty()
-        progress_bar.empty()
-        st.session_state.countdown_done = True  # 카운트다운 완료 상태 저장
+    #     countdown_placeholder.empty()
+    #     progress_bar.empty()
+    #     st.session_state.countdown_done = True  # 카운트다운 완료 상태 저장
+
+     # 버튼을 눌러서 카운트다운 실행
+    if st.button("카운트다운 시작"):
+        show_countdown()  # 카운트다운 함수 호출
 
 
     # CSV 파일 업로드
