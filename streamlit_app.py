@@ -324,19 +324,28 @@ elif st.session_state.page == "업데이트":
 elif st.session_state.page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
 
-    # 5초 카운트다운과 진행 바
-    countdown_placeholder = st.empty()
-    progress_bar = st.progress(0)
-    total_time = 5  # 총 카운트다운 시간 (초)
+        # 초기 상태 설정
+    if "countdown_done" not in st.session_state:
+        st.session_state.countdown_done = False
 
-    for i in range(total_time, 0, -1):
-        countdown_placeholder.markdown(
-            f"<h2 style='text-align: center;'>운동 측정 시작: <span style='color:blue;'>{i}</span>초 후</h2>", 
-            unsafe_allow_html=True
-        )
-        progress_bar.progress((total_time - i + 1) / total_time)
-        time.sleep(1)
-    countdown_placeholder.empty()
+    # 5초 카운트다운 (처음에만 실행)
+    if not st.session_state.countdown_done:
+        countdown_placeholder = st.empty()
+        progress_bar = st.progress(0)
+        total_time = 5  # 총 카운트다운 시간 (초)
+
+        for i in range(total_time, 0, -1):
+            countdown_placeholder.markdown(
+                f"<h2 style='text-align: center;'>운동 측정 시작: <span style='color:blue;'>{i}</span>초 후</h2>", 
+                unsafe_allow_html=True
+            )
+            progress_bar.progress((total_time - i + 1) / total_time)
+            time.sleep(1)
+        
+        countdown_placeholder.empty()
+        progress_bar.empty()
+        st.session_state.countdown_done = True  # 카운트다운 완료 상태 저장
+
 
     # CSV 파일 업로드
     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
