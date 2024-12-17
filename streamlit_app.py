@@ -376,6 +376,7 @@ elif st.session_state.page == "csv":
             show_countdown()  # 카운트다운 실행
             st.session_state.countdown_done = True  # 카운트다운 완료 상태 저장
             st.session_state.show_upload = True  # 파일 업로드 창 표시 상태로 전환
+            st.session_state.show_button = False
             st.button("카운트다운 다시 시작")
     else:
         # 카운트다운 완료 후 "카운트다운 다시 시작" 버튼
