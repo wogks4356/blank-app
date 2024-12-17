@@ -366,13 +366,19 @@ elif st.session_state.page == "csv":
      # 버튼을 눌러서 카운트다운 실행
     # 카운트다운 초기 상태 설정
     if "countdown_done" not in st.session_state:
-        st.session_state.countdown_done = False
+        st.session_state.countdown_done = False  # 카운트다운 완료 여부
 
-    # 카운트다운 실행
+    # 카운트다운 상태에 따른 버튼 표시 및 처리
     if not st.session_state.countdown_done:
+        # 처음 상태에서 "카운트다운 시작" 버튼
         if st.button("카운트다운 시작"):
-            show_countdown()  # 카운트다운 함수 호출
+            show_countdown()  # 카운트다운 실행
             st.session_state.countdown_done = True  # 카운트다운 완료 상태 저장
+    else:
+        # 카운트다운 완료 후 "카운트다운 다시 시작" 버튼
+        if st.button("카운트다운 다시 시작"):
+            st.session_state.countdown_done = False  # 다시 초기 상태로 복원
+
 
     # CSV 파일 업로드 (카운트다운 완료 후 실행)
     if st.session_state.countdown_done:
