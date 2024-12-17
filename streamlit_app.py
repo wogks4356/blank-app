@@ -379,10 +379,10 @@ elif st.session_state.page == "csv":
             st.session_state.show_button = False
             st.button("카운트다운 다시 시작")
     # else:
-        # 카운트다운 완료 후 "카운트다운 다시 시작" 버튼
-        if st.button("카운트다운 다시 시작"):
-            st.session_state.countdown_done = False  # 다시 초기 상태로 복원
-            st.session_state.show_upload = False  # 파일 업로드 창 숨김
+    #     # 카운트다운 완료 후 "카운트다운 다시 시작" 버튼
+            if st.button("카운트다운 다시 시작"):
+                st.session_state.countdown_done = False  # 다시 초기 상태로 복원
+                st.session_state.show_upload = False  # 파일 업로드 창 숨김
         
     # CSV 파일 업로드 (카운트다운 완료 후 실행)
     if st.session_state.countdown_done:
