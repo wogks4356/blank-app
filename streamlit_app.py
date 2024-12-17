@@ -324,6 +324,13 @@ elif st.session_state.page == "업데이트":
 elif st.session_state.page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
 
+    # 5초 카운트 다운
+    countdown_placeholder = st.empty()
+    for i in range(5,0,-1):
+        countdown_placeholder.markdown(f"### 페이지가 시작됩니다: {i}초 후")
+        time.sleep(1)
+    countdown_placeholder.empty()
+
     # CSV 파일 업로드
     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
