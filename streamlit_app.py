@@ -367,6 +367,7 @@ elif st.session_state.page == "csv":
     # 카운트다운 초기 상태 설정
     if "countdown_done" not in st.session_state:
         st.session_state.countdown_done = False  # 카운트다운 완료 여부
+        st.session_state.show_upload = False  # 업로드 창 표시 여부
 
     # 카운트다운 상태에 따른 버튼 표시 및 처리
     if not st.session_state.countdown_done:
@@ -374,16 +375,16 @@ elif st.session_state.page == "csv":
         if st.button("카운트다운 시작"):
             show_countdown()  # 카운트다운 실행
             st.session_state.countdown_done = True  # 카운트다운 완료 상태 저장
-            st.experimental_rerun()  # 상태 변경 즉시 반영
+            st.session_state.show_upload = True  # 파일 업로드 창 표시 상태로 전환
     else:
         # 카운트다운 완료 후 "카운트다운 다시 시작" 버튼
         if st.button("카운트다운 다시 시작"):
             st.session_state.countdown_done = False  # 다시 초기 상태로 복원
-            st.experimental_rerun()  # 상태 변경 즉시 반영
-    
-    # CSV 파일 업로드 (카운트다운 완료 후 실행)
-    if st.session_state.countdown_done:
-        uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+            st.session_state.show_upload = False  # 파일 업로드 창 숨김
+        
+        # CSV 파일 업로드 (카운트다운 완료 후 실행)
+        if st.session_state.countdown_done:
+            uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
     
 
 
