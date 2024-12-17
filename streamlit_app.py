@@ -325,9 +325,12 @@ elif st.session_state.page == "csv":
     st.title("🎈 CSV 데이터의 축 선택 및 정적 그래프")
 
     # 5초 카운트 다운
-    countdown_placeholder = st.empty()
-    for i in range(5,0,-1):
-        countdown_placeholder.markdown(f"### 페이지가 시작됩니다: {i}초 후")
+     countdown_placeholder = st.empty()
+    for i in range(5, 0, -1):
+        countdown_placeholder.markdown(
+            f"<h1 style='text-align: center; color: red;'>운동 측정 시작: {i}초 후</h1>", 
+            unsafe_allow_html=True
+        )
         time.sleep(1)
     countdown_placeholder.empty()
 
