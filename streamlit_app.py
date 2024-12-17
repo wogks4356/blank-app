@@ -364,12 +364,20 @@ elif st.session_state.page == "csv":
     #     st.session_state.countdown_done = True  # 카운트다운 완료 상태 저장
 
      # 버튼을 눌러서 카운트다운 실행
-    if st.button("카운트다운 시작"):
-        show_countdown()  # 카운트다운 함수 호출
+    # 카운트다운 초기 상태 설정
+    if "countdown_done" not in st.session_state:
+        st.session_state.countdown_done = False
 
+    # 카운트다운 실행
+    if not st.session_state.countdown_done:
+        if st.button("카운트다운 시작"):
+            show_countdown()  # 카운트다운 함수 호출
+            st.session_state.countdown_done = True  # 카운트다운 완료 상태 저장
 
-    # CSV 파일 업로드   
-    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+    # CSV 파일 업로드 (카운트다운 완료 후 실행)
+    if st.session_state.countdown_done:
+        uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+
 
     if uploaded_file is not None:
         try:
