@@ -366,7 +366,7 @@ elif st.session_state.page == "csv":
      # 버튼을 눌러서 카운트다운 실행
     # 카운트다운 초기 상태 설정
     if "countdown_done" not in st.session_state:
-    st.session_state.countdown_done = False  # 카운트다운 완료 여부
+        st.session_state.countdown_done = False  # 카운트다운 완료 여부
 
     # 카운트다운 상태에 따른 버튼 표시 및 처리
     if not st.session_state.countdown_done:
