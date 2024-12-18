@@ -294,11 +294,11 @@ elif st.session_state.page == "home":
                 top: -10px;
                 left: {bmi_pos}%;
                 transform: translateX(-50%);
-                width: 20px;
-                height: 20px;
-                background-color: black;
-                border-radius: 50%;
-                border: 2px solid white;
+                width: 0; 
+                height: 0; 
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-top: 15px solid black;  /* 아래 방향 화살표 */
                 z-index: 2;
             }}
         </style>
@@ -310,11 +310,7 @@ elif st.session_state.page == "home":
             <div class="bmi-dot"></div>
         </div>
     """, unsafe_allow_html=True)
-    
-    # 현재 BMI 상태 출력
-    st.write(f"**현재 BMI 상태**: {category}")
-
-    
+        
     # 현재 BMI 상태 출력
     st.write(f"**현재 BMI 상태**: {category}")
     
