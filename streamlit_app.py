@@ -56,15 +56,20 @@ def show_countdown(total_time=5):
 
 def update_hight_from_slider():
     st.session_state.hight_input = st.session_state.hight_slider
+    st.session_state.hight = st.session_state.hight_slider
 
 def update_hight_from_input():
     st.session_state.hight_slider = st.session_state.hight_input
+    st.session_state.hight = st.session_state.hight_input
 
 def update_weight_from_slider():
     st.session_state.weight_input = st.session_state.weight_slider
+    st.session_state.weight = st.session_state.weight_slider
 
 def update_weight_from_input():
     st.session_state.weight_slider = st.session_state.weight_input
+    st.session_state.weight = st.session_state.weight_input
+
 
 # 운동 횟수 계산 함수
 def count_reps(data, time, offset):
