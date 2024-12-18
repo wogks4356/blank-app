@@ -256,16 +256,19 @@ elif st.session_state.page == "home":
     )
 
     # BMI와 BMR 계산
-    bmi = calculate_bmi(st.session_state.weight, st.session_state.hight)
-    bmr = calculate_bmr(st.session_state.sex, st.session_state.weight, st.session_state.hight, st.session_state.age)
-    category = bmi_category(bmi)
-
+    bmi = calculate_bmi(st.session_state.weight, st.session_state.hight)  # BMI 계산
+    bmr = calculate_bmr(st.session_state.sex, st.session_state.weight, st.session_state.hight, st.session_state.age)  # BMR 계산
+    category = bmi_category(bmi)  # BMI 카테고리
+    
+    # BMI 위치 계산
+    bmi_pos = bmi_position(bmi)  # BMI 위치
+    
     # 결과 출력
     st.subheader("📊 결과")
     st.write(f"**BMI (체질량지수)**: {bmi} ({category})")
     st.write(f"**기초대사량 (BMR)**: {bmr} kcal/day")
-
-    # BMI 시각화 부분 수정
+    
+    # BMI 시각화
     st.write("### BMI 분류 및 위치 시각화")
     st.markdown(f"""
         <style>
@@ -307,6 +310,10 @@ elif st.session_state.page == "home":
             <div class="bmi-dot"></div>
         </div>
     """, unsafe_allow_html=True)
+    
+    # 현재 BMI 상태 출력
+    st.write(f"**현재 BMI 상태**: {category}")
+
     
     # 현재 BMI 상태 출력
     st.write(f"**현재 BMI 상태**: {category}")
