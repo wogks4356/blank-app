@@ -131,9 +131,6 @@ def bmi_position(bmi):
     position = (bmi - min_bmi) / (max_bmi - min_bmi) * 100  # 퍼센트로 변환
     return min(max(position, 0), 100)  # 0~100 범위 제한
 
-# BMI에 따라 점의 위치 결정
-bmi_pos = bmi_position(bmi)
-
 # csv_data = pd.read_csv('data.csv')
 # st.session_state.csv_data = csv_data  # Store data in session state
 # st.write("업로드된 데이터 (처음 100줄):")
@@ -262,6 +259,9 @@ elif st.session_state.page == "home":
     
     # BMI 위치 계산
     bmi_pos = bmi_position(bmi)  # BMI 위치
+
+    # BMI에 따라 점의 위치 결정
+    bmi_pos = bmi_position(bmi)
     
     # 결과 출력
     st.subheader("📊 결과")
