@@ -265,11 +265,11 @@ elif st.session_state.page == "home":
     
     # 결과 출력
     st.subheader("📊 결과")
-    st.write(f"**BMI (체질량지수)**: {bmi} ({category})")
-    st.write(f"**기초대사량 (BMR)**: {bmr} kcal/day")
+    st.write(f"**표준 BMI (체질량지수)**: {bmi} ({category})")
+    st.write(f"**표준 기초대사량 (BMR)**: {bmr} kcal/day")
     
     # BMI 시각화
-    st.write("### BMI 분류 및 위치 시각화")
+    st.write("### 표준 BMI 분류 및 위치 시각화")
     st.markdown(f"""
         <style>
             .bmi-bar {{ 
