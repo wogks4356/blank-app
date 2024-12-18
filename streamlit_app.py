@@ -95,6 +95,28 @@ def count_reps(data, time, offset):
     return reps, below_times, above_times
 
 
+# BMI 계산 함수
+def calculate_bmi(weight, height):
+    height_m = height / 100  # cm를 m로 변환
+    return round(weight / (height_m ** 2), 2)
+
+# BMR 계산 함수
+def calculate_bmr(sex, weight, height, age):
+    if sex == '남성':
+        return round(88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age), 2)
+    else:
+        return round(447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age), 2)
+
+# BMI 범위 판정 함수
+def bmi_category(bmi):
+    if bmi < 18.5:
+        return "저체중"
+    elif 18.5 <= bmi < 23:
+        return "정상"
+    elif 23 <= bmi < 25:
+        return "과체중"
+    else:
+        return "비만"
 
 # csv_data = pd.read_csv('data.csv')
 # st.session_state.csv_data = csv_data  # Store data in session state
@@ -210,13 +232,54 @@ elif st.session_state.page == "basis":
 
 elif st.session_state.page == "home":
     st.title("🏋️‍♂️ 운동 선택 및 데이터 시각화")
-    st.text(
-        '저는 ' +  str(st.session_state.sex) + '이며 ' +
-        str(st.session_state.age) + '세, ' +
-        str(st.session_state.hight) + 'cm, ' +
-        str(st.session_state.weight) + 'kg 입니다.'
-    ) 
 
+    # 입력 데이터 출력
+    st.text(
+        f"저는 {st.session_state.sex}이며, {st.session_state.age}세, "
+        f"{st.session_state.hight}cm, {st.session_state.weight}kg 입니다."
+    )
+
+    # BMI와 BMR 계산
+    bmi = calculate_bmi(st.session_state.weight, st.session_state.hight)
+    bmr = calculate_bmr(st.session_state.sex, st.session_state.weight, st.session_state.hight, st.session_state.age)
+    category = bmi_category(bmi)
+
+    # 결과 출력
+    st.subheader("📊 결과")
+    st.write(f"**BMI (체질량지수)**: {bmi} ({category})")
+    st.write(f"**기초대사량 (BMR)**: {bmr} kcal/day")
+
+    # BMI 시각화
+    st.write("### BMI 분류")
+    st.markdown("""
+    <style>
+        .bmi-bar { 
+            display: flex; 
+            height: 30px;
+            width: 100%;
+        }
+        .bmi-bar div { 
+            flex: 1; 
+            text-align: center; 
+            line-height: 30px;
+            font-weight: bold;
+            color: white;
+        }
+        .underweight { background-color: #4da3ff; }
+        .normal { background-color: #9dd06e; }
+        .overweight { background-color: #f0a94e; }
+        .obese { background-color: #e85c4e; }
+    </style>
+    <div class="bmi-bar">
+        <div class="underweight">저체중</div>
+        <div class="normal">정상</div>
+        <div class="overweight">과체중</div>
+        <div class="obese">비만</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write(f"**현재 BMI 상태**: {category}")
+    
     # 첫 번째 항목: 삼두
     col2, col1 = st.columns([1, 2])  # 비율 설정: 버튼 1, 이미지 2
     with col1:
