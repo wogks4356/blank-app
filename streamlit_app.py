@@ -108,9 +108,9 @@ def calculate_bmi(weight, height):
 # BMR 계산 함수
 def calculate_bmr(sex, weight, height, age):
     if sex == '남성':
-        return round(88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age), 2)
+        return round(66.5 + (13.75 * weight) + (5.003 * height) - (6.75 * age), 2)
     else:
-        return round(447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age), 2)
+        return round(655.1 + (9.563 * weight) + (1.850 * height) - (4.676 * age), 2)
 
 # BMI 범위 판정 함수
 def bmi_category(bmi):
