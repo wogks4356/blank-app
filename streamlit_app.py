@@ -123,6 +123,17 @@ def bmi_category(bmi):
     else:
         return "비만"
 
+# BMI 점의 위치를 계산하는 함수
+def bmi_position(bmi):
+    # BMI 범위: 저체중(0-18.5), 정상(18.5-23), 과체중(23-25), 비만(25-40+)
+    min_bmi = 0
+    max_bmi = 40
+    position = (bmi - min_bmi) / (max_bmi - min_bmi) * 100  # 퍼센트로 변환
+    return min(max(position, 0), 100)  # 0~100 범위 제한
+
+# BMI에 따라 점의 위치 결정
+bmi_pos = bmi_position(bmi)
+
 # csv_data = pd.read_csv('data.csv')
 # st.session_state.csv_data = csv_data  # Store data in session state
 # st.write("업로드된 데이터 (처음 100줄):")
@@ -254,35 +265,50 @@ elif st.session_state.page == "home":
     st.write(f"**BMI (체질량지수)**: {bmi} ({category})")
     st.write(f"**기초대사량 (BMR)**: {bmr} kcal/day")
 
-    # BMI 시각화
-    st.write("### BMI 분류")
-    st.markdown("""
-    <style>
-        .bmi-bar { 
-            display: flex; 
-            height: 30px;
-            width: 100%;
-        }
-        .bmi-bar div { 
-            flex: 1; 
-            text-align: center; 
-            line-height: 30px;
-            font-weight: bold;
-            color: white;
-        }
-        .underweight { background-color: #4da3ff; }
-        .normal { background-color: #9dd06e; }
-        .overweight { background-color: #f0a94e; }
-        .obese { background-color: #e85c4e; }
-    </style>
-    <div class="bmi-bar">
-        <div class="underweight">저체중</div>
-        <div class="normal">정상</div>
-        <div class="overweight">과체중</div>
-        <div class="obese">비만</div>
-    </div>
+    # BMI 시각화 부분 수정
+    st.write("### BMI 분류 및 위치 시각화")
+    st.markdown(f"""
+        <style>
+            .bmi-bar {{ 
+                display: flex; 
+                position: relative;
+                height: 30px;
+                width: 100%;
+            }}
+            .bmi-bar div {{ 
+                flex: 1; 
+                text-align: center; 
+                line-height: 30px;
+                font-weight: bold;
+                color: white;
+            }}
+            .underweight {{ background-color: #4da3ff; }}
+            .normal {{ background-color: #9dd06e; }}
+            .overweight {{ background-color: #f0a94e; }}
+            .obese {{ background-color: #e85c4e; }}
+            .bmi-dot {{
+                position: absolute;
+                top: -10px;
+                left: {bmi_pos}%;
+                transform: translateX(-50%);
+                width: 20px;
+                height: 20px;
+                background-color: black;
+                border-radius: 50%;
+                border: 2px solid white;
+                z-index: 2;
+            }}
+        </style>
+        <div class="bmi-bar">
+            <div class="underweight">저체중</div>
+            <div class="normal">정상</div>
+            <div class="overweight">과체중</div>
+            <div class="obese">비만</div>
+            <div class="bmi-dot"></div>
+        </div>
     """, unsafe_allow_html=True)
-
+    
+    # 현재 BMI 상태 출력
     st.write(f"**현재 BMI 상태**: {category}")
     
     # 첫 번째 항목: 삼두
