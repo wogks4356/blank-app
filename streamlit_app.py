@@ -5,6 +5,7 @@ from matplotlib.animation import FuncAnimation
 import numpy
 import base64
 from scipy.signal import savgol_filter, find_peaks
+from sklearn.linear_model import LinearRegression
 
 import streamlit as st
 import pandas as pd
@@ -1105,14 +1106,14 @@ if st.session_state.page == "rs":
             # 필요한 열 확인
             if 'Time (ms)' in data.columns and 'Envelope' in data.columns:
                 # 데이터 정규화
-                envelope = data['Envelope'] * 200 / np.max(data['Envelope'])
+                envelope = data['Envelope'] * 200 / numpy.max(data['Envelope'])
                 time_in_seconds = data['Time (ms)'] * 0.001
     
                 # 키와 값 준비
-                keys_array = np.arange(len(data))
+                keys_array = numpy.arange(len(data))
                 keys = keys_array.reshape(-1, 1)
                 normalized_results = {i: v for i, v in zip(keys_array, envelope)}
-                values = np.array(list(normalized_results.values())) * 100
+                values = numpy.array(list(normalized_results.values())) * 100
     
                 # 선형 회귀 수행
                 model = LinearRegression()
