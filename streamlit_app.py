@@ -442,7 +442,7 @@ elif st.session_state.page == "업데이트":
     st.markdown(
         """
         <div style="position: fixed; bottom: 10px; right: 10px;">
-            <img src="https://your-small-image-url-here.com/small-image.gif" style="width: 100px; height: auto;">
+            <img src="fe3b41ff75f4e1e73d48ae338fbc80b2.gif" style="width: 100px; height: auto;">
         </div>
         """,
         unsafe_allow_html=True
