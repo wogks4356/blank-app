@@ -43,7 +43,7 @@ def plot_live_graph(csv_path):
 
 
 # 카운트다운 함수 정의
-def show_countdown(total_time=5):
+def show_countdown(total_time=30):
     countdown_placeholder = st.empty()
     progress_bar = st.progress(0)
     
