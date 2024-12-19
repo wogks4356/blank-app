@@ -625,7 +625,7 @@ elif st.session_state.page == "realtime":
             max_frames = min(len(csv_data), 100)
 
             # Create animation
-            anim = FuncAnimation(fig, update, frames=max_frames, interval=500)
+            anim = FuncAnimation(fig, update, frames=max_frames, interval=100)
 
             # Save animation as GIF
             gif_path = "temp_animation.gif"
