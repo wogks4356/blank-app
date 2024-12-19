@@ -164,7 +164,7 @@ if st.session_state.page == "start":
     st.title("📋 앱 시작하기")
     st.text("이 앱은 운동 선택 및 CSV 데이터를 시각화하는 데 사용됩니다.")
     st.image("KakaoTalk_20241212_230003394.png")
-    with open("a39da85f22af0926a84525350928d076.gif", "rb") as image_file:
+    with open("fe3b41ff75f4e1e73d48ae338fbc80b2.gif", "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
         
         # Base64 이미지 삽입
