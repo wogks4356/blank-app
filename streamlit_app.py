@@ -450,17 +450,17 @@ elif st.session_state.page == "업데이트":
     st.write("Coming soon~")
     # 이미지 파일을 Base64로 변환
     with open("fe3b41ff75f4e1e73d48ae338fbc80b2.gif", "rb") as image_file:
-    encoded_string = base64.b64encode(image_file.read()).decode()
-    
-    Base64 이미지 삽입
-    st.markdown(
-        f"""
-        <div style="position: fixed; bottom: 10px; left: 10px;">
-            <img src="data:image/gif;base64,{encoded_string}" style="width: 100px; height: auto;">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        encoded_string = base64.b64encode(image_file.read()).decode()
+        
+        Base64 이미지 삽입
+        st.markdown(
+            f"""
+            <div style="position: fixed; bottom: 10px; left: 10px;">
+                <img src="data:image/gif;base64,{encoded_string}" style="width: 100px; height: auto;">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 #     st.markdown(
 #     """
 #     <div style="text-align: center;">
