@@ -452,7 +452,7 @@ elif st.session_state.page == "업데이트":
     with open("fe3b41ff75f4e1e73d48ae338fbc80b2.gif", "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
         
-        Base64 이미지 삽입
+        # Base64 이미지 삽입
         st.markdown(
             f"""
             <div style="position: fixed; bottom: 10px; left: 10px;">
