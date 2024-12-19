@@ -418,7 +418,7 @@ elif st.session_state.page == "삼두":
         set_page("home")
         
     if st.button("분석"):
-        set_page("rr")
+        set_page("rs")
     
 
 elif st.session_state.page == "사레레":
@@ -1082,3 +1082,91 @@ elif st.session_state.page == "rr":
         st.error(f"오류가 발생했습니다: {e}")
 else:
     st.warning("CSV 파일을 업로드하세요.")
+
+elif st.session_state.page == "rs":
+    st.title("📊 실제 분석 페이지")
+    st.write("업로드된 데이터를 기반으로 실제 분석을 수행합니다.")
+
+    # CSV 파일 업로드
+    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+
+    if uploaded_file is not None:
+        try:
+            # CSV 데이터 읽기
+            csv_data = pd.read_csv(uploaded_file)
+            st.session_state.csv_data = csv_data  # 세션 상태에 저장
+            st.write("업로드된 데이터 (처음 100줄):")
+            st.dataframe(csv_data.head(100))  # 데이터 표시
+
+            # X축과 Y축 선택
+            x_axis = st.selectbox("X 축 선택", csv_data.columns, key="rs_x_axis")
+            y_axis = st.selectbox("Y 축 선택", csv_data.columns, key="rs_y_axis")
+
+            if x_axis and y_axis:
+                # 데이터 시각화
+                st.write("선택된 축을 기반으로 데이터 시각화:")
+                fig, ax = plt.subplots(figsize=(10, 5))
+                ax.plot(csv_data[x_axis], csv_data[y_axis], label=f"{y_axis} vs {x_axis}")
+                ax.set_xlabel(x_axis)
+                ax.set_ylabel(y_axis)
+                ax.set_title("데이터 시각화")
+                ax.legend()
+                ax.grid()
+                st.pyplot(fig)
+
+                # 분석 옵션
+                analysis_type = st.radio("분석 유형 선택", options=["RR 간격 계산", "데이터 피크 검출", "기타 분석"])
+
+                if analysis_type == "RR 간격 계산":
+                    st.write("RR 간격 계산 수행 중...")
+
+                    try:
+                        # RR 간격 계산 (예시)
+                        time_col = csv_data[x_axis]
+                        rr_intervals = time_col.diff().dropna()  # 시간 간격 계산
+                        st.write(f"RR 간격 (ms): {rr_intervals.describe()}")
+
+                        # 히스토그램
+                        fig, ax = plt.subplots(figsize=(10, 5))
+                        ax.hist(rr_intervals, bins=20, alpha=0.75, color='blue', edgecolor='black')
+                        ax.set_title("RR 간격 분포")
+                        ax.set_xlabel("RR 간격 (ms)")
+                        ax.set_ylabel("빈도")
+                        st.pyplot(fig)
+
+                    except Exception as e:
+                        st.error(f"RR 간격 계산 중 오류 발생: {e}")
+
+                elif analysis_type == "데이터 피크 검출":
+                    st.write("데이터 피크 검출 수행 중...")
+
+                    try:
+                        # 피크 검출
+                        from scipy.signal import find_peaks
+
+                        peaks, _ = find_peaks(csv_data[y_axis].values, height=0)  # 피크 찾기
+                        st.write(f"검출된 피크 수: {len(peaks)}")
+
+                        # 피크 시각화
+                        fig, ax = plt.subplots(figsize=(10, 5))
+                        ax.plot(csv_data[x_axis], csv_data[y_axis], label=f"{y_axis} vs {x_axis}")
+                        ax.plot(csv_data[x_axis].iloc[peaks], csv_data[y_axis].iloc[peaks], "x", label="피크")
+                        ax.set_xlabel(x_axis)
+                        ax.set_ylabel(y_axis)
+                        ax.set_title("피크 검출 결과")
+                        ax.legend()
+                        ax.grid()
+                        st.pyplot(fig)
+
+                    except Exception as e:
+                        st.error(f"피크 검출 중 오류 발생: {e}")
+
+                elif analysis_type == "기타 분석":
+                    st.write("기타 사용자 정의 분석 기능은 여기에 추가할 수 있습니다.")
+
+            else:
+                st.warning("X축과 Y축을 모두 선택하세요.")
+        except Exception as e:
+            st.error(f"CSV 파일 처리 중 오류 발생: {e}")
+    else:
+        st.warning("CSV 파일을 업로드하세요.")
