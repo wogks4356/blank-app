@@ -1056,8 +1056,9 @@ elif st.session_state.page == "rr":
             y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
 
             if x_axis and y_axes:
-                # 실시간 업데이트 주기 설정
+                # 실시간 업데이트 주기 및 데이터 범위 설정
                 refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=1, max_value=10, value=3)
+                window_size = st.slider("표시할 데이터 범위 (개수)", min_value=1, max_value=50, value=10)
 
                 # 데이터 추가를 시뮬레이션하기 위해 데이터프레임 복제
                 simulated_data = csv_data.copy()
@@ -1065,7 +1066,7 @@ elif st.session_state.page == "rr":
                 # 실시간 그래프를 위한 컨테이너
                 placeholder = st.empty()
 
-                st.write("실시간 그래프 (데이터 시뮬레이션)")
+                st.write("실시간 그래프 (슬라이딩 윈도우)")
 
                 # 버튼 상태 초기화
                 if "run_live_graph" not in st.session_state:
@@ -1082,15 +1083,21 @@ elif st.session_state.page == "rr":
                         st.session_state.run_live_graph = False
 
                 # 실시간 그래프 실행
+                start_index = 0
                 while st.session_state.run_live_graph:
                     # 데이터 갱신 (여기서는 임의로 데이터 추가)
                     new_row = pd.DataFrame([{col: np.random.randn() for col in csv_data.columns}])
                     new_row[x_axis] = simulated_data[x_axis].max() + 1
                     simulated_data = pd.concat([simulated_data, new_row], ignore_index=True)
 
+                    # 슬라이딩 윈도우 데이터 선택
+                    end_index = len(simulated_data)
+                    start_index = max(0, end_index - window_size)
+                    sliding_window_data = simulated_data.iloc[start_index:end_index]
+
                     # 그래프 업데이트
                     with placeholder.container():
-                        chart_data = simulated_data[[x_axis] + y_axes].set_index(x_axis)
+                        chart_data = sliding_window_data[[x_axis] + y_axes].set_index(x_axis)
                         st.line_chart(chart_data)
 
                     # 주기적으로 새로고침
