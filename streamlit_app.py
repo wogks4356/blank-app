@@ -1090,102 +1090,58 @@ if "page" not in st.session_state:
     st.session_state.page = "rs"
 
 if st.session_state.page == "rs":
-    st.title("📊 Real Analysis Page")
-    st.write("Perform actual analysis based on the uploaded data.")
-
+    # 페이지 제목
+    st.title("📊 Muscle Fatigue Analysis")
+    st.write("Analyze muscle fatigue using regression and graph plotting.")
+    
     # CSV 파일 업로드
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
-
+    
     if uploaded_file is not None:
         try:
-            # CSV 데이터 읽기
-            csv_data = pd.read_csv(uploaded_file)
-            st.session_state.csv_data = csv_data  # 세션 상태에 저장
-            st.write("Uploaded Data (First 100 rows):")
-            st.dataframe(csv_data.head(100))  # 데이터 표시
-
-            # X축과 Y축 선택
-            x_axis = st.selectbox("Select X-axis", csv_data.columns, key="rs_x_axis")
-            y_axis = st.selectbox("Select Y-axis", csv_data.columns, key="rs_y_axis")
-
-            if x_axis and y_axis:
-                # 데이터 시각화 버튼
-                if st.button("Visualize Data"):
-                    st.write("Data visualization based on selected axes:")
-                    fig, ax = plt.subplots(figsize=(10, 5))
-                    ax.plot(csv_data[x_axis], csv_data[y_axis], label=f"{y_axis} vs {x_axis}")
-                    ax.set_xlabel(x_axis)
-                    ax.set_ylabel(y_axis)
-                    ax.set_title("Data Visualization")
-                    ax.legend()
-                    ax.grid()
+            # 데이터 로드
+            data = pd.read_csv(uploaded_file)
+            
+            # 필요한 열 확인
+            if 'Time (ms)' in data.columns and 'Envelope' in data.columns:
+                # 데이터 정규화
+                envelope = data['Envelope'] * 200 / np.max(data['Envelope'])
+                time_in_seconds = data['Time (ms)'] * 0.001
+    
+                # 키와 값 준비
+                keys_array = np.arange(len(data))
+                keys = keys_array.reshape(-1, 1)
+                normalized_results = {i: v for i, v in zip(keys_array, envelope)}
+                values = np.array(list(normalized_results.values())) * 100
+    
+                # 선형 회귀 수행
+                model = LinearRegression()
+                model.fit(keys, values)
+                predicted_values = model.predict(keys)
+                slope = model.coef_[0]
+    
+                # 분석 실행 버튼
+                if st.button("Perform Regression Analysis"):
+                    st.write(f"**Slope (Muscle Fatigue)**: {slope:.4f}")
+    
+                    # 그래프 그리기
+                    fig, ax = plt.subplots(figsize=(6, 6))
+                    ax.plot(time_in_seconds, envelope, label="Normalized Envelope", color="blue")
+                    ax.scatter(time_in_seconds[keys_array], values, color="blue", label="Original Data")
+                    ax.plot(time_in_seconds[keys_array], predicted_values, color="red", label="Linear Regression")
+    
+                    # 그래프 라벨 및 제목
+                    ax.set_title(f"Muscle Fatigue Slope = {slope:.4f}", fontsize=16)
+                    ax.set_xlabel("Time (s)", fontsize=12)
+                    ax.set_ylabel("Envelope Value (Percentage)", fontsize=12)
+                    ax.legend(fontsize=12)
+                    ax.grid(True)
+    
+                    # 그래프 표시
                     st.pyplot(fig)
-
-                # 분석 옵션
-                analysis_type = st.radio("Choose analysis type", options=["Peak and Valley Analysis", "Other Analysis"])
-
-                if analysis_type == "Peak and Valley Analysis":
-                    if st.button("Analyze Peaks and Valleys"):
-                        try:
-                            # Step 1: Smooth the data using Savitzky-Golay filter
-                            smoothed_data = savgol_filter(csv_data[y_axis], window_length=300, polyorder=2)
-
-                            # Step 2: Find peaks (upper peaks)
-                            peaks, _ = find_peaks(smoothed_data, height=50, distance=100)
-
-                            # Step 3: Find valleys (lower peaks)
-                            inverted_data = -smoothed_data
-                            valleys, _ = find_peaks(inverted_data, height=-50, distance=100)
-
-                            # Step 4: Pair each upper peak with its closest lower peaks on both sides
-                            peak_valley_pairs = []
-                            for peak_idx in peaks:
-                                # Find the closest valley to the left
-                                left_valleys = valleys[valleys < peak_idx]
-                                left_valley = left_valleys[-1] if len(left_valleys) > 0 else None
-
-                                # Find the closest valley to the right
-                                right_valleys = valleys[valleys > peak_idx]
-                                right_valley = right_valleys[0] if len(right_valleys) > 0 else None
-
-                                # Add the pair (upper peak, left valley, right valley)
-                                peak_valley_pairs.append((peak_idx, left_valley, right_valley))
-
-                            # Display the pairs
-                            st.write("Peak-Valley Pairs:")
-                            for i, (peak, left, right) in enumerate(peak_valley_pairs):
-                                st.write(f"Peak {i + 1}: Index = {peak}, Left Valley = {left}, Right Valley = {right}")
-
-                            # Step 5: Plot the data with peaks and valleys
-                            fig, ax = plt.subplots(figsize=(12, 6))
-                            ax.plot(smoothed_data, label='Smoothed Data', linewidth=2)
-                            ax.plot(peaks, smoothed_data[peaks], "x", label='Peaks', color='red')
-                            ax.plot(valleys, smoothed_data[valleys], "o", label='Valleys', color='blue')
-
-                            # Annotate the pairs on the plot
-                            for peak, left, right in peak_valley_pairs:
-                                if left is not None:
-                                    ax.plot(left, smoothed_data[left], "o", color='green')  # Highlight left valley
-                                if right is not None:
-                                    ax.plot(right, smoothed_data[right], "o", color='purple')  # Highlight right valley
-
-                            ax.set_title('Peaks and Valleys Analysis')
-                            ax.set_xlabel('Index')
-                            ax.set_ylabel('Value')
-                            ax.legend()
-                            ax.grid()
-                            st.pyplot(fig)
-
-                        except Exception as e:
-                            st.error(f"Error during analysis: {e}")
-
-                elif analysis_type == "Other Analysis":
-                    st.write("You can add more custom analysis functions here.")
-
             else:
-                st.warning("Please select both X-axis and Y-axis.")
-
+                st.error("The required columns ('Time (ms)', 'Envelope') are not found in the uploaded data.")
         except Exception as e:
-            st.error(f"Error processing the file: {e}")
+            st.error(f"An error occurred: {e}")
     else:
         st.info("Please upload a CSV file.")
