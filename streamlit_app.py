@@ -17,18 +17,6 @@ import matplotlib.pyplot as plt
 
 from PIL import Image
 
-# 이미지 크기 축소
-def compress_image(file_path, output_path, max_width=100):
-    img = Image.open(file_path)
-    width, height = img.size
-
-    if width > max_width:
-        ratio = max_width / width
-        new_size = (int(width * ratio), int(height * ratio))
-        img = img.resize(new_size, Image.ANTIALIAS)
-    
-    img.save(output_path, optimize=True, quality=85)
-    return output_path
 
 @st.cache_data
 def get_base64_image(file_path):
@@ -466,7 +454,7 @@ elif st.session_state.page == "업데이트":
     # st.image("https://mblogthumb-phinf.pstatic.net/MjAyMDA3MDJfMjk4/MDAxNTkzNjc1MzM5NjIx.OjEij9RK6k3yFrvDhkRC0_3NXmfFqZiHUS1tyv-Fygwg.Wk6unZQiMuqoJeqfrDhIhUNIpiuj3tumQI_WyP7a2Wog.GIF.sjlhome/Despicable_Me_2_2013_1080p_BRRip_x264_AC3-JYK.mkv_001209458.gif?type=w800", use_container_width=True)
     st.write("Coming soon~")
     # 이미지 파일을 Base64로 변환
-    # with open("fe3b41ff75f4e1e73d48ae338fbc80b2.gif", "rb") as image_file:
+    with open("fe3b41ff75f4e1e73d48ae338fbc80b2.gif", "rb") as image_file:
     encoded_string = base64.b64encode(image_file.read()).decode()
 
     encoded_string = get_base64_image("fe3b41ff75f4e1e73d48ae338fbc80b2.gif")
