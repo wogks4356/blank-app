@@ -1085,90 +1085,89 @@ elif st.session_state.page == "realtime":
 # else:
 #     st.warning("CSV 파일을 업로드하세요.")
 
-elif st.session_state.page == "rs":
-    st.title("📊 실제 분석 페이지")
-    st.write("업로드된 데이터를 기반으로 실제 분석을 수행합니다.")
+# Streamlit session-based structure
+if st.session_state.page == "rs":
+    st.title("📊 Real Analysis Page")
+    st.write("Perform actual analysis based on the uploaded data.")
 
-    # CSV 파일 업로드
-    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+    # CSV file upload
+    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
     if uploaded_file is not None:
         try:
-            # CSV 데이터 읽기
+            # Read CSV data
             csv_data = pd.read_csv(uploaded_file)
-            st.session_state.csv_data = csv_data  # 세션 상태에 저장
-            st.write("업로드된 데이터 (처음 100줄):")
-            st.dataframe(csv_data.head(100))  # 데이터 표시
+            st.session_state.csv_data = csv_data  # Save in session state
+            st.write("Uploaded data (first 100 rows):")
+            st.dataframe(csv_data.head(100))  # Display data
 
-            # X축과 Y축 선택
-            x_axis = st.selectbox("X 축 선택", csv_data.columns, key="rs_x_axis")
-            y_axis = st.selectbox("Y 축 선택", csv_data.columns, key="rs_y_axis")
+            # Select X-axis and Y-axis
+            x_axis = st.selectbox("Select X-axis", csv_data.columns, key="rs_x_axis")
+            y_axis = st.selectbox("Select Y-axis", csv_data.columns, key="rs_y_axis")
 
             if x_axis and y_axis:
-                # 데이터 시각화
-                st.write("선택된 축을 기반으로 데이터 시각화:")
+                # Data visualization
+                st.write("Data visualization based on selected axes:")
                 fig, ax = plt.subplots(figsize=(10, 5))
                 ax.plot(csv_data[x_axis], csv_data[y_axis], label=f"{y_axis} vs {x_axis}")
                 ax.set_xlabel(x_axis)
                 ax.set_ylabel(y_axis)
-                ax.set_title("데이터 시각화")
+                ax.set_title("Data Visualization")
                 ax.legend()
                 ax.grid()
                 st.pyplot(fig)
 
-                # 분석 옵션
-                analysis_type = st.radio("분석 유형 선택", options=["RR 간격 계산", "데이터 피크 검출", "기타 분석"])
+                # Analysis options
+                analysis_type = st.radio("Select Analysis Type", options=["RR Interval Calculation", "Peak Detection", "Other Analysis"])
 
-                if analysis_type == "RR 간격 계산":
-                    st.write("RR 간격 계산 수행 중...")
+                if analysis_type == "RR Interval Calculation":
+                    st.write("Performing RR interval calculation...")
 
                     try:
-                        # RR 간격 계산 (예시)
+                        # RR interval calculation (example)
                         time_col = csv_data[x_axis]
-                        rr_intervals = time_col.diff().dropna()  # 시간 간격 계산
-                        st.write(f"RR 간격 (ms): {rr_intervals.describe()}")
+                        rr_intervals = time_col.diff().dropna()  # Calculate time intervals
+                        st.write(f"RR intervals (ms): {rr_intervals.describe()}")
 
-                        # 히스토그램
+                        # Histogram
                         fig, ax = plt.subplots(figsize=(10, 5))
                         ax.hist(rr_intervals, bins=20, alpha=0.75, color='blue', edgecolor='black')
-                        ax.set_title("RR 간격 분포")
-                        ax.set_xlabel("RR 간격 (ms)")
-                        ax.set_ylabel("빈도")
+                        ax.set_title("RR Interval Distribution")
+                        ax.set_xlabel("RR Interval (ms)")
+                        ax.set_ylabel("Frequency")
                         st.pyplot(fig)
 
                     except Exception as e:
-                        st.error(f"RR 간격 계산 중 오류 발생: {e}")
+                        st.error(f"Error during RR interval calculation: {e}")
 
-                elif analysis_type == "데이터 피크 검출":
-                    st.write("데이터 피크 검출 수행 중...")
+                elif analysis_type == "Peak Detection":
+                    st.write("Performing peak detection...")
 
                     try:
-                        # 피크 검출
-                        from scipy.signal import find_peaks
+                        # Peak detection
+                        peaks, _ = find_peaks(csv_data[y_axis].values, height=0)  # Detect peaks
+                        st.write(f"Number of detected peaks: {len(peaks)}")
 
-                        peaks, _ = find_peaks(csv_data[y_axis].values, height=0)  # 피크 찾기
-                        st.write(f"검출된 피크 수: {len(peaks)}")
-
-                        # 피크 시각화
+                        # Visualize peaks
                         fig, ax = plt.subplots(figsize=(10, 5))
                         ax.plot(csv_data[x_axis], csv_data[y_axis], label=f"{y_axis} vs {x_axis}")
-                        ax.plot(csv_data[x_axis].iloc[peaks], csv_data[y_axis].iloc[peaks], "x", label="피크")
+                        ax.plot(csv_data[x_axis].iloc[peaks], csv_data[y_axis].iloc[peaks], "x", label="Peaks")
                         ax.set_xlabel(x_axis)
                         ax.set_ylabel(y_axis)
-                        ax.set_title("피크 검출 결과")
+                        ax.set_title("Peak Detection Results")
                         ax.legend()
                         ax.grid()
                         st.pyplot(fig)
 
                     except Exception as e:
-                        st.error(f"피크 검출 중 오류 발생: {e}")
+                        st.error(f"Error during peak detection: {e}")
 
-                elif analysis_type == "기타 분석":
-                    st.write("기타 사용자 정의 분석 기능은 여기에 추가할 수 있습니다.")
+                elif analysis_type == "Other Analysis":
+                    st.write("Other custom analysis features can be added here.")
 
             else:
-                st.warning("X축과 Y축을 모두 선택하세요.")
+                st.warning("Please select both X-axis and Y-axis.")
         except Exception as e:
-            st.error(f"CSV 파일 처리 중 오류 발생: {e}")
+            st.error(f"Error while processing the CSV file: {e}")
     else:
-        st.warning("CSV 파일을 업로드하세요.")
+        st.warning("Please upload a CSV file.")
