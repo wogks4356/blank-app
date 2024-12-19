@@ -1038,6 +1038,8 @@ elif st.session_state.page == "rr":
     import time
     
     st.title("🎈 실시간 데이터 업데이트")
+
+    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
     
     if uploaded_file is not None:
         try:
