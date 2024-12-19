@@ -12,10 +12,6 @@ import time
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 
-# 한글 폰트 설정
-font_path = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"  # 서버나 로컬에 있는 한글 폰트 경로
-plt.rc('font', family=fm.FontProperties(fname=font_path).get_name())
-plt.rc('axes', unicode_minus=False)  # 음수 기호가 깨지지 않도록 설정
 
 # CSV 파일 경로 (실시간 업데이트 중인 파일 경로)
 # csv_file_path = "real_time_data.csv"  # 파일 경로를 정확히 지정하세요.
