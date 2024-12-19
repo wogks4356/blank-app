@@ -5,3 +5,5 @@ pillow
 imageio
 scipy
 scikit-learn
+gspread
+oauth2client
