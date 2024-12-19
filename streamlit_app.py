@@ -432,7 +432,7 @@ elif st.session_state.page == "사레레":
         set_page("home")
         
     if st.button("분석"):
-        set_page("csv")
+        set_page("rr")
     
     
 
