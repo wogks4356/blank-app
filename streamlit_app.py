@@ -1039,9 +1039,6 @@ elif st.session_state.page == "rr":
     
     st.title("🎈 실시간 데이터 업데이트")
     
-    # CSV 파일 업로드
-    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
-    
     if uploaded_file is not None:
         # CSV 파일 읽기
         csv_data = pd.read_csv(uploaded_file)
@@ -1070,9 +1067,9 @@ elif st.session_state.page == "rr":
             if st.button("실시간 그래프 시작"):
                 while True:
                     # 데이터 갱신 (여기서는 임의로 데이터 추가)
-                    new_row = {col: np.random.randn() for col in csv_data.columns}
+                    new_row = pd.DataFrame([{col: np.random.randn() for col in csv_data.columns}])
                     new_row[x_axis] = simulated_data[x_axis].max() + 1
-                    simulated_data = simulated_data.append(new_row, ignore_index=True)
+                    simulated_data = pd.concat([simulated_data, new_row], ignore_index=True)
     
                     # 그래프 업데이트
                     with placeholder.container():
@@ -1086,10 +1083,10 @@ elif st.session_state.page == "rr":
                     if st.button("실시간 그래프 중지", key="stop_button"):
                         break
     
-            else:
-                st.warning("X축과 Y축을 모두 선택하세요.")
         else:
-            st.warning("CSV 파일을 업로드하세요.")
+            st.warning("X축과 Y축을 모두 선택하세요.")
+    else:
+        st.warning("CSV 파일을 업로드하세요.")
 
 
     # # CSV 파일 업로드
