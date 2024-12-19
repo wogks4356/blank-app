@@ -1057,7 +1057,7 @@ elif st.session_state.page == "rr":
 
             if x_axis and y_axes:
                 # 실시간 업데이트 주기 및 데이터 범위 설정
-                refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=1, max_value=10, value=3)
+                refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=0.01, max_value=10, value=3)
                 window_size = st.slider("표시할 데이터 범위 (개수)", min_value=1, max_value=50, value=10)
 
                 # 데이터 추가를 시뮬레이션하기 위해 데이터프레임 복제
