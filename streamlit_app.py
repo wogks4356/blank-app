@@ -164,6 +164,18 @@ if st.session_state.page == "start":
     st.title("📋 앱 시작하기")
     st.text("이 앱은 운동 선택 및 CSV 데이터를 시각화하는 데 사용됩니다.")
     st.image("KakaoTalk_20241212_230003394.png")
+    with open("a39da85f22af0926a84525350928d076.gif", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
+        
+        # Base64 이미지 삽입
+        st.markdown(
+            f"""
+            <div style="position: fixed; bottom: 10px; left: 10px;">
+                <img src="data:image/gif;base64,{encoded_string}" style="width: 100px; height: auto;">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     if st.button("Run"):
         set_page("basis")  # Navigate to the home page
 
