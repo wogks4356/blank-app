@@ -1159,8 +1159,8 @@ if st.session_state.page == "rs":
                 normalized_results = {key: value / first_value for key, value in zip(keys_list, values_list)}
     
                 # 선형 회귀
-                keys = np.array(list(normalized_results.keys())).reshape(-1, 1)
-                values = np.array(list(normalized_results.values())) * 100
+                keys = numpy.array(list(normalized_results.keys())).reshape(-1, 1)
+                values = numpy.array(list(normalized_results.values())) * 100
                 model = LinearRegression()
                 model.fit(keys, values)
                 predicted_values = model.predict(keys)
