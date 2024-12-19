@@ -1134,10 +1134,10 @@ if st.session_state.page == "rs":
                     fft_values = fft(segment)
                     frequencies = fftfreq(n, d=1/fs)
                     positive_freqs = frequencies[:n // 2]
-                    power_spectrum = np.abs(fft_values[:n // 2]) ** 2
-                    cumulative_sum = np.cumsum(power_spectrum)
-                    half_power_threshold = np.sum(power_spectrum) / 2
-                    half_power_index = np.where(cumulative_sum >= half_power_threshold)[0][0]
+                    power_spectrum = numpy.abs(fft_values[:n // 2]) ** 2
+                    cumulative_sum = numpy.cumsum(power_spectrum)
+                    half_power_threshold = numpy.sum(power_spectrum) / 2
+                    half_power_index = numpy.where(cumulative_sum >= half_power_threshold)[0][0]
                     return positive_freqs[half_power_index]
     
                 # 샘플링 레이트
