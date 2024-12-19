@@ -14,6 +14,82 @@ import matplotlib.pyplot as plt
 # CSV 파일 경로 (실시간 업데이트 중인 파일 경로)
 # csv_file_path = "real_time_data.csv"  # 파일 경로를 정확히 지정하세요.
 
+
+Base64 이미지를 직접 HTML로 렌더링하는 과정에서 속도가 느려질 수 있는 이유는 다음과 같습니다:
+
+이미지 파일 크기: GIF 파일 또는 이미지 파일 크기가 너무 클 경우 렌더링 시간이 길어질 수 있습니다.
+이미지 변환 프로세스: 파일을 Base64로 변환하고 이를 HTML로 렌더링하는 과정이 비효율적일 수 있습니다.
+아래는 처리 속도를 빠르게 할 수 있는 몇 가지 방법입니다:
+
+1. 이미지 크기 축소
+GIF 파일 또는 이미지를 업로드하기 전에 크기를 축소하거나 압축하여 파일 크기를 줄이세요. Python의 Pillow 라이브러리를 사용하여 크기를 축소할 수 있습니다:
+
+python
+코드 복사
+from PIL import Image
+
+# 이미지 크기 축소
+def compress_image(file_path, output_path, max_width=100):
+    img = Image.open(file_path)
+    width, height = img.size
+
+    if width > max_width:
+        ratio = max_width / width
+        new_size = (int(width * ratio), int(height * ratio))
+        img = img.resize(new_size, Image.ANTIALIAS)
+    
+    img.save(output_path, optimize=True, quality=85)
+    return output_path
+사용 예시:
+
+python
+코드 복사
+compressed_file = compress_image("original.gif", "compressed.gif", max_width=100)
+2. Base64 인코딩 최적화
+이미지를 Base64로 변환하는 대신 이미지를 로컬 또는 외부 URL에서 로드하여 직접 사용하세요. Streamlit에서 이미지 URL을 처리하는 방식이 더 효율적입니다.
+
+python
+코드 복사
+st.image("compressed.gif", caption="Optimized GIF", use_container_width=True)
+3. GIF 파일 최적화
+GIF 파일 최적화 도구를 사용하여 파일 크기를 줄이세요:
+
+Online Tools: EZGIF, Compress-Or-Die
+Python을 활용한 GIF 최적화:
+bash
+코드 복사
+pip install gifsicle
+gifsicle --optimize=3 --colors 256 original.gif > optimized.gif
+4. HTML 대신 Streamlit 기본 기능 사용
+HTML 삽입 대신 Streamlit의 기본 이미지 출력 기능을 사용하면 속도가 더 빠릅니다:
+
+python
+코드 복사
+st.image("compressed.gif", use_column_width=True)
+5. 동적 로드 지연 적용
+페이지가 완전히 로드된 후에 이미지를 렌더링하도록 설정하면 초기 렌더링 속도를 높일 수 있습니다:
+
+python
+코드 복사
+st.markdown(
+    """
+    <div style="position: fixed; bottom: 10px; left: 10px;">
+        <img src="path_to_compressed_image.gif" style="width: 100px; height: auto;" loading="lazy">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+6. 미리 캐싱된 이미지 활용
+st.cache_data를 사용하여 변환된 Base64 데이터를 캐싱하면 반복 렌더링 속도를 향상시킬 수 있습니다:
+
+python
+코드 복사
+@st.cache_data
+def get_base64_image(file_path):
+    with open(file_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
+
+
 # 그래프 업데이트 함수
 def plot_live_graph(csv_path):
     try:
@@ -444,8 +520,18 @@ elif st.session_state.page == "업데이트":
     # st.image("https://mblogthumb-phinf.pstatic.net/MjAyMDA3MDJfMjk4/MDAxNTkzNjc1MzM5NjIx.OjEij9RK6k3yFrvDhkRC0_3NXmfFqZiHUS1tyv-Fygwg.Wk6unZQiMuqoJeqfrDhIhUNIpiuj3tumQI_WyP7a2Wog.GIF.sjlhome/Despicable_Me_2_2013_1080p_BRRip_x264_AC3-JYK.mkv_001209458.gif?type=w800", use_container_width=True)
     st.write("Coming soon~")
     # 이미지 파일을 Base64로 변환
-    with open("fe3b41ff75f4e1e73d48ae338fbc80b2.gif", "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read()).decode()
+    # with open("fe3b41ff75f4e1e73d48ae338fbc80b2.gif", "rb") as image_file:
+    encoded_string = base64.b64encode(image_file.read()).decode()
+
+    encoded_string = get_base64_image("fe3b41ff75f4e1e73d48ae338fbc80b2.gif")
+    st.markdown(
+        f"""
+        <div style="position: fixed; bottom: 10px; left: 10px;">
+            <img src="data:image/gif;base64,{encoded_string}" style="width: 100px; height: auto;">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     
     # Base64 이미지 삽입
     # st.markdown(
