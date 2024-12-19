@@ -155,6 +155,7 @@ def load_csv(file):
 st.write("현재 페이지 상태:", st.session_state.page)
 
 # Render pages based on the session state
+@st.cache_data(show_spinner=True)
 if st.session_state.page == "start":
     st.title("📋 앱 시작하기")
     st.text("이 앱은 운동 선택 및 CSV 데이터를 시각화하는 데 사용됩니다.")
@@ -438,7 +439,6 @@ elif st.session_state.page == "어깨":
 
 elif st.session_state.page == "업데이트":
     st.title("2026년 2월 업데이트 예정")
-    @st.cache_data(show_spinner=True)
     # st.image("https://i.pinimg.com/originals/61/4b/b4/614bb4d7982f87558039fc55fb223ef5.gif",  use_container_width=True)
     # st.image("computer-internet.gif", use_container_width=True)
     st.image("“26 Times Ryan Reynolds Was Really Fucking Funny On Instagram Seriously, give the man a medal_”.gif", use_container_width=True)
