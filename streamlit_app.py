@@ -142,7 +142,6 @@ if "page" not in st.session_state:
     st.session_state.page = "start"  # Initial start page
 
 # Function to set page
-@st.cache_data(show_spinner=True)
 def set_page(page_name):
     st.session_state.page = page_name
 
