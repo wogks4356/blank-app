@@ -20,8 +20,13 @@ from PIL import Image
 
 @st.cache_data
 def get_base64_image(file_path):
-    with open(file_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode()
+    try:
+        with open(file_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+            return encoded_string
+    except Exception as e:
+        st.error(f"이미지 파일 로드 중 오류 발생: {e}")
+        return None
 
 
 # 그래프 업데이트 함수
@@ -454,19 +459,19 @@ elif st.session_state.page == "업데이트":
     # st.image("https://mblogthumb-phinf.pstatic.net/MjAyMDA3MDJfMjk4/MDAxNTkzNjc1MzM5NjIx.OjEij9RK6k3yFrvDhkRC0_3NXmfFqZiHUS1tyv-Fygwg.Wk6unZQiMuqoJeqfrDhIhUNIpiuj3tumQI_WyP7a2Wog.GIF.sjlhome/Despicable_Me_2_2013_1080p_BRRip_x264_AC3-JYK.mkv_001209458.gif?type=w800", use_container_width=True)
     st.write("Coming soon~")
     # 이미지 파일을 Base64로 변환
-    with open("fe3b41ff75f4e1e73d48ae338fbc80b2.gif", "rb") as image_file:
-    encoded_string = base64.b64encode(image_file.read()).decode()
-
     encoded_string = get_base64_image("fe3b41ff75f4e1e73d48ae338fbc80b2.gif")
-    st.markdown(
-        f"""
-        <div style="position: fixed; bottom: 10px; left: 10px;">
-            <img src="data:image/gif;base64,{encoded_string}" style="width: 100px; height: auto;">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
     
+    if encoded_string:  # 변환에 성공한 경우에만 렌더링
+        st.markdown(
+            f"""
+            <div style="position: fixed; bottom: 10px; left: 10px;">
+                <img src="data:image/gif;base64,{encoded_string}" style="width: 100px; height: auto;">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        st.write("이미지를 불러올 수 없습니다.")
     # Base64 이미지 삽입
     # st.markdown(
     #     f"""
