@@ -584,10 +584,10 @@ elif st.session_state.page == "realtime":
                 ax.grid(True)
 
             # Limit frames to improve performance
-            max_frames = min(len(csv_data), 50)
+            max_frames = min(len(csv_data), 100)
 
             # Create animation
-            anim = FuncAnimation(fig, update, frames=max_frames, interval=200)
+            anim = FuncAnimation(fig, update, frames=max_frames, interval=500)
 
             # Save animation as GIF
             gif_path = "temp_animation.gif"
