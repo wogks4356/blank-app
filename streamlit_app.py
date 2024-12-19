@@ -1030,62 +1030,181 @@ elif st.session_state.page == "realtime":
  # Streamlit 앱을 새로고침하여 업데이트 반영
 
 
-elif st.session_state.page == "rr":
-    st.title("🎈 RR 데이터의 축 선택 및 정적 그래프")
+import streamlit as st
+import pandas as pd
+import numpy as np
+import time
 
-    # CSV 파일 업로드
-    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+st.title("🎈 실시간 데이터 업데이트")
 
-    if uploaded_file is not None:
-        csv_file_path = uploaded_file
+# CSV 파일 업로드
+uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
-        st.title("실시간 CSV 데이터 그래프")
-        st.text("실시간으로 업데이트되는 CSV 파일 데이터를 시각화합니다.")
+if uploaded_file is not None:
+    # CSV 파일 읽기
+    csv_data = pd.read_csv(uploaded_file)
 
+    # 데이터 초기화 및 표시
+    st.write("업로드된 데이터:")
+    st.dataframe(csv_data)
+
+    # X축 및 Y축 선택
+    x_axis = st.selectbox("X 축 선택", csv_data.columns)
+    y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+
+    if x_axis and y_axes:
         # 실시간 업데이트 주기 설정
         refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=1, max_value=10, value=3)
-        st.text(f"그래프가 {refresh_rate}초마다 업데이트됩니다.")
 
-        # "그래프 업데이트" 버튼 클릭 시 실시간 데이터 시각화
-        if st.button("그래프 업데이트"):
-            if "last_run_time" not in st.session_state:
-                st.session_state.last_run_time = time.time()
+        # 데이터 추가를 시뮬레이션하기 위해 데이터프레임 복제
+        simulated_data = csv_data.copy()
 
-            current_time = time.time()
-            elapsed_time = current_time - st.session_state.last_run_time
+        # 실시간 그래프를 위한 컨테이너
+        placeholder = st.empty()
 
-            # 주기적으로 그래프를 새로 그림
-            if elapsed_time >= refresh_rate:
-                plot_live_graph(csv_file_path)  # 실시간 데이터를 그래프로 출력
-                st.session_state.last_run_time = current_time
-                st.stop()  # 새로고침 없이 현재 상태 유지
+        st.write("실시간 그래프 (데이터 시뮬레이션)")
+        
+        # 버튼으로 업데이트 시작/중지
+        if st.button("실시간 그래프 시작"):
+            while True:
+                # 데이터 갱신 (여기서는 임의로 데이터 추가)
+                new_row = {col: np.random.randn() for col in csv_data.columns}
+                new_row[x_axis] = simulated_data[x_axis].max() + 1
+                simulated_data = simulated_data.append(new_row, ignore_index=True)
 
-        # 업로드된 CSV 데이터 표시
-        try:
-            if uploaded_file is not None:
-                # Read and display the CSV file
-                csv_data = pd.read_csv(uploaded_file)
-                st.session_state.csv_data = csv_data  # Store data in session state
-                st.write("업로드된 데이터 (처음 100줄):")
-                st.dataframe(csv_data.head(100))  # Display the first 100 rows
-    
-                # X축 및 Y축 선택
-                x_axis = st.selectbox("X 축 선택", csv_data.columns)
-                y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
-    
-                if x_axis and y_axes:
-                    # 그래프 데이터 준비
-                    chart_data = csv_data[[x_axis] + y_axes]
-                    chart_data = chart_data.set_index(x_axis)
-    
-                    # 그래프 그리기
+                # 그래프 업데이트
+                with placeholder.container():
+                    chart_data = simulated_data[[x_axis] + y_axes].set_index(x_axis)
                     st.line_chart(chart_data)
-                else:
-                    st.warning("X축과 Y축을 모두 선택하세요.")
-        except Exception as e:
-            st.error(f"오류가 발생했습니다: {e}")
+
+                # 주기적으로 새로고침
+                time.sleep(refresh_rate)
+
+                # Streamlit 앱 인터럽트를 체크
+                if st.button("실시간 그래프 중지", key="stop_button"):
+                    break
+
+    else:
+        st.warning("X축과 Y축을 모두 선택하세요.")
+else:
+    st.warning("CSV 파일을 업로드하세요.")
+
+
+elif st.session_state.page == "rr":
+    st.title("🎈 RR 데이터의 축 선택 및 정적 그래프")
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    import time
+    
+    st.title("🎈 실시간 데이터 업데이트")
+    
+    # CSV 파일 업로드
+    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+    
+    if uploaded_file is not None:
+        # CSV 파일 읽기
+        csv_data = pd.read_csv(uploaded_file)
+    
+        # 데이터 초기화 및 표시
+        st.write("업로드된 데이터:")
+        st.dataframe(csv_data)
+    
+        # X축 및 Y축 선택
+        x_axis = st.selectbox("X 축 선택", csv_data.columns)
+        y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+    
+        if x_axis and y_axes:
+            # 실시간 업데이트 주기 설정
+            refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=1, max_value=10, value=3)
+    
+            # 데이터 추가를 시뮬레이션하기 위해 데이터프레임 복제
+            simulated_data = csv_data.copy()
+    
+            # 실시간 그래프를 위한 컨테이너
+            placeholder = st.empty()
+    
+            st.write("실시간 그래프 (데이터 시뮬레이션)")
+            
+            # 버튼으로 업데이트 시작/중지
+            if st.button("실시간 그래프 시작"):
+                while True:
+                    # 데이터 갱신 (여기서는 임의로 데이터 추가)
+                    new_row = {col: np.random.randn() for col in csv_data.columns}
+                    new_row[x_axis] = simulated_data[x_axis].max() + 1
+                    simulated_data = simulated_data.append(new_row, ignore_index=True)
+    
+                    # 그래프 업데이트
+                    with placeholder.container():
+                        chart_data = simulated_data[[x_axis] + y_axes].set_index(x_axis)
+                        st.line_chart(chart_data)
+    
+                    # 주기적으로 새로고침
+                    time.sleep(refresh_rate)
+    
+                    # Streamlit 앱 인터럽트를 체크
+                    if st.button("실시간 그래프 중지", key="stop_button"):
+                        break
+    
+        else:
+            st.warning("X축과 Y축을 모두 선택하세요.")
     else:
         st.warning("CSV 파일을 업로드하세요.")
+
+
+    # # CSV 파일 업로드
+    # uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+
+    # if uploaded_file is not None:
+    #     csv_file_path = uploaded_file
+
+    #     st.title("실시간 CSV 데이터 그래프")
+    #     st.text("실시간으로 업데이트되는 CSV 파일 데이터를 시각화합니다.")
+
+    #     # 실시간 업데이트 주기 설정
+    #     refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=1, max_value=10, value=3)
+    #     st.text(f"그래프가 {refresh_rate}초마다 업데이트됩니다.")
+
+    #     # "그래프 업데이트" 버튼 클릭 시 실시간 데이터 시각화
+    #     if st.button("그래프 업데이트"):
+    #         if "last_run_time" not in st.session_state:
+    #             st.session_state.last_run_time = time.time()
+
+    #         current_time = time.time()
+    #         elapsed_time = current_time - st.session_state.last_run_time
+
+    #         # 주기적으로 그래프를 새로 그림
+    #         if elapsed_time >= refresh_rate:
+    #             plot_live_graph(csv_file_path)  # 실시간 데이터를 그래프로 출력
+    #             st.session_state.last_run_time = current_time
+    #             st.stop()  # 새로고침 없이 현재 상태 유지
+
+    #     # 업로드된 CSV 데이터 표시
+    #     try:
+    #         if uploaded_file is not None:
+    #             # Read and display the CSV file
+    #             csv_data = pd.read_csv(uploaded_file)
+    #             st.session_state.csv_data = csv_data  # Store data in session state
+    #             st.write("업로드된 데이터 (처음 100줄):")
+    #             st.dataframe(csv_data.head(100))  # Display the first 100 rows
+    
+    #             # X축 및 Y축 선택
+    #             x_axis = st.selectbox("X 축 선택", csv_data.columns)
+    #             y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+    
+    #             if x_axis and y_axes:
+    #                 # 그래프 데이터 준비
+    #                 chart_data = csv_data[[x_axis] + y_axes]
+    #                 chart_data = chart_data.set_index(x_axis)
+    
+    #                 # 그래프 그리기
+    #                 st.line_chart(chart_data)
+    #             else:
+    #                 st.warning("X축과 Y축을 모두 선택하세요.")
+    #     except Exception as e:
+    #         st.error(f"오류가 발생했습니다: {e}")
+    # else:
+    #     st.warning("CSV 파일을 업로드하세요.")
 
 # 페이지 제목
 if "page" not in st.session_state:
