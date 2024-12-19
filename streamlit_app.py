@@ -1040,51 +1040,53 @@ elif st.session_state.page == "rr":
     st.title("🎈 실시간 데이터 업데이트")
     
     if uploaded_file is not None:
-        # CSV 파일 읽기
-        csv_data = pd.read_csv(uploaded_file)
+        try:
+            # CSV 파일 읽기
+            csv_data = pd.read_csv(uploaded_file)
     
-        # 데이터 초기화 및 표시
-        st.write("업로드된 데이터:")
-        st.dataframe(csv_data)
+            # 데이터 초기화 및 표시
+            st.write("업로드된 데이터:")
+            st.dataframe(csv_data)
     
-        # X축 및 Y축 선택
-        x_axis = st.selectbox("X 축 선택", csv_data.columns)
-        y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+            # X축 및 Y축 선택
+            x_axis = st.selectbox("X 축 선택", csv_data.columns)
+            y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
     
-        if x_axis and y_axes:
-            # 실시간 업데이트 주기 설정
-            refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=1, max_value=10, value=3)
+            if x_axis and y_axes:
+                # 실시간 업데이트 주기 설정
+                refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=1, max_value=10, value=3)
     
-            # 데이터 추가를 시뮬레이션하기 위해 데이터프레임 복제
-            simulated_data = csv_data.copy()
+                # 데이터 추가를 시뮬레이션하기 위해 데이터프레임 복제
+                simulated_data = csv_data.copy()
     
-            # 실시간 그래프를 위한 컨테이너
-            placeholder = st.empty()
+                # 실시간 그래프를 위한 컨테이너
+                placeholder = st.empty()
     
-            st.write("실시간 그래프 (데이터 시뮬레이션)")
-            
-            # 버튼으로 업데이트 시작/중지
-            if st.button("실시간 그래프 시작"):
-                while True:
-                    # 데이터 갱신 (여기서는 임의로 데이터 추가)
-                    new_row = pd.DataFrame([{col: np.random.randn() for col in csv_data.columns}])
-                    new_row[x_axis] = simulated_data[x_axis].max() + 1
-                    simulated_data = pd.concat([simulated_data, new_row], ignore_index=True)
+                st.write("실시간 그래프 (데이터 시뮬레이션)")
+                
+                # 버튼으로 업데이트 시작/중지
+                if st.button("실시간 그래프 시작"):
+                    while True:
+                        # 데이터 갱신 (여기서는 임의로 데이터 추가)
+                        new_row = pd.DataFrame([{col: np.random.randn() for col in csv_data.columns}])
+                        new_row[x_axis] = simulated_data[x_axis].max() + 1
+                        simulated_data = pd.concat([simulated_data, new_row], ignore_index=True)
     
-                    # 그래프 업데이트
-                    with placeholder.container():
-                        chart_data = simulated_data[[x_axis] + y_axes].set_index(x_axis)
-                        st.line_chart(chart_data)
+                        # 그래프 업데이트
+                        with placeholder.container():
+                            chart_data = simulated_data[[x_axis] + y_axes].set_index(x_axis)
+                            st.line_chart(chart_data)
     
-                    # 주기적으로 새로고침
-                    time.sleep(refresh_rate)
+                        # 주기적으로 새로고침
+                        time.sleep(refresh_rate)
     
-                    # Streamlit 앱 인터럽트를 체크
-                    if st.button("실시간 그래프 중지", key="stop_button"):
-                        break
-    
-        else:
-            st.warning("X축과 Y축을 모두 선택하세요.")
+                        # Streamlit 앱 인터럽트를 체크
+                        if st.button("실시간 그래프 중지", key="stop_button"):
+                            break
+            else:
+                st.warning("X축과 Y축을 모두 선택하세요.")
+        except Exception as e:
+            st.error(f"오류가 발생했습니다: {e}")
     else:
         st.warning("CSV 파일을 업로드하세요.")
 
