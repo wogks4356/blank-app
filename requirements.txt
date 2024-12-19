@@ -4,3 +4,4 @@ matplotlib
 pillow
 imageio
 scipy
+scikit-learn
