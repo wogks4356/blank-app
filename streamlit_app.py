@@ -435,6 +435,7 @@ elif st.session_state.page == "어깨":
     if st.button("분석"):
         set_page("csv")
 
+@st.cache_data(show_spinner=True)
 elif st.session_state.page == "업데이트":
     st.title("2026년 2월 업데이트 예정")
     # st.image("https://i.pinimg.com/originals/61/4b/b4/614bb4d7982f87558039fc55fb223ef5.gif",  use_container_width=True)
