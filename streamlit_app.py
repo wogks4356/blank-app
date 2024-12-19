@@ -1108,7 +1108,7 @@ if st.session_state.page == "rs":
             if {'Envelope', 'Time (ms)', 'Value'}.issubset(data.columns):
                 # 데이터 준비
                 data['Time (s)'] = data['Time (ms)'] / 1000
-                envelope_data = data['Envelope'] * 200 / np.max(data['Envelope'])
+                envelope_data = data['Envelope'] * 200 / numpy.max(data['Envelope'])
                 value_data = pd.to_numeric(data['Value'], errors='coerce').dropna()
     
                 # Savitzky-Golay 필터로 스무딩
