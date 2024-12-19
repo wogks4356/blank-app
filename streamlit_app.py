@@ -5,6 +5,7 @@ from matplotlib.animation import FuncAnimation
 import numpy
 import base64
 from scipy.signal import savgol_filter, find_peaks
+from scipy.fft import fft, fftfreq
 from sklearn.linear_model import LinearRegression
 
 import streamlit as st
