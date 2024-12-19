@@ -1092,8 +1092,9 @@ if "page" not in st.session_state:
 
 if st.session_state.page == "rs":
     # 페이지 제목
+    # Streamlit 앱
     st.title("📊 Muscle Fatigue Analysis")
-    st.write("Analyze muscle fatigue using regression and graph plotting.")
+    st.write("Upload a CSV file to analyze muscle fatigue based on envelope and MPF calculations.")
     
     # CSV 파일 업로드
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
@@ -1102,47 +1103,84 @@ if st.session_state.page == "rs":
         try:
             # 데이터 로드
             data = pd.read_csv(uploaded_file)
-            
+    
             # 필요한 열 확인
-            if 'Time (ms)' in data.columns and 'Envelope' in data.columns:
-                # 데이터 정규화
-                envelope = data['Envelope'] * 200 / numpy.max(data['Envelope'])
-                time_in_seconds = data['Time (ms)'] * 0.001
+            if {'Envelope', 'Time (ms)', 'Value'}.issubset(data.columns):
+                # 데이터 준비
+                data['Time (s)'] = data['Time (ms)'] / 1000
+                envelope_data = data['Envelope'] * 200 / np.max(data['Envelope'])
+                value_data = pd.to_numeric(data['Value'], errors='coerce').dropna()
     
-                # 키와 값 준비
-                keys_array = numpy.arange(len(data))
-                keys = keys_array.reshape(-1, 1)
-                normalized_results = {i: v for i, v in zip(keys_array, envelope)}
-                values = numpy.array(list(normalized_results.values())) * 100
+                # Savitzky-Golay 필터로 스무딩
+                smoothed_data = savgol_filter(envelope_data, window_length=300, polyorder=2)
     
-                # 선형 회귀 수행
+                # 피크 및 밸리 탐지
+                peaks, _ = find_peaks(smoothed_data, height=40, distance=100)
+                inverted_data = -smoothed_data
+                valleys, _ = find_peaks(inverted_data, height=-50, distance=100)
+    
+                # 피크와 밸리 짝짓기
+                peak_valley_pairs = []
+                for peak_idx in peaks:
+                    left_valleys = valleys[valleys < peak_idx]
+                    right_valleys = valleys[valleys > peak_idx]
+                    left_valley = left_valleys[-1] if len(left_valleys) > 0 else None
+                    right_valley = right_valleys[0] if len(right_valleys) > 0 else None
+                    peak_valley_pairs.append((peak_idx, left_valley, right_valley))
+    
+                # FFT로 MPF 계산
+                def calculate_mpf_fft(segment, fs):
+                    n = len(segment)
+                    fft_values = fft(segment)
+                    frequencies = fftfreq(n, d=1/fs)
+                    positive_freqs = frequencies[:n // 2]
+                    power_spectrum = np.abs(fft_values[:n // 2]) ** 2
+                    cumulative_sum = np.cumsum(power_spectrum)
+                    half_power_threshold = np.sum(power_spectrum) / 2
+                    half_power_index = np.where(cumulative_sum >= half_power_threshold)[0][0]
+                    return positive_freqs[half_power_index]
+    
+                # 샘플링 레이트
+                sampling_rate = len(data) / data['Time (s)'].iloc[-1]
+    
+                # MPF 계산
+                results = {}
+                for peak, left, right in peak_valley_pairs:
+                    if left is not None and right is not None:
+                        segment_data = data.loc[left:right, 'Value']
+                        mpf = calculate_mpf_fft(segment_data, fs=sampling_rate)
+                        results[peak] = mpf
+    
+                # 결과 정규화
+                keys_list = list(results.keys())
+                values_list = list(results.values())
+                first_value = values_list[0]
+                normalized_results = {key: value / first_value for key, value in zip(keys_list, values_list)}
+    
+                # 선형 회귀
+                keys = np.array(list(normalized_results.keys())).reshape(-1, 1)
+                values = np.array(list(normalized_results.values())) * 100
                 model = LinearRegression()
                 model.fit(keys, values)
                 predicted_values = model.predict(keys)
                 slope = model.coef_[0]
     
-                # 분석 실행 버튼
-                if st.button("Perform Regression Analysis"):
-                    st.write(f"**Slope (Muscle Fatigue)**: {slope:.4f}")
+                # Streamlit에 그래프 시각화
+                st.write("### Muscle Fatigue Analysis Result")
+                fig, ax = plt.subplots(figsize=(8, 6))
+                ax.plot(data['Time (s)'], envelope_data, label='Smoothed Envelope')
+                ax.scatter(data['Time (s)'].iloc[keys_list], values, color='blue', label='Normalized MPF')
+                ax.plot(data['Time (s)'].iloc[keys_list], predicted_values, color='red', label='Linear Regression')
+                ax.set_title(f'Muscle Fatigue Slope = {slope:.4f}')
+                ax.set_xlabel('Time (s)')
+                ax.set_ylabel('Normalized MPF (%)')
+                ax.legend()
+                ax.grid()
     
-                    # 그래프 그리기
-                    fig, ax = plt.subplots(figsize=(6, 6))
-                    ax.plot(time_in_seconds, envelope, label="Normalized Envelope", color="blue")
-                    ax.scatter(time_in_seconds[keys_array], values, color="blue", label="Original Data")
-                    ax.plot(time_in_seconds[keys_array], predicted_values, color="red", label="Linear Regression")
-    
-                    # 그래프 라벨 및 제목
-                    ax.set_title(f"Muscle Fatigue Slope = {slope:.4f}", fontsize=16)
-                    ax.set_xlabel("Time (s)", fontsize=12)
-                    ax.set_ylabel("Envelope Value (Percentage)", fontsize=12)
-                    ax.legend(fontsize=12)
-                    ax.grid(True)
-    
-                    # 그래프 표시
-                    st.pyplot(fig)
+                st.pyplot(fig)
             else:
-                st.error("The required columns ('Time (ms)', 'Envelope') are not found in the uploaded data.")
+                st.error("The required columns ('Envelope', 'Time (ms)', 'Value') are missing in the dataset.")
         except Exception as e:
-            st.error(f"An error occurred: {e}")
+            st.error(f"Error processing the file: {e}")
     else:
-        st.info("Please upload a CSV file.")
+        st.info("Please upload a CSV file to begin the analysis.")
