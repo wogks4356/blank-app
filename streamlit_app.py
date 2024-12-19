@@ -1090,84 +1090,61 @@ if st.session_state.page == "rs":
     st.title("📊 Real Analysis Page")
     st.write("Perform actual analysis based on the uploaded data.")
 
-    # CSV file upload
-    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
-
-    if uploaded_file is not None:
-        try:
-            # Read CSV data
-            csv_data = pd.read_csv(uploaded_file)
-            st.session_state.csv_data = csv_data  # Save in session state
-            st.write("Uploaded data (first 100 rows):")
-            st.dataframe(csv_data.head(100))  # Display data
-
-            # Select X-axis and Y-axis
-            x_axis = st.selectbox("Select X-axis", csv_data.columns, key="rs_x_axis")
-            y_axis = st.selectbox("Select Y-axis", csv_data.columns, key="rs_y_axis")
-
-            if x_axis and y_axis:
-                # Data visualization
-                st.write("Data visualization based on selected axes:")
-                fig, ax = plt.subplots(figsize=(10, 5))
-                ax.plot(csv_data[x_axis], csv_data[y_axis], label=f"{y_axis} vs {x_axis}")
-                ax.set_xlabel(x_axis)
-                ax.set_ylabel(y_axis)
-                ax.set_title("Data Visualization")
-                ax.legend()
-                ax.grid()
-                st.pyplot(fig)
-
-                # Analysis options
-                analysis_type = st.radio("Select Analysis Type", options=["RR Interval Calculation", "Peak Detection", "Other Analysis"])
-
-                if analysis_type == "RR Interval Calculation":
-                    st.write("Performing RR interval calculation...")
-
-                    try:
-                        # RR interval calculation (example)
-                        time_col = csv_data[x_axis]
-                        rr_intervals = time_col.diff().dropna()  # Calculate time intervals
-                        st.write(f"RR intervals (ms): {rr_intervals.describe()}")
-
-                        # Histogram
-                        fig, ax = plt.subplots(figsize=(10, 5))
-                        ax.hist(rr_intervals, bins=20, alpha=0.75, color='blue', edgecolor='black')
-                        ax.set_title("RR Interval Distribution")
-                        ax.set_xlabel("RR Interval (ms)")
-                        ax.set_ylabel("Frequency")
-                        st.pyplot(fig)
-
-                    except Exception as e:
-                        st.error(f"Error during RR interval calculation: {e}")
-
-                elif analysis_type == "Peak Detection":
-                    st.write("Performing peak detection...")
-
-                    try:
-                        # Peak detection
-                        peaks, _ = find_peaks(csv_data[y_axis].values, height=0)  # Detect peaks
-                        st.write(f"Number of detected peaks: {len(peaks)}")
-
-                        # Visualize peaks
-                        fig, ax = plt.subplots(figsize=(10, 5))
-                        ax.plot(csv_data[x_axis], csv_data[y_axis], label=f"{y_axis} vs {x_axis}")
-                        ax.plot(csv_data[x_axis].iloc[peaks], csv_data[y_axis].iloc[peaks], "x", label="Peaks")
-                        ax.set_xlabel(x_axis)
-                        ax.set_ylabel(y_axis)
-                        ax.set_title("Peak Detection Results")
-                        ax.legend()
-                        ax.grid()
-                        st.pyplot(fig)
-
-                    except Exception as e:
-                        st.error(f"Error during peak detection: {e}")
-
-                elif analysis_type == "Other Analysis":
-                    st.write("Other custom analysis features can be added here.")
-
-            else:
-                st.warning("Please select both X-axis and Y-axis.")
-        except Exception as e:
-            st.error(f"Error while processing the CSV file: {e}")
+   # Load the CSV file
+    file_path = 'today_test.csv'
+    data = pd.read_csv(file_path)
+    
+    # Assuming the column name for envelope data is 'Envelope'
+    if 'Envelope' in data.columns:
+        envelope_data = data['Envelope']
+    
+        # Step 1: Smooth the data using Savitzky-Golay filter
+        smoothed_data = savgol_filter(envelope_data, window_length=300, polyorder=2)
+    
+        # Step 2: Find peaks (upper peaks)
+        peaks, _ = find_peaks(smoothed_data, height=50, distance=100)
+    
+        # Step 3: Find valleys (lower peaks)
+        inverted_data = -smoothed_data
+        valleys, _ = find_peaks(inverted_data, height=-50, distance=100)
+    
+        # Step 4: Pair each upper peak with its closest lower peaks on both sides
+        peak_valley_pairs = []
+        for peak_idx in peaks:
+            # Find the closest valley to the left
+            left_valleys = valleys[valleys < peak_idx]
+            left_valley = left_valleys[-1] if len(left_valleys) > 0 else None
+    
+            # Find the closest valley to the right
+            right_valleys = valleys[valleys > peak_idx]
+            right_valley = right_valleys[0] if len(right_valleys) > 0 else None
+    
+            # Add the pair (upper peak, left valley, right valley)
+            peak_valley_pairs.append((peak_idx, left_valley, right_valley))
+    
+        # Display the pairs
+        for i, (peak, left, right) in enumerate(peak_valley_pairs):
+            print(f"Peak {i + 1}: Index = {peak}, Left Valley = {left}, Right Valley = {right}")
+    
+        # Step 5: Plot the data with peaks and valleys
+        plt.figure(figsize=(12, 6))
+        plt.plot(smoothed_data, label='Smoothed Envelope Data', linewidth=2)
+        plt.plot(peaks, smoothed_data[peaks], "x", label='Upper Peaks', color='red')  # Upper peaks in red
+        plt.plot(valleys, smoothed_data[valleys], "o", label='Lower Peaks (Valleys)', color='blue')  # Lower peaks in blue
+    
+        # Annotate the pairs on the plot
+        for peak, left, right in peak_valley_pairs:
+            if left is not None:
+                plt.plot(left, smoothed_data[left], "o", color='green')  # Highlight left valley
+            if right is not None:
+                plt.plot(right, smoothed_data[right], "o", color='purple')  # Highlight right valley
+    
+        plt.title('Peaks and Closest Valleys')
+        plt.xlabel('Index')
+        plt.ylabel('Envelope Value')
+        plt.legend()
+        plt.grid()
+        plt.show()
+    
     else:
-        st.warning("Please upload a CSV file.")
+        print("The 'Envelope' column was not found in the data.")
