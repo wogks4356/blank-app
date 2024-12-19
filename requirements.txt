@@ -3,3 +3,4 @@ pyserial
 matplotlib
 pillow
 imageio
+scipy
