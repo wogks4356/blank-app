@@ -1090,61 +1090,72 @@ if st.session_state.page == "rs":
     st.title("📊 Real Analysis Page")
     st.write("Perform actual analysis based on the uploaded data.")
 
-   # Load the CSV file
-    file_path = 'today_test.csv'
-    data = pd.read_csv(file_path)
-    
-    # Assuming the column name for envelope data is 'Envelope'
-    if 'Envelope' in data.columns:
-        envelope_data = data['Envelope']
-    
-        # Step 1: Smooth the data using Savitzky-Golay filter
-        smoothed_data = savgol_filter(envelope_data, window_length=300, polyorder=2)
-    
-        # Step 2: Find peaks (upper peaks)
-        peaks, _ = find_peaks(smoothed_data, height=50, distance=100)
-    
-        # Step 3: Find valleys (lower peaks)
-        inverted_data = -smoothed_data
-        valleys, _ = find_peaks(inverted_data, height=-50, distance=100)
-    
-        # Step 4: Pair each upper peak with its closest lower peaks on both sides
-        peak_valley_pairs = []
-        for peak_idx in peaks:
-            # Find the closest valley to the left
-            left_valleys = valleys[valleys < peak_idx]
-            left_valley = left_valleys[-1] if len(left_valleys) > 0 else None
-    
-            # Find the closest valley to the right
-            right_valleys = valleys[valleys > peak_idx]
-            right_valley = right_valleys[0] if len(right_valleys) > 0 else None
-    
-            # Add the pair (upper peak, left valley, right valley)
-            peak_valley_pairs.append((peak_idx, left_valley, right_valley))
-    
-        # Display the pairs
-        for i, (peak, left, right) in enumerate(peak_valley_pairs):
-            print(f"Peak {i + 1}: Index = {peak}, Left Valley = {left}, Right Valley = {right}")
-    
-        # Step 5: Plot the data with peaks and valleys
-        plt.figure(figsize=(12, 6))
-        plt.plot(smoothed_data, label='Smoothed Envelope Data', linewidth=2)
-        plt.plot(peaks, smoothed_data[peaks], "x", label='Upper Peaks', color='red')  # Upper peaks in red
-        plt.plot(valleys, smoothed_data[valleys], "o", label='Lower Peaks (Valleys)', color='blue')  # Lower peaks in blue
-    
-        # Annotate the pairs on the plot
-        for peak, left, right in peak_valley_pairs:
-            if left is not None:
-                plt.plot(left, smoothed_data[left], "o", color='green')  # Highlight left valley
-            if right is not None:
-                plt.plot(right, smoothed_data[right], "o", color='purple')  # Highlight right valley
-    
-        plt.title('Peaks and Closest Valleys')
-        plt.xlabel('Index')
-        plt.ylabel('Envelope Value')
-        plt.legend()
-        plt.grid()
-        plt.show()
-    
+    # CSV 파일 업로드
+    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+    if uploaded_file is not None:
+        try:
+            # Load the CSV file
+            data = pd.read_csv(uploaded_file)
+
+            # Assuming the column name for envelope data is 'Envelope'
+            if 'Envelope' in data.columns:
+                envelope_data = data['Envelope']
+
+                # Step 1: Smooth the data using Savitzky-Golay filter
+                smoothed_data = savgol_filter(envelope_data, window_length=300, polyorder=2)
+
+                # Step 2: Find peaks (upper peaks)
+                peaks, _ = find_peaks(smoothed_data, height=50, distance=100)
+
+                # Step 3: Find valleys (lower peaks)
+                inverted_data = -smoothed_data
+                valleys, _ = find_peaks(inverted_data, height=-50, distance=100)
+
+                # Step 4: Pair each upper peak with its closest lower peaks on both sides
+                peak_valley_pairs = []
+                for peak_idx in peaks:
+                    # Find the closest valley to the left
+                    left_valleys = valleys[valleys < peak_idx]
+                    left_valley = left_valleys[-1] if len(left_valleys) > 0 else None
+
+                    # Find the closest valley to the right
+                    right_valleys = valleys[valleys > peak_idx]
+                    right_valley = right_valleys[0] if len(right_valleys) > 0 else None
+
+                    # Add the pair (upper peak, left valley, right valley)
+                    peak_valley_pairs.append((peak_idx, left_valley, right_valley))
+
+                # Display the pairs
+                st.write("Peak-Valley Pairs:")
+                for i, (peak, left, right) in enumerate(peak_valley_pairs):
+                    st.write(f"Peak {i + 1}: Index = {peak}, Left Valley = {left}, Right Valley = {right}")
+
+                # Step 5: Plot the data with peaks and valleys
+                fig, ax = plt.subplots(figsize=(12, 6))
+                ax.plot(smoothed_data, label='Smoothed Envelope Data', linewidth=2)
+                ax.plot(peaks, smoothed_data[peaks], "x", label='Upper Peaks', color='red')  # Upper peaks in red
+                ax.plot(valleys, smoothed_data[valleys], "o", label='Lower Peaks (Valleys)', color='blue')  # Lower peaks in blue
+
+                # Annotate the pairs on the plot
+                for peak, left, right in peak_valley_pairs:
+                    if left is not None:
+                        ax.plot(left, smoothed_data[left], "o", color='green')  # Highlight left valley
+                    if right is not None:
+                        ax.plot(right, smoothed_data[right], "o", color='purple')  # Highlight right valley
+
+                ax.set_title('Peaks and Closest Valleys')
+                ax.set_xlabel('Index')
+                ax.set_ylabel('Envelope Value')
+                ax.legend()
+                ax.grid()
+
+                st.pyplot(fig)
+
+            else:
+                st.error("The 'Envelope' column was not found in the data.")
+
+        except Exception as e:
+            st.error(f"Error processing the file: {e}")
     else:
-        print("The 'Envelope' column was not found in the data.")
+        st.info("Please upload a CSV file.")
