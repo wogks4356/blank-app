@@ -1169,7 +1169,7 @@ if st.session_state.page == "rs":
     
                 # Streamlit에 그래프 시각화
                 st.write("### Muscle Fatigue Analysis Result")
-                fig, ax = plt.subplots(figsize=(6, 6))
+                fig, ax = plt.subplots(figsize=(6, 4))
                 ax.plot(data['Time (s)'], envelope_data, label='Smoothed Envelope')
                 ax.scatter(data['Time (s)'].iloc[keys_list], values, color='blue', label='Normalized MPF')
                 ax.plot(data['Time (s)'].iloc[keys_list], predicted_values, color='red', label='Linear Regression')
