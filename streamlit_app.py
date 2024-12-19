@@ -436,8 +436,9 @@ elif st.session_state.page == "어깨":
 
 elif st.session_state.page == "업데이트":
     st.title("2026년 2월 업데이트 예정")
-    st.image("https://i.pinimg.com/originals/61/4b/b4/614bb4d7982f87558039fc55fb223ef5.gif",  use_container_width=True)
-    st.image("computer-internet.gif", use_container_width=True)
+    # st.image("https://i.pinimg.com/originals/61/4b/b4/614bb4d7982f87558039fc55fb223ef5.gif",  use_container_width=True)
+    # st.image("computer-internet.gif", use_container_width=True)
+    st.image("“26 Times Ryan Reynolds Was Really Fucking Funny On Instagram Seriously, give the man a medal_”.gif", use_container_width=True)
     # st.image("https://mblogthumb-phinf.pstatic.net/MjAyMDA3MDJfMjk4/MDAxNTkzNjc1MzM5NjIx.OjEij9RK6k3yFrvDhkRC0_3NXmfFqZiHUS1tyv-Fygwg.Wk6unZQiMuqoJeqfrDhIhUNIpiuj3tumQI_WyP7a2Wog.GIF.sjlhome/Despicable_Me_2_2013_1080p_BRRip_x264_AC3-JYK.mkv_001209458.gif?type=w800", use_container_width=True)
     st.write("Coming soon~")
     # 이미지 파일을 Base64로 변환
