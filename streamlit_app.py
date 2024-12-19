@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import numpy
 import base64
-
+from scipy.signal import savgol_filter, find_peaks
 
 import streamlit as st
 import pandas as pd
