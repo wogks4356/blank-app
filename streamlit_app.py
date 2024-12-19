@@ -446,7 +446,7 @@ elif st.session_state.page == "업데이트":
     # Base64 이미지 삽입
     st.markdown(
         f"""
-        <div style="position: fixed; bottom: 10px; right: 10px;">
+        <div style="position: fixed; bottom: 10px; left: 10px;">
             <img src="data:image/gif;base64,{encoded_string}" style="width: 100px; height: auto;">
         </div>
         """,
