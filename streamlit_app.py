@@ -1085,7 +1085,10 @@ elif st.session_state.page == "realtime":
 # else:
 #     st.warning("CSV 파일을 업로드하세요.")
 
-# Streamlit session-based structure
+# 페이지 제목
+if "page" not in st.session_state:
+    st.session_state.page = "rs"
+
 if st.session_state.page == "rs":
     st.title("📊 Real Analysis Page")
     st.write("Perform actual analysis based on the uploaded data.")
@@ -1095,65 +1098,92 @@ if st.session_state.page == "rs":
 
     if uploaded_file is not None:
         try:
-            # Load the CSV file
-            data = pd.read_csv(uploaded_file)
+            # CSV 데이터 읽기
+            csv_data = pd.read_csv(uploaded_file)
+            st.session_state.csv_data = csv_data  # 세션 상태에 저장
+            st.write("Uploaded Data (First 100 rows):")
+            st.dataframe(csv_data.head(100))  # 데이터 표시
 
-            # Assuming the column name for envelope data is 'Envelope'
-            if 'Envelope' in data.columns:
-                envelope_data = data['Envelope']
+            # X축과 Y축 선택
+            x_axis = st.selectbox("Select X-axis", csv_data.columns, key="rs_x_axis")
+            y_axis = st.selectbox("Select Y-axis", csv_data.columns, key="rs_y_axis")
 
-                # Step 1: Smooth the data using Savitzky-Golay filter
-                smoothed_data = savgol_filter(envelope_data, window_length=300, polyorder=2)
+            if x_axis and y_axis:
+                # 데이터 시각화 버튼
+                if st.button("Visualize Data"):
+                    st.write("Data visualization based on selected axes:")
+                    fig, ax = plt.subplots(figsize=(10, 5))
+                    ax.plot(csv_data[x_axis], csv_data[y_axis], label=f"{y_axis} vs {x_axis}")
+                    ax.set_xlabel(x_axis)
+                    ax.set_ylabel(y_axis)
+                    ax.set_title("Data Visualization")
+                    ax.legend()
+                    ax.grid()
+                    st.pyplot(fig)
 
-                # Step 2: Find peaks (upper peaks)
-                peaks, _ = find_peaks(smoothed_data, height=50, distance=100)
+                # 분석 옵션
+                analysis_type = st.radio("Choose analysis type", options=["Peak and Valley Analysis", "Other Analysis"])
 
-                # Step 3: Find valleys (lower peaks)
-                inverted_data = -smoothed_data
-                valleys, _ = find_peaks(inverted_data, height=-50, distance=100)
+                if analysis_type == "Peak and Valley Analysis":
+                    if st.button("Analyze Peaks and Valleys"):
+                        try:
+                            # Step 1: Smooth the data using Savitzky-Golay filter
+                            smoothed_data = savgol_filter(csv_data[y_axis], window_length=300, polyorder=2)
 
-                # Step 4: Pair each upper peak with its closest lower peaks on both sides
-                peak_valley_pairs = []
-                for peak_idx in peaks:
-                    # Find the closest valley to the left
-                    left_valleys = valleys[valleys < peak_idx]
-                    left_valley = left_valleys[-1] if len(left_valleys) > 0 else None
+                            # Step 2: Find peaks (upper peaks)
+                            peaks, _ = find_peaks(smoothed_data, height=50, distance=100)
 
-                    # Find the closest valley to the right
-                    right_valleys = valleys[valleys > peak_idx]
-                    right_valley = right_valleys[0] if len(right_valleys) > 0 else None
+                            # Step 3: Find valleys (lower peaks)
+                            inverted_data = -smoothed_data
+                            valleys, _ = find_peaks(inverted_data, height=-50, distance=100)
 
-                    # Add the pair (upper peak, left valley, right valley)
-                    peak_valley_pairs.append((peak_idx, left_valley, right_valley))
+                            # Step 4: Pair each upper peak with its closest lower peaks on both sides
+                            peak_valley_pairs = []
+                            for peak_idx in peaks:
+                                # Find the closest valley to the left
+                                left_valleys = valleys[valleys < peak_idx]
+                                left_valley = left_valleys[-1] if len(left_valleys) > 0 else None
 
-                # Display the pairs
-                st.write("Peak-Valley Pairs:")
-                for i, (peak, left, right) in enumerate(peak_valley_pairs):
-                    st.write(f"Peak {i + 1}: Index = {peak}, Left Valley = {left}, Right Valley = {right}")
+                                # Find the closest valley to the right
+                                right_valleys = valleys[valleys > peak_idx]
+                                right_valley = right_valleys[0] if len(right_valleys) > 0 else None
 
-                # Step 5: Plot the data with peaks and valleys
-                fig, ax = plt.subplots(figsize=(12, 6))
-                ax.plot(smoothed_data, label='Smoothed Envelope Data', linewidth=2)
-                ax.plot(peaks, smoothed_data[peaks], "x", label='Upper Peaks', color='red')  # Upper peaks in red
-                ax.plot(valleys, smoothed_data[valleys], "o", label='Lower Peaks (Valleys)', color='blue')  # Lower peaks in blue
+                                # Add the pair (upper peak, left valley, right valley)
+                                peak_valley_pairs.append((peak_idx, left_valley, right_valley))
 
-                # Annotate the pairs on the plot
-                for peak, left, right in peak_valley_pairs:
-                    if left is not None:
-                        ax.plot(left, smoothed_data[left], "o", color='green')  # Highlight left valley
-                    if right is not None:
-                        ax.plot(right, smoothed_data[right], "o", color='purple')  # Highlight right valley
+                            # Display the pairs
+                            st.write("Peak-Valley Pairs:")
+                            for i, (peak, left, right) in enumerate(peak_valley_pairs):
+                                st.write(f"Peak {i + 1}: Index = {peak}, Left Valley = {left}, Right Valley = {right}")
 
-                ax.set_title('Peaks and Closest Valleys')
-                ax.set_xlabel('Index')
-                ax.set_ylabel('Envelope Value')
-                ax.legend()
-                ax.grid()
+                            # Step 5: Plot the data with peaks and valleys
+                            fig, ax = plt.subplots(figsize=(12, 6))
+                            ax.plot(smoothed_data, label='Smoothed Data', linewidth=2)
+                            ax.plot(peaks, smoothed_data[peaks], "x", label='Peaks', color='red')
+                            ax.plot(valleys, smoothed_data[valleys], "o", label='Valleys', color='blue')
 
-                st.pyplot(fig)
+                            # Annotate the pairs on the plot
+                            for peak, left, right in peak_valley_pairs:
+                                if left is not None:
+                                    ax.plot(left, smoothed_data[left], "o", color='green')  # Highlight left valley
+                                if right is not None:
+                                    ax.plot(right, smoothed_data[right], "o", color='purple')  # Highlight right valley
+
+                            ax.set_title('Peaks and Valleys Analysis')
+                            ax.set_xlabel('Index')
+                            ax.set_ylabel('Value')
+                            ax.legend()
+                            ax.grid()
+                            st.pyplot(fig)
+
+                        except Exception as e:
+                            st.error(f"Error during analysis: {e}")
+
+                elif analysis_type == "Other Analysis":
+                    st.write("You can add more custom analysis functions here.")
 
             else:
-                st.error("The 'Envelope' column was not found in the data.")
+                st.warning("Please select both X-axis and Y-axis.")
 
         except Exception as e:
             st.error(f"Error processing the file: {e}")
