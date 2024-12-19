@@ -1030,58 +1030,157 @@ elif st.session_state.page == "realtime":
  # Streamlit 앱을 새로고침하여 업데이트 반영
 
 
+# elif st.session_state.page == "rr":
+#     st.title("🎈 RR 데이터의 축 선택 및 정적 그래프")
+#     import streamlit as st
+#     import pandas as pd
+#     import numpy as np
+#     import time
+    
+#     st.title("🎈 실시간 데이터 업데이트")
+
+#     uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
+
+
+#     if uploaded_file is not None:
+#         try:
+#             # CSV 파일 읽기
+#             csv_data = pd.read_csv(uploaded_file)
+
+#             # 데이터 초기화 및 표시
+#             st.write("업로드된 데이터:")
+#             st.dataframe(csv_data)
+
+#             # X축 및 Y축 선택
+#             x_axis = st.selectbox("X 축 선택", csv_data.columns)
+#             y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
+
+#             if x_axis and y_axes:
+#                 # 실시간 업데이트 주기 및 데이터 범위 설정
+#                 refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=0.01, max_value=10.0, value=3.0, step=0.01)
+#                 window_size = st.slider("표시할 데이터 범위 (개수)", min_value=1, max_value=500, value=10)
+
+#                 # 데이터 추가를 시뮬레이션하기 위해 데이터프레임 복제
+#                 simulated_data = csv_data.copy()
+
+#                 # 실시간 그래프를 위한 컨테이너
+#                 placeholder = st.empty()
+
+#                 st.write("실시간 그래프 (슬라이딩 윈도우)")
+
+#                 # 버튼 상태 초기화
+#                 if "run_live_graph" not in st.session_state:
+#                     st.session_state.run_live_graph = False
+
+#                 # "실시간 그래프 시작" 버튼
+#                 if not st.session_state.run_live_graph:
+#                     if st.button("실시간 그래프 시작", key="start_button"):
+#                         st.session_state.run_live_graph = True
+
+#                 # "실시간 그래프 중지" 버튼
+#                 if st.session_state.run_live_graph:
+#                     if st.button("실시간 그래프 중지", key="stop_button_unique"):
+#                         st.session_state.run_live_graph = False
+
+#                 # 실시간 그래프 실행
+#                 start_index = 0
+#                 while st.session_state.run_live_graph:
+#                     # 데이터 갱신 (여기서는 임의로 데이터 추가)
+#                     new_row = pd.DataFrame([{col: np.random.randn() for col in csv_data.columns}])
+#                     new_row[x_axis] = simulated_data[x_axis].max() + 1
+#                     simulated_data = pd.concat([simulated_data, new_row], ignore_index=True)
+
+#                     # 슬라이딩 윈도우 데이터 선택
+#                     end_index = len(simulated_data)
+#                     start_index = max(0, end_index - window_size)
+#                     sliding_window_data = simulated_data.iloc[start_index:end_index]
+
+#                     # 그래프 업데이트
+#                     with placeholder.container():
+#                         chart_data = sliding_window_data[[x_axis] + y_axes].set_index(x_axis)
+#                         st.line_chart(chart_data)
+
+#                     # 주기적으로 새로고침
+#                     time.sleep(refresh_rate)
+
+#         except Exception as e:
+#             st.error(f"오류가 발생했습니다: {e}")
+#     else:
+#         st.warning("CSV 파일을 업로드하세요.")
+
+
 elif st.session_state.page == "rr":
     st.title("🎈 RR 데이터의 축 선택 및 정적 그래프")
+    
     import streamlit as st
     import pandas as pd
     import numpy as np
     import time
-    
-    st.title("🎈 실시간 데이터 업데이트")
+    import gspread
+    from oauth2client.service_account import ServiceAccountCredentials
 
-    uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
-
-
-    if uploaded_file is not None:
+    # Google Sheets 인증 및 데이터 가져오기
+    def authenticate_google_sheets(json_keyfile_name, sheet_name):
         try:
-            # CSV 파일 읽기
-            csv_data = pd.read_csv(uploaded_file)
+            scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+            creds = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile_name, scope)
+            client = gspread.authorize(creds)
+            sheet = client.open(sheet_name).sheet1  # 첫 번째 시트를 가져옴
+            return sheet
+        except Exception as e:
+            st.error(f"Google Sheets 인증에 실패했습니다: {e}")
+            return None
 
-            # 데이터 초기화 및 표시
-            st.write("업로드된 데이터:")
+    def fetch_sheet_data(sheet):
+        try:
+            data = sheet.get_all_records()
+            return pd.DataFrame(data)
+        except Exception as e:
+            st.error(f"데이터를 가져오지 못했습니다: {e}")
+            return pd.DataFrame()
+
+        # Google Sheets 파일 경로 및 이름 설정
+        google_sheet_keyfile = "your_service_account.json"  # 서비스 계정 JSON 파일 경로
+        google_sheet_name = "your_google_sheet_name"       # Google Sheets 이름
+    
+        # Google Sheets 인증 및 데이터 불러오기
+        sheet = authenticate_google_sheets(google_sheet_keyfile, google_sheet_name)
+        if sheet:
+            csv_data = fetch_sheet_data(sheet)
+            st.write("Google Sheets에서 가져온 데이터:")
             st.dataframe(csv_data)
-
+    
             # X축 및 Y축 선택
             x_axis = st.selectbox("X 축 선택", csv_data.columns)
             y_axes = st.multiselect("Y 축 선택 (복수 가능)", csv_data.columns)
-
+    
             if x_axis and y_axes:
                 # 실시간 업데이트 주기 및 데이터 범위 설정
                 refresh_rate = st.slider("그래프 업데이트 주기 (초)", min_value=0.01, max_value=10.0, value=3.0, step=0.01)
                 window_size = st.slider("표시할 데이터 범위 (개수)", min_value=1, max_value=500, value=10)
-
+    
                 # 데이터 추가를 시뮬레이션하기 위해 데이터프레임 복제
                 simulated_data = csv_data.copy()
-
+    
                 # 실시간 그래프를 위한 컨테이너
                 placeholder = st.empty()
-
+    
                 st.write("실시간 그래프 (슬라이딩 윈도우)")
-
+    
                 # 버튼 상태 초기화
                 if "run_live_graph" not in st.session_state:
                     st.session_state.run_live_graph = False
-
+    
                 # "실시간 그래프 시작" 버튼
                 if not st.session_state.run_live_graph:
                     if st.button("실시간 그래프 시작", key="start_button"):
                         st.session_state.run_live_graph = True
-
+    
                 # "실시간 그래프 중지" 버튼
                 if st.session_state.run_live_graph:
                     if st.button("실시간 그래프 중지", key="stop_button_unique"):
                         st.session_state.run_live_graph = False
-
+    
                 # 실시간 그래프 실행
                 start_index = 0
                 while st.session_state.run_live_graph:
@@ -1089,24 +1188,23 @@ elif st.session_state.page == "rr":
                     new_row = pd.DataFrame([{col: np.random.randn() for col in csv_data.columns}])
                     new_row[x_axis] = simulated_data[x_axis].max() + 1
                     simulated_data = pd.concat([simulated_data, new_row], ignore_index=True)
-
+    
                     # 슬라이딩 윈도우 데이터 선택
                     end_index = len(simulated_data)
                     start_index = max(0, end_index - window_size)
                     sliding_window_data = simulated_data.iloc[start_index:end_index]
-
+    
                     # 그래프 업데이트
                     with placeholder.container():
                         chart_data = sliding_window_data[[x_axis] + y_axes].set_index(x_axis)
                         st.line_chart(chart_data)
-
+    
                     # 주기적으로 새로고침
                     time.sleep(refresh_rate)
+    
+        else:
+            st.warning("Google Sheets 데이터를 로드할 수 없습니다. 인증 정보를 확인하세요.")
 
-        except Exception as e:
-            st.error(f"오류가 발생했습니다: {e}")
-    else:
-        st.warning("CSV 파일을 업로드하세요.")
 
 
     # # CSV 파일 업로드
