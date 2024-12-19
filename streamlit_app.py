@@ -1146,10 +1146,10 @@ elif st.session_state.page == "rr":
                     if st.button("실시간 그래프 중지", key="stop_button"):
                         break
     
+            else:
+                st.warning("X축과 Y축을 모두 선택하세요.")
         else:
-            st.warning("X축과 Y축을 모두 선택하세요.")
-    else:
-        st.warning("CSV 파일을 업로드하세요.")
+            st.warning("CSV 파일을 업로드하세요.")
 
 
     # # CSV 파일 업로드
